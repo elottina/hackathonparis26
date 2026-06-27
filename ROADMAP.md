@@ -17,7 +17,7 @@ Every block ends with a **stable, demoable build**. If we stop at any block, wha
 
 ## Timeline — 3 parallel lanes
 
-| Block (wall clock) | 🛠️ DEV-CORE — engine | 🖥️ DEV-2 — dashboard/demo | 🎤 FEDERICA — pitch + customers | ✅ Demo state if we stop here |
+| Block (wall clock) | 🛠️ DEV-CORE — engine | 🖥️ DEV-2 — dashboard/demo | 🎤 pitch + customers | ✅ Demo state if we stop here |
 |---|---|---|---|---|
 | **H0–H1** · Sat 10–11 | **M0:** restore Hydra (`git checkout 15e345d -- engine data README.md`), fix model IDs, `pip install`, smoke-test `run.py --target demo` | Watch restore; scaffold dashboard (Vite **or** plain HTML+JS); agree event contract w/ DEV-CORE | Draft 15–20 outreach DMs; list room teams building agents | **Working swarm + findings.json in CLI** (already a full demo) |
 | **H1–H4** · Sat 11–14 | Tee `on_event` → JSONL + SSE endpoint (FastAPI); keep CLI working | Live dashboard: swarm grid + breach feed + findings, reading SSE/JSONL | Fire DMs; **walk the room**, lock ≥1 in-person target before lunch | **Live web dashboard** of the swarm vs FinBuddy |
@@ -51,7 +51,7 @@ M0 restored engine **+** a deterministic behavior-oracle demo (one seeded inject
 
 ## Team division (3 people)
 
-**Logic:** the demo + 3 real customers are what win the room — but both rest on the core working. So the strongest engineer goes heads-down on the core and is shielded from everything else; the second builder owns the surface + makes the demo unbreakable; Federica owns the two things that actually win (pitch + real users).
+**Logic:** the demo + 3 real customers are what win the room — but both rest on the core working. So the strongest engineer goes heads-down on the core and is shielded from everything else; the second builder owns the surface + makes the demo unbreakable; PERS 2 owns the two things that actually win (pitch + real users).
 
 ### 👤 Person 1 — DEV-CORE *(strongest engineer)*
 - **Owns:** Hydra engine restore · the behavior oracle (tool-enabled target + sink + oracle) · `--seeded` determinism · real-target `HTTPTarget` shims.
@@ -60,12 +60,12 @@ M0 restored engine **+** a deterministic behavior-oracle demo (one seeded inject
 - **Win condition:** secret deterministically hits the sink by H6; build frozen & green by H16.
 
 ### 👤 Person 2 — DEV-2 *(builder + demo surface)*
-- **Owns:** the dashboard (swarm grid + breach feed + split-screen sink) · report rendering (lite HTML by H5 → PDF later) · the **90s backup video** · runs scans/shims with Federica.
+- **Owns:** the dashboard (swarm grid + breach feed + split-screen sink) · report rendering (lite HTML by H5 → PDF later) · the **90s backup video** · runs scans/shims with PERS 2.
 - **Cadence:** H0–1 scaffold + lock event contract w/ DEV-CORE · H1–4 dashboard · H4–6 report-lite + sink stub · H6–12 split-screen sink view + polish · H12–16 "generate report" + **record video** (→GATE D) · H22+ dry-run demo 5× + pre-warm.
 - **Never:** engine logic, the pitch narrative.
 - **Win condition:** the jaw-drop reads instantly on screen; backup video exists by H16; demo never breaks on stage.
 
-### 👤 Person 3 — FEDERICA *(pitch + customers — highest leverage)*
+### 👤 Person 3 — PERS 2 *(pitch + customers — highest leverage)*
 - **Owns:** all outreach + the design-partner motion · capturing 3 logos + 1 real vuln + 1 "yes I'd pay" · the deck · narrative + rehearsal · report exec-summary copy.
 - **Cadence:** H0–4 fire DMs + work the room (lock ≥1 in-person target) · H4–12 run scans w/ DEV-2 + send same-day reports + lock 3 partners · H12–16 send reports + testimonial ask · H22–26 collect WTP quotes + lock traction slide · H26–30 rehearse ≥4× + present.
 - **Never:** pulled into debugging.
@@ -73,10 +73,10 @@ M0 restored engine **+** a deterministic behavior-oracle demo (one seeded inject
 
 ### 🤝 The 5 handoff points (where the lanes touch)
 - **H1** — DEV-CORE → DEV-2: lock the `on_event` schema (reuse it, don't redesign).
-- **H5** — DEV-2 → FEDERICA: report-lite ready → Saturday scans become deliverable.
+- **H5** — DEV-2 → PERS 2: report-lite ready → Saturday scans become deliverable.
 - **H5.5** — DEV-CORE → DEV-2: freeze the sink contract → sink panel built in parallel.
-- **H11** — FEDERICA → DEV-2: hand over traction assets (logos/quotes/screenshots) for the deck.
+- **H11** — PERS 2 → DEV-2: hand over traction assets (logos/quotes/screenshots) for the deck.
 - **H16** — whole team: GATE D freeze + video, then sleep in shifts.
 
 ### 🎤 On stage (2 present)
-Federica narrates the pitch; DEV-2 drives the demo laptop (knows the dashboard + the backup); DEV-CORE handles technical Q&A. See [CUSTOMERS.md](./CUSTOMERS.md) and [PITCH.md](./PITCH.md).
+PERS 2 narrates the pitch; DEV-2 drives the demo laptop (knows the dashboard + the backup); DEV-CORE handles technical Q&A. See [CUSTOMERS.md](./CUSTOMERS.md) and [PITCH.md](./PITCH.md).
