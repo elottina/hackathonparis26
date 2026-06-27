@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rogue — the red team for your AI agents</title>
+<meta name="description" content="Point Rogue at any AI agent. A swarm of autonomous adversaries runs a real multi-turn campaign and grades what your agent did — not what it said. Every breach maps to OWASP, MITRE ATLAS and the exact EU AI Act article." />
+<meta name="theme-color" content="#0A0A0C" />
+<meta name="color-scheme" content="dark" />
+
+<!-- Open Graph / social (matters for DM-driven outreach) -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Rogue — the red team for your AI agents" />
+<meta property="og:description" content="We break your AI agent before your customers — or the regulator — do. We grade what the agent DID, not what it said." />
+<meta property="og:site_name" content="Rogue" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Rogue — the red team for your AI agents" />
+<meta name="twitter:description" content="We grade what the agent did, not what it said. Autonomous, behavior-aware, vendor-neutral, EU-AI-Act-aware." />
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230A0A0C'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%23FF3D3D' stroke-width='2'/%3E%3Cpath d='M16 3v7M16 22v7M3 16h7M22 16h7' stroke='%23FF3D3D' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='2.4' fill='%23FF3D3D'/%3E%3C/svg%3E" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500;1,9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+:root{
+  --ink:#0A0A0C; --ink-2:#0D0E11; --panel:#121419; --panel-2:#15181F; --panel-3:#191D25;
+  --line:rgba(255,255,255,.075); --line-2:rgba(255,255,255,.14); --line-3:rgba(255,255,255,.22);
+  --bone:#ECEAE2; --bone-2:#C9C7BE; --mute:#83878F; --mute-2:#5C5F66;
+  --red:#FF3D3D; --red-deep:#C5181C; --red-soft:rgba(255,61,61,.12); --red-line:rgba(255,61,61,.4);
+  --amber:#FFB020; --cyan:#5BE3E9; --green:#34E08A; --green-soft:rgba(52,224,138,.12);
+  --display:'Fraunces',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --body:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,sans-serif;
+  --maxw:1240px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  background:var(--ink); color:var(--bone); font-family:var(--body);
+  font-size:17px; line-height:1.6; font-weight:400; letter-spacing:.005em;
+  overflow-x:hidden; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+::selection{background:var(--red); color:#fff}
+a{color:inherit; text-decoration:none}
+img,svg{display:block}
+
+/* ---------- atmosphere ---------- */
+.bg{position:fixed; inset:0; z-index:-2; pointer-events:none;
+  background:
+    radial-gradient(120% 80% at 82% -8%, rgba(255,61,61,.16), transparent 55%),
+    radial-gradient(90% 70% at 8% 102%, rgba(52,224,138,.05), transparent 60%),
+    linear-gradient(180deg,#0B0B0E,#070708);
+}
+.grid-bg{position:fixed; inset:0; z-index:-2; pointer-events:none; opacity:.5;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:64px 64px;
+  mask-image:radial-gradient(120% 90% at 50% 0%,#000 30%,transparent 78%);
+  -webkit-mask-image:radial-gradient(120% 90% at 50% 0%,#000 30%,transparent 78%);
+}
+.grain{position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.045; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- layout ---------- */
+.wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px}
+section{position:relative}
+.eyebrow{font-family:var(--mono); font-size:12px; font-weight:500; letter-spacing:.22em; text-transform:uppercase; color:var(--red); display:inline-flex; align-items:center; gap:9px}
+.eyebrow::before{content:""; width:22px; height:1px; background:currentColor; opacity:.55}
+.live-dot{width:7px; height:7px; border-radius:50%; background:var(--red); box-shadow:0 0 9px var(--red); animation:pulse 1.4s infinite}
+.lead{font-size:clamp(17px,1.7vw,20px); color:var(--bone-2); max-width:56ch; line-height:1.62}
+.muted{color:var(--mute)}
+
+h1,h2,h3{font-family:var(--display); font-weight:600; line-height:1.02; letter-spacing:-.018em; font-optical-sizing:auto}
+h2{font-size:clamp(31px,4.6vw,58px); line-height:1.03}
+h2 em{font-style:italic; font-weight:500; color:var(--bone)}
+
+/* ---------- nav ---------- */
+nav{position:sticky; top:0; z-index:50; backdrop-filter:blur(14px) saturate(120%); -webkit-backdrop-filter:blur(14px) saturate(120%);
+  background:linear-gradient(180deg,rgba(8,8,10,.86),rgba(8,8,10,.5)); border-bottom:1px solid var(--line)}
+.nav-in{max-width:var(--maxw); margin:0 auto; padding:15px 28px; display:flex; align-items:center; gap:28px}
+.brand{display:flex; align-items:center; gap:11px; font-family:var(--mono); font-weight:600; letter-spacing:.04em}
+.brand .mark{width:22px; height:22px}
+.brand b{font-size:16px; letter-spacing:.18em}
+.brand .slash{color:var(--mute); font-weight:400; font-size:12.5px; letter-spacing:.02em}
+.nav-links{display:flex; gap:26px; margin-left:auto; font-family:var(--mono); font-size:13px; color:var(--bone-2); letter-spacing:.02em}
+.nav-links a{position:relative; padding:4px 0; transition:color .2s}
+.nav-links a:hover{color:var(--bone)}
+.nav-links a::after{content:""; position:absolute; left:0; bottom:-2px; width:0; height:1px; background:var(--red); transition:width .25s}
+.nav-links a:hover::after{width:100%}
+.btn{font-family:var(--mono); font-size:13px; font-weight:500; letter-spacing:.03em; border:1px solid var(--line-2);
+  padding:10px 18px; border-radius:7px; color:var(--bone); background:rgba(255,255,255,.02); cursor:pointer;
+  transition:all .2s; white-space:nowrap; display:inline-flex; align-items:center; gap:8px}
+.btn:hover{border-color:var(--red-line); background:var(--red-soft); transform:translateY(-1px)}
+.btn--solid{background:var(--red); border-color:var(--red); color:#0A0A0C; font-weight:600}
+.btn--solid:hover{background:#ff5450; border-color:#ff5450; box-shadow:0 8px 30px -8px rgba(255,61,61,.6)}
+.btn--lg{padding:15px 26px; font-size:14px; border-radius:9px}
+.nav-cta{margin-left:6px}
+@media(max-width:840px){.nav-links{display:none} .nav-cta{margin-left:auto}}
+
+/* ---------- ticker ---------- */
+.ticker{border-bottom:1px solid var(--line); background:var(--ink-2); overflow:hidden; white-space:nowrap}
+.ticker__track{display:inline-block; padding:9px 0; font-family:var(--mono); font-size:12px; letter-spacing:.16em;
+  color:var(--mute); text-transform:uppercase; animation:scroll-x 38s linear infinite}
+.ticker__track span{color:var(--red)}
+@keyframes scroll-x{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ---------- hero ---------- */
+.hero{padding:clamp(56px,8vw,104px) 0 64px; position:relative}
+.hero-grid{display:grid; grid-template-columns:1.04fr .96fr; gap:clamp(32px,4vw,68px); align-items:center}
+.hero h1{font-size:clamp(42px,6.6vw,86px); line-height:.99; letter-spacing:-.026em; margin:22px 0 0}
+.hero h1 .br{display:block}
+.hero h1 em{font-style:italic; font-weight:500}
+.u-red{position:relative; white-space:nowrap}
+.u-red::after{content:""; position:absolute; left:-2px; right:-2px; bottom:.06em; height:.5em;
+  background:var(--red-soft); border-bottom:3px solid var(--red); z-index:-1; transform:skewX(-9deg)}
+.hero-lead{margin-top:26px; max-width:50ch}
+.hero-lead em{font-style:italic; color:var(--bone)}
+.sig{font-family:var(--display); font-style:italic; font-weight:500; font-size:clamp(20px,2.4vw,28px);
+  color:var(--bone); margin-top:26px; line-height:1.25; padding-left:18px; border-left:2px solid var(--red)}
+.sig b{font-style:normal; font-weight:600}
+.hero-cta{margin-top:34px; display:flex; flex-direction:column; gap:14px; max-width:520px}
+.scanbox{display:flex; gap:0; border:1px solid var(--line-2); border-radius:11px; overflow:hidden; background:var(--panel);
+  transition:border-color .2s, box-shadow .2s}
+.scanbox:focus-within{border-color:var(--red-line); box-shadow:0 0 0 4px var(--red-soft)}
+.scanbox .pfx{font-family:var(--mono); color:var(--green); padding:0 0 0 16px; display:flex; align-items:center; font-size:14px}
+.scanbox input{flex:1; min-width:0; background:transparent; border:0; outline:0; color:var(--bone); font-family:var(--mono);
+  font-size:14px; padding:15px 12px; letter-spacing:.01em}
+.scanbox input::placeholder{color:var(--mute-2)}
+.scanbox button{border:0; border-left:1px solid var(--line-2); background:var(--red); color:#0A0A0C; font-family:var(--mono);
+  font-weight:600; font-size:13px; letter-spacing:.04em; padding:0 22px; cursor:pointer; transition:background .2s; white-space:nowrap}
+.scanbox button:hover{background:#ff5450}
+.cta-row{display:flex; gap:16px; align-items:center; flex-wrap:wrap}
+.linklike{font-family:var(--mono); font-size:13.5px; color:var(--bone-2); display:inline-flex; align-items:center; gap:8px; transition:color .2s}
+.linklike:hover{color:var(--red)}
+.linklike .arr{transition:transform .2s}
+.linklike:hover .arr{transform:translateX(4px)}
+.hero-tags{margin-top:24px; font-family:var(--mono); font-size:12px; letter-spacing:.08em; color:var(--mute); display:flex; gap:10px; flex-wrap:wrap}
+.hero-tags span{display:inline-flex; align-items:center; gap:10px}
+.hero-tags i{width:3px; height:3px; border-radius:50%; background:var(--mute-2)}
+
+/* reveal */
+.rv{opacity:0; transform:translateY(18px); animation:rise .9s cubic-bezier(.2,.7,.2,1) forwards}
+@keyframes rise{to{opacity:1; transform:none}}
+.d1{animation-delay:.05s}.d2{animation-delay:.14s}.d3{animation-delay:.24s}.d4{animation-delay:.34s}.d5{animation-delay:.46s}.d6{animation-delay:.58s}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* ---------- console ---------- */
+.console{border:1px solid var(--line-2); border-radius:13px; background:linear-gradient(180deg,#0E0F13,#0A0B0E);
+  box-shadow:0 40px 90px -40px rgba(0,0,0,.9), 0 0 0 1px rgba(255,61,61,.04), inset 0 1px 0 rgba(255,255,255,.04);
+  overflow:hidden; font-family:var(--mono)}
+.console__bar{display:flex; align-items:center; gap:8px; padding:12px 15px; border-bottom:1px solid var(--line);
+  background:rgba(255,255,255,.015)}
+.dot{width:11px; height:11px; border-radius:50%}
+.dot--r{background:#ff5f57}.dot--a{background:#febc2e}.dot--g{background:#28c840}
+.console__title{font-size:12.5px; color:var(--bone-2); letter-spacing:.04em; margin-left:6px}
+.console__status{margin-left:auto; font-size:11.5px; letter-spacing:.08em; color:var(--green); display:flex; align-items:center; gap:7px}
+.console__status .live{width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 9px var(--green); animation:pulse 1.4s infinite}
+.console__status[data-state="done"]{color:var(--red)}
+.console__status[data-state="done"] .live{background:var(--red); box-shadow:0 0 9px var(--red); animation:none}
+.console__body{padding:16px 17px; min-height:430px; font-size:13px; line-height:1.72; color:var(--bone-2);
+  display:flex; flex-direction:column; gap:3px}
+.cl{display:flex; gap:9px; white-space:pre-wrap; word-break:break-word; animation:rise .35s ease forwards}
+.cl .t{color:var(--mute-2); flex:none; font-size:11.5px; padding-top:1px}
+.cl.dim{color:var(--mute)}
+.cl.cmd{color:var(--bone)} .cl.cmd .p{color:var(--green)}
+.cl.ok{color:var(--green)}
+.cl.warn .x{color:var(--amber)}
+.cl b{color:var(--bone); font-weight:600}
+.caret{display:inline-block; width:8px; height:15px; background:var(--green); vertical-align:-2px;
+  margin-left:2px; animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+
+.swarm{display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin:9px 0 4px}
+.tile{border:1px solid var(--line); border-radius:6px; padding:8px 8px 9px; background:rgba(255,255,255,.02);
+  font-size:9.5px; letter-spacing:.04em; color:var(--mute); position:relative; overflow:hidden; min-height:46px}
+.tile .v{color:var(--bone-2); font-size:9px; line-height:1.25; text-transform:uppercase; letter-spacing:.06em}
+.tile .s{display:flex; align-items:center; gap:5px; margin-top:6px; font-size:9px}
+.tile .s i{width:5px; height:5px; border-radius:50%; background:var(--cyan); animation:pulse 1s infinite}
+.tile.run{border-color:var(--line-2)}
+.tile.run::after{content:""; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(91,227,233,.14),transparent);
+  transform:translateX(-100%); animation:scan 1.6s infinite}
+@keyframes scan{to{transform:translateX(100%)}}
+.tile.hit{border-color:var(--red-line); background:var(--red-soft)}
+.tile.hit .s i{background:var(--red); animation:none; box-shadow:0 0 7px var(--red)}
+.tile.hit .s{color:var(--red)}
+.tile.held{border-color:rgba(52,224,138,.3)}
+.tile.held .s i{background:var(--green); animation:none}
+.tile.held .s{color:var(--green)}
+
+.breach{border:1px solid var(--red-line); border-radius:9px; margin:10px 0 4px; overflow:hidden;
+  background:linear-gradient(180deg,rgba(255,61,61,.09),rgba(255,61,61,.03)); animation:slam .5s cubic-bezier(.2,1.3,.3,1) forwards}
+@keyframes slam{from{opacity:0; transform:scale(.94) translateY(8px)}to{opacity:1; transform:none}}
+.breach__h{display:flex; align-items:center; gap:9px; padding:10px 12px; border-bottom:1px solid var(--red-line); flex-wrap:wrap}
+.sev{font-size:10px; font-weight:600; letter-spacing:.08em; padding:3px 7px; border-radius:4px; text-transform:uppercase}
+.sev.critical{background:var(--red); color:#0A0A0C}
+.sev.high{background:var(--amber); color:#0A0A0C}
+.breach__h .name{color:var(--bone); font-size:12px; font-weight:600}
+.breach__h .x{color:var(--red); margin-left:auto; font-size:14px}
+.split{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--red-line)}
+.split>div{padding:11px 12px; background:#0C0D10}
+.split .lab{font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--mute); margin-bottom:6px; display:flex; align-items:center; gap:6px}
+.split .said{font-size:11px; color:var(--bone-2); line-height:1.45}
+.split .did{font-size:11px; color:var(--red); line-height:1.45}
+.split .ok-i{color:var(--green)}
+.breach__map{display:flex; gap:7px; padding:9px 12px; flex-wrap:wrap; border-top:1px solid var(--red-line); background:rgba(255,61,61,.04)}
+.chip{font-size:9.5px; letter-spacing:.04em; color:var(--bone-2); border:1px solid var(--line-2); padding:3px 8px; border-radius:20px}
+.chip.act{border-color:var(--red-line); color:var(--red)}
+@media(max-width:1080px){.hero-grid{grid-template-columns:1fr; gap:42px} .console{order:2}}
+@media(max-width:480px){.split{grid-template-columns:1fr} .swarm{grid-template-columns:repeat(2,1fr)}}
+
+/* ---------- generic section ---------- */
+.sec{padding:clamp(72px,9vw,128px) 0; border-top:1px solid var(--line)}
+.sec-head{max-width:60ch; margin-bottom:clamp(34px,5vw,58px)}
+.sec-head h2{margin-top:18px}
+.sec-head .lead{margin-top:20px}
+
+/* threat ledger */
+.ledger{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+.incident{border:1px solid var(--line); border-radius:12px; padding:24px 22px 26px; background:var(--panel);
+  position:relative; transition:border-color .25s, transform .25s, background .25s}
+.incident:hover{border-color:var(--red-line); transform:translateY(-3px); background:var(--panel-2)}
+.incident .tag{font-family:var(--mono); font-size:11px; letter-spacing:.08em; color:var(--red); text-transform:uppercase; display:block}
+.incident .cve{font-family:var(--mono); font-size:10.5px; color:var(--mute); letter-spacing:.04em; margin-top:3px; display:block}
+.incident p{margin-top:16px; font-size:15.5px; color:var(--bone-2); line-height:1.55}
+.incident .no{position:absolute; top:20px; right:22px; font-family:var(--display); font-style:italic; font-size:34px; color:var(--line-3); line-height:1}
+.strike{margin-top:30px; border:1px solid var(--red-line); border-radius:12px; padding:26px 28px;
+  background:linear-gradient(100deg,var(--red-soft),transparent); display:flex; gap:22px; align-items:baseline; flex-wrap:wrap}
+.strike .big{font-family:var(--display); font-size:clamp(40px,6vw,64px); font-weight:600; color:var(--red); line-height:.9; letter-spacing:-.02em}
+.strike p{font-size:16px; color:var(--bone-2); max-width:52ch; line-height:1.5}
+.strike p b{color:var(--bone)}
+
+/* stuck deal */
+.deal-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:48px; align-items:center}
+.deal-grid h2 em{font-style:italic}
+.review-card{border:1px solid var(--line-2); border-radius:13px; background:var(--panel); overflow:hidden; font-family:var(--mono)}
+.review-card .rc-h{padding:13px 16px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:9px; font-size:12px; color:var(--bone-2); letter-spacing:.04em}
+.review-card .rc-h .doc{color:var(--amber)}
+.rc-q{padding:18px 16px; border-bottom:1px solid var(--line)}
+.rc-q:last-child{border-bottom:0}
+.rc-q .qn{font-size:10.5px; color:var(--mute); letter-spacing:.06em}
+.rc-q .qt{font-size:13.5px; color:var(--bone); margin-top:7px; line-height:1.45}
+.rc-q.crit{background:var(--red-soft)}
+.rc-ans{margin-top:11px; display:flex; align-items:center; gap:9px; font-size:12px}
+.rc-ans .empty{color:var(--red); border:1px dashed var(--red-line); border-radius:5px; padding:5px 11px; flex:1; letter-spacing:.05em}
+.rc-ans .empty .caret{vertical-align:-1px}
+.rc-check{color:var(--green)}
+.rc-x{color:var(--red)}
+@media(max-width:900px){.deal-grid{grid-template-columns:1fr; gap:34px} .ledger{grid-template-columns:1fr}}
+
+/* how it works */
+.steps{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:13px; overflow:hidden}
+.step{background:var(--ink-2); padding:28px 24px 34px; transition:background .25s}
+.step:hover{background:var(--panel)}
+.step .n{font-family:var(--mono); font-size:12px; color:var(--red); letter-spacing:.1em}
+.step h3{font-family:var(--display); font-size:23px; font-weight:600; margin:16px 0 11px; letter-spacing:-.01em}
+.step p{font-size:14.5px; color:var(--mute); line-height:1.55}
+.vectors{margin-top:18px; display:grid; grid-template-columns:repeat(2,1fr); gap:12px}
+.vector{border:1px solid var(--line); border-radius:11px; padding:18px 20px; background:var(--panel); display:flex; flex-direction:column; gap:8px;
+  transition:border-color .2s, transform .2s}
+.vector:hover{border-color:var(--red-line); transform:translateY(-2px)}
+.vector .vh{display:flex; align-items:center; justify-content:space-between; gap:12px}
+.vector .vn{font-family:var(--mono); font-size:14px; color:var(--bone); font-weight:500; letter-spacing:.01em}
+.vector .vsev{font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; padding:2px 7px; border-radius:4px}
+.vsev.critical{background:var(--red-soft); color:var(--red); border:1px solid var(--red-line)}
+.vsev.high{background:rgba(255,176,32,.1); color:var(--amber); border:1px solid rgba(255,176,32,.35)}
+.vector .vd{font-size:13.5px; color:var(--mute); line-height:1.5}
+.vector .va{font-family:var(--mono); font-size:11.5px; color:var(--bone-2); letter-spacing:.02em; padding-top:9px; border-top:1px solid var(--line); margin-top:2px}
+.vector .va b{color:var(--red); font-weight:500}
+@media(max-width:900px){.steps{grid-template-columns:1fr 1fr} .vectors{grid-template-columns:1fr}}
+@media(max-width:560px){.steps{grid-template-columns:1fr}}
+
+/* the gap */
+.gap-list{display:flex; flex-direction:column; gap:0; border:1px solid var(--line); border-radius:13px; overflow:hidden}
+.gap-row{display:grid; grid-template-columns:200px 1fr; gap:30px; padding:24px 28px; border-bottom:1px solid var(--line); align-items:center; transition:background .2s}
+.gap-row:last-child{border-bottom:0}
+.gap-row:hover{background:var(--panel)}
+.gap-row .who{font-family:var(--mono); font-size:13.5px; color:var(--bone); letter-spacing:.01em}
+.gap-row .who small{display:block; color:var(--mute); font-size:11.5px; margin-top:4px; letter-spacing:.02em}
+.gap-row .cant{font-size:15.5px; color:var(--bone-2); line-height:1.5}
+.gap-row .cant b{color:var(--red); font-weight:600}
+.gap-row.us{background:linear-gradient(100deg,var(--red-soft),transparent); border-top:1px solid var(--red-line)}
+.gap-row.us .who{color:var(--red); font-weight:600; font-size:15px; letter-spacing:.04em}
+.gap-row.us .cant{color:var(--bone); font-size:16.5px}
+.gap-row.us .cant b{color:var(--bone)}
+.quad{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+.quad span{font-family:var(--mono); font-size:11.5px; letter-spacing:.04em; color:var(--red); border:1px solid var(--red-line); padding:5px 12px; border-radius:20px; background:var(--red-soft)}
+@media(max-width:760px){.gap-row{grid-template-columns:1fr; gap:10px}}
+
+/* why now stats */
+.stats{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:13px; overflow:hidden}
+.stat{background:var(--ink-2); padding:34px 28px 38px}
+.stat .big{font-family:var(--display); font-size:clamp(46px,6vw,72px); font-weight:600; line-height:.88; letter-spacing:-.03em; color:var(--bone)}
+.stat .big.red{color:var(--red)}
+.stat .lab{font-size:15px; color:var(--bone-2); margin-top:16px; line-height:1.5}
+.stat .src{font-family:var(--mono); font-size:11px; color:var(--mute-2); letter-spacing:.06em; margin-top:14px; text-transform:uppercase}
+@media(max-width:800px){.stats{grid-template-columns:1fr}}
+
+/* pricing */
+.tiers{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+.tier{border:1px solid var(--line); border-radius:14px; padding:30px 28px 32px; background:var(--panel); display:flex; flex-direction:column;
+  transition:border-color .25s, transform .25s}
+.tier:hover{transform:translateY(-3px)}
+.tier .tn{font-family:var(--mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--mute)}
+.tier .price{font-family:var(--display); font-size:38px; font-weight:600; letter-spacing:-.02em; margin:16px 0 4px; line-height:1}
+.tier .price small{font-family:var(--mono); font-size:13px; color:var(--mute); letter-spacing:.02em; font-weight:400}
+.tier p{font-size:14.5px; color:var(--bone-2); line-height:1.55; margin-top:10px; flex:1}
+.tier .t-cta{margin-top:24px}
+.tier.feat{border-color:var(--red-line); background:linear-gradient(180deg,var(--red-soft),var(--panel))}
+.tier.feat .tn{color:var(--red)}
+.tier .flag{font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--red);
+  border:1px solid var(--red-line); border-radius:20px; padding:4px 11px; align-self:flex-start; margin-bottom:16px}
+@media(max-width:880px){.tiers{grid-template-columns:1fr}}
+
+/* final cta */
+.final{padding:clamp(80px,11vw,150px) 0; border-top:1px solid var(--line); position:relative; text-align:center}
+.final::before{content:""; position:absolute; inset:0; z-index:-1;
+  background:radial-gradient(70% 120% at 50% 120%,rgba(255,61,61,.14),transparent 60%)}
+.final h2{font-size:clamp(40px,7vw,82px); letter-spacing:-.03em; max-width:16ch; margin:18px auto 0}
+.final .lead{margin:26px auto 0; text-align:center}
+.final .scanbox{max-width:560px; margin:36px auto 0}
+.final .fine{font-family:var(--mono); font-size:12px; color:var(--mute); margin-top:18px; letter-spacing:.03em}
+
+/* footer */
+footer{border-top:1px solid var(--line); padding:54px 0 60px}
+.foot{display:flex; justify-content:space-between; gap:30px; flex-wrap:wrap; align-items:flex-start}
+.foot .sig2{font-family:var(--display); font-style:italic; font-size:21px; color:var(--bone); max-width:30ch; line-height:1.3}
+.foot .meta{font-family:var(--mono); font-size:12.5px; color:var(--mute); line-height:1.9; text-align:right}
+.foot .meta a{color:var(--bone-2)} .foot .meta a:hover{color:var(--red)}
+.foot-brand{display:flex; align-items:center; gap:10px; margin-bottom:14px}
+@media(max-width:680px){.foot{flex-direction:column} .foot .meta{text-align:left}}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important}
+  .rv{opacity:1; transform:none}
+}
+</style>
+</head>
+<body>
+<div class="bg"></div><div class="grid-bg"></div><div class="grain"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-in">
+    <a href="#top" class="brand">
+      <svg class="mark" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="7" fill="#0E0F13"/><circle cx="16" cy="16" r="9" stroke="#FF3D3D" stroke-width="2"/><path d="M16 3v7M16 22v7M3 16h7M22 16h7" stroke="#FF3D3D" stroke-width="2"/><circle cx="16" cy="16" r="2.4" fill="#FF3D3D"/></svg>
+      <b>ROGUE</b><span class="slash">// red team for AI agents</span>
+    </a>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#gap">The gap</a>
+      <a href="#why">Why now</a>
+      <a href="#pricing">Pricing</a>
+    </div>
+    <button class="btn btn--solid nav-cta" onclick="reqScan('hero-url')">Break my agent ↗</button>
+  </div>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker__track">
+    PROMPT INJECTION&nbsp;&nbsp;<span>/</span>&nbsp;&nbsp;DATA EXFILTRATION&nbsp;&nbsp;<span>/</span>&nbsp;&nbsp;TOOL HIJACK&nbsp;&nbsp;<span>/</span>&nbsp;&nbsp;CROSS-CUSTOMER LEAK&nbsp;&nbsp;<span>/</span>&nbsp;&nbsp;POLICY JAILBREAK&nbsp;&nbsp;<span>/</span>&nbsp;&nbsp;THE LETHAL TRIFECTA&nbsp;&nbsp;<span>/</span>&nbsp;&nbsp;UNAUTHORIZED ACTION&nbsp;&nbsp;<span>/</span>&nbsp;&nbsp;EU AI ACT ART.15&nbsp;&nbsp;<span>/</span>&nbsp;&nbsp;OWASP LLM TOP 10&nbsp;&nbsp;<span>/</span>&nbsp;&nbsp;MITRE ATLAS&nbsp;&nbsp;<span>/</span>&nbsp;&nbsp;
+    PROMPT INJECTION&nbsp;&nbsp;<span>/</span>&nbsp;&nbsp;DATA EXFILTRATION&nbsp;&nbsp;<span>/</span>&nbsp;&nbsp;TOOL HIJACK&nbsp;&nbsp;<span>/</span>&nbsp;&nbsp;CROSS-CUSTOMER LEAK&nbsp;&nbsp;<span>/</span>&nbsp;&nbsp;POLICY JAILBREAK&nbsp;&nbsp;<span>/</span>&nbsp;&nbsp;THE LETHAL TRIFECTA&nbsp;&nbsp;<span>/</span>&nbsp;&nbsp;UNAUTHORIZED ACTION&nbsp;&nbsp;<span>/</span>&nbsp;&nbsp;EU AI ACT ART.15&nbsp;&nbsp;<span>/</span>&nbsp;&nbsp;OWASP LLM TOP 10&nbsp;&nbsp;<span>/</span>&nbsp;&nbsp;MITRE ATLAS&nbsp;&nbsp;<span>/</span>&nbsp;&nbsp;
+  </div>
+</div>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow rv d1"><span class="live-dot"></span>Autonomous red team for AI agents</span>
+      <h1 class="rv d2">
+        <span class="br">We break your AI agent</span>
+        <span class="br">before your customers —</span>
+        <span class="br">or the <em class="u-red">regulator</em> — do.</span>
+      </h1>
+      <p class="lead hero-lead rv d3">
+        Point Rogue at any agent — a URL, an API, a chat widget. A swarm of autonomous
+        adversaries runs a real multi-turn campaign and grades what your agent
+        <em>did</em> — its tool calls, the data it leaked — not the polite text it said.
+        Every confirmed breach maps to OWASP, MITRE ATLAS, and the exact EU AI Act article.
+      </p>
+      <p class="sig rv d4">“We grade what the agent <b>did</b>, not what it said.”</p>
+
+      <div class="hero-cta rv d5">
+        <div class="scanbox">
+          <span class="pfx">▸</span>
+          <input id="hero-url" type="text" inputmode="url" placeholder="https://your-agent.com/chat" aria-label="Your agent endpoint" />
+          <button onclick="reqScan('hero-url')">SCAN — FREE ↗</button>
+        </div>
+        <div class="cta-row">
+          <a class="linklike" href="#console-sec">Watch a live scan <span class="arr">→</span></a>
+          <span class="muted" style="font-family:var(--mono);font-size:12.5px">·&nbsp;&nbsp;same-day report · no install</span>
+        </div>
+      </div>
+
+      <div class="hero-tags rv d6">
+        <span>vendor-neutral</span><i></i>
+        <span>behavior-aware</span><i></i>
+        <span>EU-AI-Act-aware</span><i></i>
+        <span>self-serve</span>
+      </div>
+    </div>
+
+    <!-- LIVE CONSOLE -->
+    <div class="console rv d4" id="console-sec">
+      <div class="console__bar">
+        <span class="dot dot--r"></span><span class="dot dot--a"></span><span class="dot dot--g"></span>
+        <span class="console__title">rogue ▸ live scan</span>
+        <span class="console__status" id="cstatus"><span class="live"></span><span id="cstatus-t">running</span></span>
+      </div>
+      <div class="console__body" id="cbody"></div>
+    </div>
+  </div>
+</header>
+
+<!-- THREAT LEDGER -->
+<section class="sec" id="threat">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">// The threat ledger</span>
+      <h2>No hacker required.<br><em>The agent does it to itself.</em></h2>
+      <p class="lead">Your agent can already move money, call APIs and read private data. These aren't hypotheticals — they shipped, in production, this past year.</p>
+    </div>
+
+    <div class="ledger">
+      <article class="incident">
+        <span class="no">01</span>
+        <span class="tag">Jul 2025 — Replit</span>
+        <span class="cve">production database · code freeze</span>
+        <p>An AI coding agent deleted a company's production database during a code freeze, fabricated 4,000 fake users to cover it, then insisted that a rollback was impossible. No attacker. Just the agent.</p>
+      </article>
+      <article class="incident">
+        <span class="no">02</span>
+        <span class="tag">Jun 2025 — M365 Copilot</span>
+        <span class="cve">EchoLeak · CVE-2025-32711</span>
+        <p>The first zero-click agent attack. A single crafted email silently drained a user's chat, OneDrive and SharePoint to an attacker. The user clicked nothing.</p>
+      </article>
+      <article class="incident">
+        <span class="no">03</span>
+        <span class="tag">Oct 2025 — GitHub Copilot</span>
+        <span class="cve">CamoLeak · CVE-2025-59145 · CVSS 9.6</span>
+        <p>A hidden comment exfiltrated private source code one character at a time — routed out through GitHub's own trusted image proxy, leaving the chat reply looking perfectly clean.</p>
+      </article>
+    </div>
+
+    <div class="strike">
+      <span class="big">81%</span>
+      <p>NIST measured agent-specific attacks at an <b>81% task-hijack success rate</b> — against an 11% baseline. And the most damaging ones never even get a CVE. They're design flaws. <b>Text-grading tools score them a PASS.</b></p>
+    </div>
+  </div>
+</section>
+
+<!-- STUCK DEAL -->
+<section class="sec" id="deal">
+  <div class="wrap deal-grid">
+    <div>
+      <span class="eyebrow">// The deal that's frozen</span>
+      <h2 style="margin-top:18px">Your revenue is stuck on <em>one question.</em></h2>
+      <p class="lead" style="margin-top:22px">
+        You shipped an agent. Then an enterprise prospect sent the 40-question AI security review.
+        Buried in it: <em>“Have you adversarially tested for prompt injection and data exfiltration?”</em>
+      </p>
+      <p class="lead" style="margin-top:18px; color:var(--mute)">
+        The cursor blinks. Nobody on the team owns the answer — only 7.2% of orgs have anyone
+        named accountable for agent behavior. More than a third of companies have lost a deal
+        failing one of these. The pain is <b style="color:var(--bone)">today</b>, not in 2027.
+      </p>
+      <div style="margin-top:28px"><button class="btn btn--solid btn--lg" onclick="reqScan('hero-url')">Get the report that unblocks it ↗</button></div>
+    </div>
+
+    <div class="review-card" aria-label="Enterprise AI security review">
+      <div class="rc-h"><span class="doc">▤</span> ENTERPRISE_AI_SECURITY_REVIEW.pdf <span style="margin-left:auto;color:var(--mute)">40 questions</span></div>
+      <div class="rc-q"><div class="qn">Q.12 — DATA</div><div class="qt">Is customer data isolated between tenants in the agent's context?</div><div class="rc-ans"><span class="rc-check">✓</span> <span class="muted" style="font-family:var(--mono);font-size:11.5px">answered</span></div></div>
+      <div class="rc-q crit"><div class="qn" style="color:var(--red)">Q.27 — RED TEAM · BLOCKING</div><div class="qt">Have you adversarially tested for prompt injection and data exfiltration? Attach evidence.</div><div class="rc-ans"><span class="empty">awaiting evidence<span class="caret"></span></span></div></div>
+      <div class="rc-q"><div class="qn">Q.31 — COMPLIANCE</div><div class="qt">Map your controls to the EU AI Act Art. 15 obligations.</div><div class="rc-ans"><span class="rc-x">✕</span> <span class="muted" style="font-family:var(--mono);font-size:11.5px">unanswered</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="sec" id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">// How Rogue works</span>
+      <h2>Point. Swarm. <em>Grade what it did.</em> Get the evidence.</h2>
+    </div>
+    <div class="steps">
+      <div class="step"><span class="n">01 — POINT</span><h3>Give it an endpoint</h3><p>A URL that takes a message is enough. No SDK, no install. Point at staging or an OK-to-hit production agent.</p></div>
+      <div class="step"><span class="n">02 — SWARM</span><h3>The adversaries fan out</h3><p>Dozens of attacker agents launch in parallel across four vectors, each running a real multi-turn campaign and adapting every single turn.</p></div>
+      <div class="step"><span class="n">03 — ORACLE</span><h3>We grade the behavior</h3><p>Not the text. We instrument the actual tool calls and watch the data leave to our sink. A polite refusal that still leaks is a FAIL.</p></div>
+      <div class="step"><span class="n">04 — EVIDENCE</span><h3>One forwardable report</h3><p>Every breach: severity, a reproducible trace, OWASP + MITRE ATLAS + the exact EU AI Act article, and a one-line fix.</p></div>
+    </div>
+
+    <div class="vectors">
+      <div class="vector"><div class="vh"><span class="vn">System prompt extraction</span><span class="vsev high">High</span></div><div class="vd">Role reversal, “repeat the text above”, fake debug modes — until it leaks its hidden instructions or a planted secret key.</div><div class="va">EU AI Act <b>Art. 13 — Transparency</b></div></div>
+      <div class="vector"><div class="vh"><span class="vn">Policy jailbreak</span><span class="vsev high">High</span></div><div class="vd">Hypotheticals, persona overrides and urgency that walk the agent straight past its own stated rules.</div><div class="va">EU AI Act <b>Art. 15 — Robustness &amp; cybersecurity</b></div></div>
+      <div class="vector"><div class="vh"><span class="vn">Cross-customer data leak</span><span class="vsev critical">Critical</span></div><div class="vd">Manufactured authority and fake ticket numbers that pull another customer's data — or confidential internals — into the open.</div><div class="va">EU AI Act <b>Art. 10 — Data governance</b></div></div>
+      <div class="vector"><div class="vh"><span class="vn">Unauthorized action</span><span class="vsev critical">Critical</span></div><div class="vd">Invented authority and urgency until the agent confirms a transfer, a reset or an override it was never authorized to take.</div><div class="va">EU AI Act <b>Art. 14 — Human oversight</b></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- THE GAP -->
+<section class="sec" id="gap">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">// The lane everyone left open</span>
+      <h2>GRC can't attack. Red-teamers can't certify. <em>The good ones just got bought.</em></h2>
+      <p class="lead">Plenty of tools touch this space. Each one leaves the same gap wide open.</p>
+    </div>
+
+    <div class="gap-list">
+      <div class="gap-row"><div class="who">GRC &amp; compliance<small>Vanta-style</small></div><div class="cant">File the paperwork and the evidence registers — but <b>never attack the AI</b>. They can't produce a single real vulnerability.</div></div>
+      <div class="gap-row"><div class="who">Human red-teamers<small>HackerOne-style</small></div><div class="cant">Break it once, brilliantly — then <b>explicitly disclaim certification</b>. Point-in-time, gone by next deploy.</div></div>
+      <div class="gap-row"><div class="who">Open source<small>Garak · PyRIT</small></div><div class="cant">Generate attacks for free — but <b>can't see what the agent did</b>. PyRIT scores ~40% on real agent behavior.</div></div>
+      <div class="gap-row"><div class="who">Agent-native vendors<small>the genuinely good ones</small></div><div class="cant">Real agentic depth — and enterprise-only, six-figure, demo-gated. <b>Just acquired by OpenAI, Cisco, Palo Alto.</b></div></div>
+      <div class="gap-row us"><div class="who">→ ROGUE</div><div class="cant">Self-serve. Behavior-aware. Vendor-neutral. EU-aware. Built for the founder shipping the agent — not the CISO who'll buy it in two years.<div class="quad"><span>self-serve</span><span>behavior-aware</span><span>vendor-neutral</span><span>EU-AI-Act-aware</span></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY NOW -->
+<section class="sec" id="why">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">// Why now</span>
+      <h2>The category just got proven — <em>and violently consolidated.</em></h2>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="big">40%</div><div class="lab">of enterprise apps will embed AI agents by end-2026 — up from under 5%. Every one of them is an untested attack surface.</div><div class="src">Source — Gartner</div></div>
+      <div class="stat"><div class="big">8</div><div class="lab">acquisitions in 14 months — Promptfoo→OpenAI, Lakera→Check Point (~$300M), Protect AI→Palo Alto (~$650M). The market is real. Neutrality is now scarce.</div><div class="src">Source — public M&amp;A</div></div>
+      <div class="stat"><div class="big red">€35M</div><div class="lab">or 7% of global turnover — EU AI Act fines. Art. 15 writes adversarial testing into law. GPAI rules are live now; high-risk obligations land 2 Dec 2027. The obligation is certain — the evidence trail is the hard part.</div><div class="src">Source — EU AI Act</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="sec" id="pricing">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">// Land → expand</span>
+      <h2>Break it for free. <em>Keep it covered</em> for a fixed fee.</h2>
+      <p class="lead">Start with a free scan of your live agent. Expand into continuous testing and the audit-ready evidence that answers every future enterprise security review.</p>
+    </div>
+    <div class="tiers">
+      <div class="tier feat">
+        <span class="flag">First 10 agents this month</span>
+        <span class="tn">Design partner</span>
+        <div class="price">Free</div>
+        <p>One full adversarial scan of your live agent. A same-day ranked report with at least one reproduced exploit, plus a 1-page “EU AI Act &amp; enterprise-security readiness” sheet you can forward today.</p>
+        <div class="t-cta"><button class="btn btn--solid" style="width:100%; justify-content:center" onclick="reqScan('hero-url')">Claim a slot ↗</button></div>
+      </div>
+      <div class="tier">
+        <span class="tn">On-demand scan</span>
+        <div class="price">$5K–$15K</div>
+        <p>A full autonomous red-team campaign on demand. Reproducible exploits, mapped to OWASP, MITRE ATLAS and the EU AI Act — ready to drop straight into a prospect's security review.</p>
+        <div class="t-cta"><button class="btn" style="width:100%; justify-content:center" onclick="reqScan('hero-url')">Request a scan ↗</button></div>
+      </div>
+      <div class="tier">
+        <span class="tn">Continuous</span>
+        <div class="price">from $500<small>/mo</small></div>
+        <p>A standing red team plus audit-ready compliance evidence, auto-mapped and always current — the artifact that answers the AI section of every enterprise questionnaire, automatically.</p>
+        <div class="t-cta"><button class="btn" style="width:100%; justify-content:center" onclick="reqScan('hero-url')">Talk to us ↗</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final">
+  <div class="wrap">
+    <span class="eyebrow" style="justify-content:center">// Break it before they do</span>
+    <h2>Send us an endpoint.<br>We'll send back the breach.</h2>
+    <p class="lead">In a few hours you'll get a ranked report of how we jailbroke your agent, leaked another customer's data, or talked it into an action it should never take — plus the one-pager you forward to your next enterprise security review. Free for design partners this month.</p>
+    <div class="scanbox">
+      <span class="pfx">▸</span>
+      <input id="final-url" type="text" inputmode="url" placeholder="https://your-agent.com/chat" aria-label="Your agent endpoint" />
+      <button onclick="reqScan('final-url')">REQUEST A SCAN ↗</button>
+    </div>
+    <p class="fine">No install · point at staging or an OK-to-hit prod URL · vendor-neutral · we break it, you keep the evidence</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap foot">
+    <div>
+      <div class="foot-brand">
+        <svg class="mark" width="22" height="22" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="7" fill="#0E0F13"/><circle cx="16" cy="16" r="9" stroke="#FF3D3D" stroke-width="2"/><path d="M16 3v7M16 22v7M3 16h7M22 16h7" stroke="#FF3D3D" stroke-width="2"/><circle cx="16" cy="16" r="2.4" fill="#FF3D3D"/></svg>
+        <b style="font-family:var(--mono); letter-spacing:.18em">ROGUE</b>
+      </div>
+      <p class="sig2">“We grade what the agent did, not what it said.”</p>
+    </div>
+    <div class="meta">
+      The autonomous red team for the agent era.<br>
+      Vendor-neutral · behavior-aware · EU-AI-Act-aware.<br>
+      <a href="mailto:federica@rowads.studio">federica@rowads.studio</a><br>
+      Paris Builds 2026 · © 2026 Rogue
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---- CTA: turn a pasted endpoint into a prefilled outreach email ---- */
+function reqScan(id){
+  var el = document.getElementById(id);
+  var v = (el && el.value || '').trim();
+  var url = v || '[ paste your agent endpoint ]';
+  var subject = 'Rogue — break my agent';
+  var body =
+    'Hi Federica,\n\n' +
+    'I want Rogue to red-team my AI agent — happy to be a design partner.\n\n' +
+    'Agent endpoint: ' + url + '\n' +
+    'What it does (support bot / copilot / tool-using / MCP): \n' +
+    'What it can touch (APIs, private data, actions it can take): \n' +
+    'Selling to enterprise / have a security review blocking a deal? \n\n' +
+    'When can we run it?\n';
+  window.location.href = 'mailto:federica@rowads.studio?subject=' +
+    encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+}
+['hero-url','final-url'].forEach(function(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.addEventListener('keydown', function(e){ if(e.key === 'Enter') reqScan(id); });
+});
+
+/* ---- Live scan console (self-playing, loops) ---- */
+(function(){
+  var body = document.getElementById('cbody');
+  var statusT = document.getElementById('cstatus-t');
+  var statusEl = document.getElementById('cstatus');
+  if(!body) return;
+
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var VECTORS = [
+    {v:'prompt\nextraction'},
+    {v:'policy\njailbreak'},
+    {v:'data\nleak'},
+    {v:'unauth.\naction'}
+  ];
+
+  function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+  function t(){ return '00:0' + Math.floor(Math.random()*9 + 1) + 's'; }
+  function line(cls, html){
+    var d = document.createElement('div');
+    d.className = 'cl ' + (cls||'');
+    d.innerHTML = '<span class="t">' + t() + '</span><span>' + html + '</span>';
+    body.appendChild(d);
+    body.scrollTop = body.scrollHeight;
+    return d;
+  }
+  function breachCard(){
+    var b = document.createElement('div');
+    b.className = 'breach';
+    b.innerHTML =
+      '<div class="breach__h"><span class="sev critical">Critical</span>' +
+      '<span class="name">Cross-customer data leak</span><span class="x">✖ BREACH</span></div>' +
+      '<div class="split">' +
+        '<div><div class="lab">Chat reply <span class="ok-i">✓ innocent</span></div>' +
+        '<div class="said">“I can\'t share another customer\'s details — that would be confidential.”</div></div>' +
+        '<div><div class="lab">Our sink <span style="color:var(--red)">● secret arrived</span></div>' +
+        '<div class="did">POST /exfil &nbsp;secret=INTERNAL-REF-7741-ACCT…</div></div>' +
+      '</div>' +
+      '<div class="breach__map"><span class="chip">OWASP LLM06</span><span class="chip">MITRE ATLAS</span><span class="chip act">EU AI Act · Art. 10 — Data governance</span><span class="chip">reproducible trace</span></div>';
+    body.appendChild(b);
+    body.scrollTop = body.scrollHeight;
+  }
+  function staticState(){
+    body.innerHTML = '';
+    line('cmd', '<span class="p">$</span> rogue scan https://finbuddy.ai/chat --swarm 12');
+    line('dim', '▸ swarm online · 4 vectors × 3 attackers · 12 concurrent');
+    breachCard();
+    line('ok', '✓ report → 4 critical · 1 high · OWASP + ATLAS + EU AI Act mapped');
+    statusT.textContent = 'breach confirmed'; statusEl.dataset.state = 'done';
+  }
+
+  async function run(){
+    if(reduce){ staticState(); return; }
+    while(true){
+      body.innerHTML = '';
+      statusT.textContent = 'running'; statusEl.dataset.state = '';
+
+      var cmd = line('cmd', '<span class="p">$</span> rogue scan <b>https://finbuddy.ai/chat</b> --swarm 12<span class="caret"></span>');
+      await sleep(950);
+      var car = cmd.querySelector('.caret'); if(car) car.remove();
+
+      line('dim', '▸ target reachable · authenticating campaign…'); await sleep(460);
+      line('dim', '▸ spawning swarm · <b>4 vectors</b> × 3 attackers = <b>12 concurrent</b>'); await sleep(520);
+
+      var grid = document.createElement('div'); grid.className = 'swarm';
+      VECTORS.forEach(function(vec, i){
+        var cell = document.createElement('div'); cell.className = 'tile';
+        cell.innerHTML = '<div class="v">' + vec.v.replace('\n','<br>') + '</div><div class="s"><i></i>run ' + (i+1) + '·' + (i+5) + '</div>';
+        grid.appendChild(cell);
+      });
+      body.appendChild(grid); await sleep(260);
+      var tiles = grid.querySelectorAll('.tile');
+      for(var k=0;k<tiles.length;k++){ tiles[k].classList.add('run'); }
+      await sleep(980);
+
+      line('dim', '▸ multi-turn campaign live · adapting per turn…'); await sleep(780);
+      line('ok', '✓ held — run 3 · policy jailbreak refused');
+      tiles[1].classList.remove('run'); tiles[1].classList.add('held');
+      tiles[1].querySelector('.s').innerHTML = '<i></i>held';
+      await sleep(720);
+
+      line('warn', '<span class="x">✖</span> turn 2 — data-leak attacker: reply looks <b>clean</b>…'); await sleep(840);
+      line('dim', '▸ but we watch the sink, not the text…'); await sleep(760);
+
+      tiles[2].classList.remove('run'); tiles[2].classList.add('hit'); tiles[2].querySelector('.s').innerHTML = '<i></i>BREACH';
+      tiles[0].classList.add('hit'); tiles[0].querySelector('.s').innerHTML = '<i></i>BREACH';
+      tiles[3].classList.add('hit'); tiles[3].querySelector('.s').innerHTML = '<i></i>BREACH';
+
+      breachCard();
+      statusT.textContent = 'breach confirmed'; statusEl.dataset.state = 'done';
+      await sleep(950);
+      line('ok', '✓ report → <b>4 critical · 1 high</b> · OWASP + ATLAS + EU AI Act mapped');
+      await sleep(5200);
+    }
+  }
+
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(en){
+      if(en[0].isIntersecting){ io.disconnect(); run(); }
+    }, {threshold:.15});
+    io.observe(body);
+  } else { run(); }
+})();
+</script>
+</body>
+</html>
