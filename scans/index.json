@@ -1,5 +1,84 @@
 [
   {
+    "id": "20260627T204912-finbuddy-offline-mock-target",
+    "target": "FinBuddy (offline mock target)",
+    "mode": "deterministic replay",
+    "generated_at": "2026-06-27T20:49:12.527291+00:00",
+    "breaches": 15,
+    "total_attacks": 15,
+    "by_severity": {
+      "critical": 12,
+      "high": 3
+    },
+    "file": "scans/20260627T204912-finbuddy-offline-mock-target.json"
+  },
+  {
+    "id": "20260627T204658-https-clary-web-ten-vercel-app-api-chat",
+    "target": "https://clary-web-ten.vercel.app/api/chat",
+    "mode": "live scan",
+    "generated_at": "2026-06-27T20:46:58.878600+00:00",
+    "breaches": 7,
+    "total_attacks": 8,
+    "by_severity": {
+      "critical": 1,
+      "medium": 5,
+      "low": 1
+    },
+    "file": "scans/20260627T204658-https-clary-web-ten-vercel-app-api-chat.json"
+  },
+  {
+    "id": "20260627T204548-finbuddy-offline-mock-target",
+    "target": "FinBuddy (offline mock target)",
+    "mode": "deterministic replay",
+    "generated_at": "2026-06-27T20:45:48.176632+00:00",
+    "breaches": 5,
+    "total_attacks": 5,
+    "by_severity": {
+      "critical": 4,
+      "high": 1
+    },
+    "file": "scans/20260627T204548-finbuddy-offline-mock-target.json"
+  },
+  {
+    "id": "20260627T204511-https-clary-web-ten-vercel-app-api-chat",
+    "target": "https://clary-web-ten.vercel.app/api/chat",
+    "mode": "live scan",
+    "generated_at": "2026-06-27T20:45:11.189367+00:00",
+    "breaches": 5,
+    "total_attacks": 8,
+    "by_severity": {
+      "high": 3,
+      "medium": 2
+    },
+    "file": "scans/20260627T204511-https-clary-web-ten-vercel-app-api-chat.json"
+  },
+  {
+    "id": "20260627T204314-finbuddy-offline-mock-target",
+    "target": "FinBuddy (offline mock target)",
+    "mode": "deterministic replay",
+    "generated_at": "2026-06-27T20:43:14.049695+00:00",
+    "breaches": 5,
+    "total_attacks": 5,
+    "by_severity": {
+      "critical": 4,
+      "high": 1
+    },
+    "file": "scans/20260627T204314-finbuddy-offline-mock-target.json"
+  },
+  {
+    "id": "20260627T204301-finbuddy-offline-mock-target",
+    "target": "FinBuddy (offline mock target)",
+    "mode": "deterministic replay",
+    "generated_at": "2026-06-27T20:43:01.640262+00:00",
+    "breaches": 5,
+    "total_attacks": 5,
+    "by_severity": {
+      "critical": 4,
+      "high": 1
+    },
+    "file": "scans/20260627T204301-finbuddy-offline-mock-target.json"
+  },
+  {
     "id": "20260627T193355-http-localhost-8793-chat",
     "target": "http://localhost:8793/chat",
     "mode": "live scan",
