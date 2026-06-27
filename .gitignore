@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Secrets
+.env
+.env.*
+*.key
+
+# Node / dashboard
+node_modules/
+.next/
+dist/
+build/
+
+# Engine output
+findings.json
+*.log
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
