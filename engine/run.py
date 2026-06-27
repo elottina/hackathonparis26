@@ -1,4 +1,4 @@
-"""Hydra CLI.
+"""Rogue CLI.
 
     python run.py --target demo
     python run.py --target http --url https://example.com/agent
@@ -61,7 +61,7 @@ def build_target(args):
 
 
 async def main():
-    ap = argparse.ArgumentParser(description="Hydra — red-team swarm for AI agents")
+    ap = argparse.ArgumentParser(description="Rogue — red-team swarm for AI agents")
     ap.add_argument("--target", default="demo", choices=["demo", "http", "mock", "tool"])
     ap.add_argument("--url", help="target URL for --target http")
     ap.add_argument("--strategies", nargs="*", help="subset of strategy keys")
@@ -84,7 +84,7 @@ async def main():
     target = build_target(args)
     chosen = strat.get(args.strategies)
 
-    print(f"\n  HYDRA  ·  target: {target.name}")
+    print(f"\n  ROGUE  ·  target: {target.name}")
     print(f"  swarm: {len(chosen)} strategies × {args.runs} attackers "
           f"= {len(chosen) * args.runs} concurrent attacks\n")
 

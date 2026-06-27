@@ -1,6 +1,6 @@
 """Adapters for the agent under test.
 
-A Target is anything Hydra can send a message to and get a reply from. We ship a
+A Target is anything Rogue can send a message to and get a reply from. We ship a
 deliberately vulnerable DemoTarget so the full pipeline runs with zero setup, and
 an HTTPTarget for real deployed agents.
 """
