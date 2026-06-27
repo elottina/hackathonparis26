@@ -6,93 +6,116 @@
 <title>Rogue — scan dashboard</title>
 <style>
   :root{
-    --bg:#09090B; --bg2:#111114; --card:#16161A; --line:rgba(255,255,255,.08);
-    --ink:#FAFAF9; --ink2:#A1A1AA; --ink3:#6B6B74;
-    --red:#FF4438; --red2:#FF6A5E; --amber:#FBBF24; --cyan:#38BDF8; --green:#34D399;
+    --bg:#0A0A0B; --card:#141416; --line:rgba(255,255,255,.08);
+    --ink:#FAFAFA; --ink2:#9A9AA2; --ink3:#646469;
+    --red:#FF4438; --red2:#FF6A5E; --amber:#FBBF24; --green:#34D399;
     --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
     --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
-  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.4}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 28px}
 
-  header{border-bottom:1px solid var(--line);background:rgba(9,9,11,.8);backdrop-filter:blur(10px);position:sticky;top:0;z-index:10}
+  /* header */
+  header{border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;background:rgba(10,10,11,.85);backdrop-filter:blur(10px)}
   .nav{display:flex;align-items:center;justify-content:space-between;height:60px}
   .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:19px;letter-spacing:-.02em}
   .brand .mark{width:20px;height:20px;color:var(--red)}
-  .brand small{font-family:var(--mono);font-size:11px;color:var(--ink3);font-weight:400;letter-spacing:.06em;text-transform:uppercase}
-  .live{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12px;color:var(--ink2)}
-  .live .pip{width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 0 0 var(--red);animation:pulse 1.4s infinite}
-  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,68,56,.5)}70%{box-shadow:0 0 0 7px rgba(255,68,56,0)}100%{box-shadow:0 0 0 0 rgba(255,68,56,0)}}
+  .brand small{font-family:var(--mono);font-size:11px;color:var(--ink3);font-weight:400;letter-spacing:.04em;text-transform:uppercase}
+  .status{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px;color:var(--ink2);text-transform:uppercase;letter-spacing:.05em}
+  .status .pip{width:7px;height:7px;border-radius:50%;background:var(--green)}
 
-  .scanbar{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px;padding:26px 0 18px}
-  .scanbar h1{font-size:15px;font-weight:500;color:var(--ink2)}
+  /* scan meta */
+  .scanbar{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 14px;padding:30px 0 22px}
+  .scanbar h1{font-size:14px;font-weight:500;color:var(--ink2)}
   .scanbar .tgt{color:var(--ink);font-weight:600}
-  .scanbar .mode{display:none;font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--amber);border:1px solid rgba(251,191,36,.3);background:rgba(251,191,36,.07);padding:3px 8px;border-radius:6px}
+  .scanbar .mode{display:none;font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2);border:1px solid var(--line);background:rgba(255,255,255,.03);padding:3px 9px;border-radius:6px}
   .scanbar .ts{font-family:var(--mono);font-size:12px;color:var(--ink3);margin-left:auto}
 
-  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:30px}
+  /* KPIs */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:34px}
   .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
-  .kpi .n{font-size:34px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
-  .kpi .l{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin-top:4px}
-  .kpi.crit .n{color:var(--red2)} .kpi.high .n{color:var(--amber)} .kpi.br .n{color:var(--ink)}
+  .kpi .n{font-size:38px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1}
+  .kpi .l{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-top:8px}
+  .kpi .n{color:var(--ink2)}
+  .kpi.br .n{color:var(--ink)}
+  .kpi.crit .n,.kpi.exfil .n{color:var(--red2)}
+  .kpi.exfil{border-color:rgba(255,68,56,.28);background:linear-gradient(180deg,rgba(255,68,56,.06),transparent)}
 
-  .feedhead{display:flex;align-items:center;gap:10px;margin:0 0 14px;font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3)}
+  /* fade-in */
+  .reveal-anim{opacity:0;transform:translateY(8px);transition:opacity .4s ease,transform .4s ease}
+  .reveal-anim.in{opacity:1;transform:none}
+
+  /* HERO — behavior-oracle split-screen (the pitch) */
+  .hero{background:var(--card);border:1px solid rgba(255,68,56,.24);border-radius:16px;padding:22px;margin-bottom:34px}
+  .hero-top{display:flex;align-items:center;gap:12px 14px;flex-wrap:wrap;margin-bottom:6px}
+  .otag{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.04em;color:#0a0a0a;background:var(--red);padding:4px 9px;border-radius:6px;white-space:nowrap}
+  .hero-h{font-size:21px;font-weight:700;letter-spacing:-.02em}
+  .hero-h .x{color:var(--green)} .hero-h .y{color:var(--red2)}
+  .chip{font-family:var(--mono);font-size:11px;color:var(--ink2);border:1px solid var(--line);border-radius:6px;padding:3px 9px;white-space:nowrap}
+  .hero-top .chip{margin-left:auto}
+  .hero-sub{color:var(--ink2);font-size:13px;line-height:1.55;margin:8px 0 16px;max-width:78ch}
+
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .pane{border:1px solid var(--line);border-radius:11px;overflow:hidden;display:flex;flex-direction:column;background:rgba(255,255,255,.015)}
+  .pane-h{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:10px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:8px}
+  .dot.ok{background:var(--green)} .dot.bad{background:var(--red)}
+  .pane-b{padding:14px;font-size:13.5px;line-height:1.6;flex:1;color:var(--ink)}
+  .pane-b.mono{font-family:var(--mono);font-size:12.5px;white-space:pre-wrap;word-break:break-word}
+  .pane-f{font-family:var(--mono);font-size:11px;padding:10px 14px;border-top:1px solid var(--line);letter-spacing:.01em}
+  .pane.safe .pane-h{color:var(--green)}
+  .pane.safe .pane-f{color:var(--green)}
+  .pane.danger{border-color:rgba(255,68,56,.4)}
+  .pane.danger .pane-h{color:var(--red2)}
+  .pane.danger .pane-f{color:var(--red2)}
+  .method{color:var(--red2);font-weight:700}
+  .url{color:var(--ink);word-break:break-all}
+
+  .more{margin-top:14px;background:none;border:0;color:var(--ink3);font-family:var(--mono);font-size:11.5px;letter-spacing:.03em;cursor:pointer;padding:4px 0;display:inline-flex;align-items:center;gap:6px}
+  .more:hover{color:var(--ink2)}
+  .more .car{transition:transform .25s}
+  .open .more .car{transform:rotate(90deg)}
+
+  /* section label */
+  .feedhead{display:flex;align-items:center;gap:12px;margin:0 0 16px;font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3)}
   .feedhead::after{content:"";flex:1;height:1px;background:var(--line)}
 
-  .card{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--ink3);border-radius:12px;padding:16px 18px;margin-bottom:12px;cursor:pointer;opacity:0;transform:translateY(10px);transition:opacity .45s ease,transform .45s ease,border-color .2s}
-  .card.in{opacity:1;transform:none}
-  .card:hover{border-color:rgba(255,255,255,.2)}
+  /* text breach cards */
+  .card{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--ink3);border-radius:12px;padding:16px 18px;margin-bottom:12px;cursor:pointer;transition:border-color .2s}
+  .card:hover{border-color:rgba(255,255,255,.18)}
   .card.sev-critical{border-left-color:var(--red)} .card.sev-high{border-left-color:var(--amber)}
-  .card.sev-medium{border-left-color:var(--cyan)} .card.sev-low{border-left-color:var(--ink3)}
   .crow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-  .badge{font-family:var(--mono);font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;padding:4px 8px;border-radius:6px}
+  .badge{font-family:var(--mono);font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;padding:4px 8px;border-radius:6px;background:rgba(255,255,255,.07);color:var(--ink2)}
   .badge.critical{background:rgba(255,68,56,.14);color:var(--red2)}
   .badge.high{background:rgba(251,191,36,.14);color:var(--amber)}
-  .badge.medium{background:rgba(56,189,248,.14);color:var(--cyan)}
-  .badge.low{background:rgba(255,255,255,.07);color:var(--ink2)}
   .cname{font-weight:600;font-size:15px}
-  .chip{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--ink2);border:1px solid var(--line);border-radius:6px;padding:3px 9px;white-space:nowrap}
-  .ev{color:var(--ink2);font-size:13.5px;margin-top:9px;line-height:1.5}
+  .crow .chip{margin-left:auto}
+  .ev{color:var(--ink2);font-size:13.5px;margin-top:10px;line-height:1.55}
   .ev b{color:var(--ink);font-weight:600}
+
+  /* expandable transcript (shared) */
   .det{max-height:0;overflow:hidden;transition:max-height .35s ease}
-  .card.open .det{max-height:600px}
+  .open .det{max-height:640px}
   .det-inner{margin-top:14px;padding-top:14px;border-top:1px dashed var(--line);font-family:var(--mono);font-size:12.5px;line-height:1.7}
-  .turn{margin-bottom:10px}
-  .who{color:var(--ink3);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:3px}
-  .who.atk{color:var(--red2)} .who.tgt{color:var(--ink2)}
+  .turn{margin-bottom:11px}
+  .who{color:var(--ink3);font-size:10px;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:4px}
+  .who.atk{color:var(--red2)}
   .msg{color:var(--ink);white-space:pre-wrap;word-break:break-word}
+  .rat{color:var(--ink3);font-style:italic;margin-top:10px}
   mark{background:rgba(255,68,56,.22);color:var(--red2);padding:1px 4px;border-radius:3px;font-weight:600}
-  .rat{color:var(--ink3);font-style:italic;margin-top:8px}
 
-  /* behavior-oracle hero banner */
-  .oracle-banner{display:flex;align-items:center;gap:14px;background:linear-gradient(90deg,rgba(255,68,56,.16),rgba(255,68,56,.02));border:1px solid rgba(255,68,56,.32);border-radius:12px;padding:15px 18px;margin-bottom:16px}
-  .oracle-banner .bolt{font-size:22px;line-height:1}
-  .oracle-banner b{color:var(--red2)}
-  .oracle-banner .sub{color:var(--ink2);font-size:12.5px;line-height:1.5;margin-top:2px}
+  /* empty state */
+  .empty{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:44px;text-align:center;color:var(--ink2);line-height:1.7}
+  .empty code{font-family:var(--mono);background:#0A0A0B;border:1px solid var(--line);padding:4px 10px;border-radius:6px;color:var(--ink);font-size:13px}
 
-  /* behavior split-screen card */
-  .card.behavior{border-left-color:var(--red);border-color:rgba(255,68,56,.22)}
-  .oracle-tag{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;color:#0a0a0a;background:var(--red);padding:4px 8px;border-radius:6px;white-space:nowrap}
-  .split{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:13px}
-  .pane{border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
-  .pane-h{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;padding:8px 12px;border-bottom:1px solid var(--line)}
-  .pane-b{padding:12px;font-size:13px;line-height:1.55;flex:1;color:var(--ink)}
-  .pane-b.mono{font-family:var(--mono);font-size:12px;white-space:pre-wrap;word-break:break-word}
-  .pane-f{font-family:var(--mono);font-size:10.5px;padding:8px 12px;border-top:1px solid var(--line);letter-spacing:.02em}
-  .pane.safe .pane-h{color:var(--green);background:rgba(52,211,153,.06)}
-  .pane.safe .pane-f{color:var(--green)}
-  .pane.danger{border-color:rgba(255,68,56,.38)}
-  .pane.danger .pane-h{color:var(--red2);background:rgba(255,68,56,.08)}
-  .pane.danger .pane-f{color:var(--red2)}
-  .method{color:var(--amber);font-weight:700}
-  .url{color:var(--cyan);word-break:break-all}
-  @media(max-width:640px){.split{grid-template-columns:1fr}.oracle-tag{margin-left:0}}
+  footer{color:var(--ink3);font-size:12px;text-align:center;padding:34px 0 44px}
 
-  .empty{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:40px;text-align:center;color:var(--ink2)}
-  .empty code{font-family:var(--mono);background:var(--bg2);border:1px solid var(--line);padding:3px 8px;border-radius:6px;color:var(--ink);font-size:13px}
-  footer{color:var(--ink3);font-size:12px;text-align:center;padding:30px 0 40px}
-  @media(max-width:640px){.kpis{grid-template-columns:1fr 1fr}.chip{margin-left:0;width:100%}}
+  @media(max-width:760px){
+    .kpis{grid-template-columns:1fr 1fr}
+    .split{grid-template-columns:1fr}
+    .crow .chip,.hero-top .chip{margin-left:0}
+  }
 </style>
 </head>
 <body>
@@ -101,7 +124,7 @@
     <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 3v5M12 16v5M3 12h5M16 12h5" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="2.3" fill="currentColor"/></svg>
     Rogue <small>red team for AI agents</small>
   </div>
-  <div class="live"><span class="pip"></span> SCAN COMPLETE</div>
+  <div class="status"><span class="pip"></span> scan complete</div>
 </div></header>
 
 <main class="wrap">
@@ -112,19 +135,20 @@
   </div>
 
   <div class="kpis" id="kpis"></div>
-  <div id="banner"></div>
-  <div class="feedhead" id="feedhead" style="display:none">confirmed breaches</div>
+  <div id="hero"></div>
+  <div class="feedhead" id="feedhead" style="display:none">text-visible breaches</div>
   <div id="feed"></div>
   <div id="empty"></div>
 </main>
 
-<footer>Rogue · autonomous red team for AI agents · Paris Builds 2026</footer>
+<footer>Rogue · autonomous red team for AI agents · breaches mapped to the EU AI Act · Paris Builds 2026</footer>
 
 <script src="data.js" onerror="window.__noData=true"></script>
 <script>
 (function(){
   const esc = s => String(s==null?"":s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const hi  = s => esc(s).replace(/INTERNAL-REF-[\w-]+/g, m=>`<mark>${m}</mark>`);
+  const nm  = x => x.strategy_name || x.strategy || 'finding';
 
   function render(report){
     const f = report.findings || [];
@@ -132,85 +156,91 @@
     document.getElementById('ts').textContent  = report.generated_at ? new Date(report.generated_at).toLocaleString() : '';
     const modeEl = document.getElementById('mode');
     if(report.mode){ modeEl.textContent = report.mode; modeEl.style.display='inline-block'; }
+
     const crit = f.filter(x=>x.severity==='critical').length;
-    const beh  = f.filter(x=>x.detection==='behavior').length;
+    const beh  = f.filter(x=>x.detection==='behavior');
     const kpi = [
-      ['attacks', report.total_attacks ?? f.length, ''],
-      ['breaches', report.breaches ?? f.length, 'br'],
-      ['critical', crit, 'crit'],
-      ['silent exfil', report.behavior_breaches ?? beh, 'crit'],
+      ['attacks',      report.total_attacks ?? f.length,             ''],
+      ['breaches',     report.breaches ?? f.length,                  'br'],
+      ['critical',     crit,                                         'crit'],
+      ['silent exfil', report.behavior_breaches ?? beh.length,       'exfil'],
     ];
     document.getElementById('kpis').innerHTML = kpi.map(([l,n,c])=>
       `<div class="kpi ${c}"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
 
-    if(!f.length){ document.getElementById('empty').innerHTML =
-      `<div class="empty">No breaches in this report.</div>`; return; }
+    if(!f.length){
+      document.getElementById('empty').innerHTML =
+        `<div class="empty">Scan loaded — <b>no breaches</b> in this report.</div>`;
+      return;
+    }
 
-    // Hero banner: frame the differentiator before they even scroll.
-    if(beh){ document.getElementById('banner').innerHTML =
-      `<div class="oracle-banner"><span class="bolt">⚡</span><div>
-        <b>${beh} breach${beh>1?'es':''} invisible to text-based testing</b>
-        <div class="sub">The agent's chat replies looked clean — and the text judge passed them (shown below).
-        Catching this means instrumenting what the agent <i>does</i>, not just what it <i>says</i>: Rogue's behavior
-        oracle watched the egress channel and caught the secret leaving through a tool call.</div>
-      </div></div>`; }
+    // Centerpiece: the behavior-oracle breach(es), pinned at top.
+    document.getElementById('hero').innerHTML = beh.map(heroCard).join('');
 
-    document.getElementById('feedhead').style.display='flex';
-    const order = {critical:0,high:1,medium:2,low:3};
-    // behavior breaches first (the differentiator), then by severity
-    const sorted = f.slice().sort((a,b)=>
-      ((a.detection==='behavior'?0:1)-(b.detection==='behavior'?0:1))
-      || ((order[a.severity]??9)-(order[b.severity]??9)));
-    const feed = document.getElementById('feed');
-    feed.innerHTML = sorted.map((x,i)=>
-      x.detection==='behavior' ? behaviorCard(x,i) : textCard(x,i)).join('');
+    // Everything a plain text test would also catch.
+    const text = f.filter(x=>x.detection!=='behavior');
+    if(text.length){
+      const order = {critical:0,high:1,medium:2,low:3};
+      text.sort((a,b)=>(order[a.severity]??9)-(order[b.severity]??9));
+      document.getElementById('feedhead').style.display='flex';
+      document.getElementById('feed').innerHTML = text.map(textCard).join('');
+    }
 
-    feed.querySelectorAll('.card').forEach(c=>c.addEventListener('click',()=>c.classList.toggle('open')));
-    // staggered reveal so it feels like the swarm is landing breaches live
-    feed.querySelectorAll('.card').forEach((c,i)=>setTimeout(()=>c.classList.add('in'), 120 + i*140));
+    // click / button toggles expandable detail
+    document.querySelectorAll('.card').forEach(c=>c.addEventListener('click',()=>c.classList.toggle('open')));
+    document.querySelectorAll('.more').forEach(b=>b.addEventListener('click',()=>{
+      const h=b.closest('.hero'); const open=h.classList.toggle('open');
+      b.setAttribute('aria-expanded',open); b.querySelector('.lbl').textContent= open?'Hide attack & AI Act mapping':'Show attack & AI Act mapping';
+    }));
+
+    // gentle reveal so it reads as a live scan landing
+    document.querySelectorAll('.reveal-anim').forEach((el,i)=>setTimeout(()=>el.classList.add('in'),80+i*90));
   }
 
-  function textCard(x,i){ return `
-    <div class="card sev-${esc(x.severity)}" data-i="${i}">
+  function heroCard(x){
+    const tc = x.tool_call||{};
+    const verdict = (x.text_judge&&x.text_judge.verdict)||'SAFE';
+    return `
+    <section class="hero reveal-anim">
+      <div class="hero-top">
+        <span class="otag">⚡ behavior-oracle breach</span>
+        <h2 class="hero-h">Looks <span class="x">clean ✓</span> &nbsp;—&nbsp; but it <span class="y">leaked the secret 🔴</span></h2>
+        <span class="chip">${esc(x.ai_act_article||'')}</span>
+      </div>
+      <p class="hero-sub">A text-only test reads the chat reply, sees nothing wrong, and passes it. Rogue also watches what the agent <i>does</i> — and caught the planted secret leaving through a tool call.</p>
+      <div class="split">
+        <div class="pane safe">
+          <div class="pane-h"><span class="dot ok"></span>what the user sees</div>
+          <div class="pane-b">${esc(x.target_reply||'')}</div>
+          <div class="pane-f" title="${esc((x.text_judge&&x.text_judge.reason)||'')}">✓ text judge verdict: <b>${esc(verdict)}</b></div>
+        </div>
+        <div class="pane danger">
+          <div class="pane-h"><span class="dot bad"></span>what the agent actually did</div>
+          <div class="pane-b mono"><span class="method">${esc(tc.method||'POST')}</span> <span class="url">${esc(tc.url||'')}</span>\n${hi(tc.body||'')}</div>
+          <div class="pane-f">🔴 secret exfiltrated to external host · <b>CRITICAL</b></div>
+        </div>
+      </div>
+      <button class="more" type="button" aria-expanded="false"><span class="car">›</span><span class="lbl">Show attack &amp; AI Act mapping</span></button>
+      <div class="det"><div class="det-inner">
+        ${x.attacker_msg?`<div class="turn"><span class="who atk">indirect injection — attacker-controlled content</span><span class="msg">${hi(x.attacker_msg)}</span></div>`:''}
+        ${x.evidence?`<div class="turn"><span class="who">oracle evidence</span><span class="msg">${hi(x.evidence)}</span></div>`:''}
+        ${x.ai_act_rationale?`<div class="rat">${esc(x.ai_act_rationale)}</div>`:''}
+      </div></div>
+    </section>`;
+  }
+
+  function textCard(x){
+    return `
+    <div class="card reveal-anim sev-${esc(x.severity)}">
       <div class="crow">
         <span class="badge ${esc(x.severity)}">${esc(x.severity)}</span>
-        <span class="cname">${esc(x.strategy_name||x.strategy)}</span>
+        <span class="cname">${esc(nm(x))}</span>
         <span class="chip">${esc(x.ai_act_article||'')}</span>
       </div>
       <div class="ev"><b>Evidence:</b> ${hi(x.evidence||x.reason||'')}</div>
       <div class="det"><div class="det-inner">
         ${x.attacker_msg?`<div class="turn"><span class="who atk">attacker</span><span class="msg">${hi(x.attacker_msg)}</span></div>`:''}
-        ${x.target_reply?`<div class="turn"><span class="who tgt">agent reply</span><span class="msg">${hi(x.target_reply)}</span></div>`:''}
-        ${x.ai_act_rationale?`<div class="rat">${esc(x.ai_act_rationale)}</div>`:''}
-      </div></div>
-    </div>`;
-  }
-
-  function behaviorCard(x,i){
-    const tc = x.tool_call||{};
-    return `
-    <div class="card behavior sev-${esc(x.severity)}" data-i="${i}">
-      <div class="crow">
-        <span class="badge ${esc(x.severity)}">${esc(x.severity)}</span>
-        <span class="cname">${esc(x.strategy_name||x.strategy)}</span>
-        <span class="oracle-tag">⚡ BEHAVIOR ORACLE</span>
-        <span class="chip">${esc(x.ai_act_article||'')}</span>
-      </div>
-      <div class="split">
-        <div class="pane safe">
-          <div class="pane-h">what the user sees</div>
-          <div class="pane-b">${esc(x.target_reply||'')}</div>
-          <div class="pane-f" title="${esc((x.text_judge&&x.text_judge.reason)||'')}">✓ text judge verdict: ${esc((x.text_judge&&x.text_judge.verdict)||'SAFE')}</div>
-        </div>
-        <div class="pane danger">
-          <div class="pane-h">what the agent actually did</div>
-          <div class="pane-b mono"><span class="method">${esc(tc.method||'POST')}</span> <span class="url">${esc(tc.url||'')}</span>\n${hi(tc.body||'')}</div>
-          <div class="pane-f">⚠ secret left the building → CRITICAL BREACH</div>
-        </div>
-      </div>
-      <div class="ev"><b>Oracle:</b> ${hi(x.evidence||'')}</div>
-      <div class="det"><div class="det-inner">
-        ${x.attacker_msg?`<div class="turn"><span class="who atk">indirect injection — attacker-controlled content</span><span class="msg">${hi(x.attacker_msg)}</span></div>`:''}
+        ${x.target_reply?`<div class="turn"><span class="who">agent reply</span><span class="msg">${hi(x.target_reply)}</span></div>`:''}
         ${x.ai_act_rationale?`<div class="rat">${esc(x.ai_act_rationale)}</div>`:''}
       </div></div>
     </div>`;
@@ -218,14 +248,13 @@
 
   function noData(){
     document.getElementById('empty').innerHTML =
-      `<div class="empty">No scan loaded yet.<br><br>Run a scan first:<br><br>
-       <code>python3 engine/run.py --target mock</code><br><br>
-       then refresh this page (open it via <code>python3 -m http.server</code> from the repo root if needed).</div>`;
+      `<div class="empty">No scan loaded yet.<br><br>Run a scan from the repo root:<br><br>
+       <code>python3 engine/run.py --seeded --runs 1 --turns 3</code><br><br>
+       then refresh (serve via <code>python3 -m http.server</code> if opening over http).</div>`;
   }
 
   if (window.ROGUE_FINDINGS) { render(window.ROGUE_FINDINGS); }
   else {
-    // fallback: try fetching findings.json (works when served over http)
     fetch('../findings.json').then(r=>r.ok?r.json():Promise.reject()).then(render)
       .catch(()=>fetch('findings.json').then(r=>r.ok?r.json():Promise.reject()).then(render).catch(noData));
   }

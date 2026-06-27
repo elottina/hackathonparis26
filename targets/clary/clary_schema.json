@@ -1,0 +1,630 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "mood",
+    "summary",
+    "top3",
+    "top3Proposal",
+    "tasks",
+    "taskUpdates",
+    "categoryCreations",
+    "reminders",
+    "ideas",
+    "guidance",
+    "calming",
+    "chatReply"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "enum": [
+        "1"
+      ]
+    },
+    "mood": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stressLevel",
+        "valence",
+        "tags"
+      ],
+      "properties": {
+        "stressLevel": {
+          "type": "integer",
+          "enum": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        "valence": {
+          "type": "integer",
+          "enum": [
+            -2,
+            -1,
+            0,
+            1,
+            2
+          ]
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "string"
+    },
+    "top3": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "top3Proposal": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "intentClass",
+        "applyDate",
+        "taskTitles",
+        "rationale",
+        "dayFraming"
+      ],
+      "properties": {
+        "intentClass": {
+          "type": "string",
+          "enum": [
+            "planning_today",
+            "venting",
+            "backlog_dump",
+            "mixed",
+            "other"
+          ]
+        },
+        "applyDate": {
+          "type": "string"
+        },
+        "taskTitles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 3
+        },
+        "rationale": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 3
+        },
+        "dayFraming": {
+          "type": "string"
+        }
+      }
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "title",
+          "priority",
+          "due",
+          "notes",
+          "estimatedMinutes",
+          "categoryId",
+          "assignDate",
+          "subtasks",
+          "size",
+          "context",
+          "kind"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "priority": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              null
+            ]
+          },
+          "due": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "notes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "estimatedMinutes": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "categoryId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "assignDate": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "subtasks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "title"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "size": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "context": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "kind": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "taskUpdates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "existingTaskId",
+          "action",
+          "newAssignDate",
+          "newTitle",
+          "childTaskIds",
+          "targetTaskId",
+          "recoverTaskIds",
+          "subtaskTitle",
+          "note",
+          "categoryId",
+          "reminderDatetime",
+          "reminderTitle",
+          "reminderRecurrence",
+          "newPriority"
+        ],
+        "properties": {
+          "existingTaskId": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "reassign",
+              "delete",
+              "rename",
+              "addSubtask",
+              "complete",
+              "addNote",
+              "setCategory",
+              "addReminder",
+              "setPriority",
+              "ungroup",
+              "group",
+              "mergeInto",
+              "recover"
+            ]
+          },
+          "newAssignDate": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "newTitle": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "childTaskIds": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "targetTaskId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "recoverTaskIds": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "subtaskTitle": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "categoryId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reminderDatetime": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reminderTitle": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reminderRecurrence": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "required": [
+              "freq",
+              "interval",
+              "daysOfWeek",
+              "monthlyMode",
+              "nthWeek",
+              "weekday",
+              "endDate",
+              "count"
+            ],
+            "properties": {
+              "freq": {
+                "type": "string",
+                "enum": [
+                  "daily",
+                  "weekly",
+                  "monthly",
+                  "yearly"
+                ]
+              },
+              "interval": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "daysOfWeek": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "monthlyMode": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "nthWeek": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "weekday": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "endDate": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "count": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              }
+            }
+          },
+          "newPriority": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "categoryCreations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "color",
+          "assignToTaskIds"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "assignToTaskIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "reminders": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "title",
+          "datetime",
+          "notes",
+          "recurrence"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "datetime": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "notes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "recurrence": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "required": [
+              "freq",
+              "interval",
+              "daysOfWeek",
+              "monthlyMode",
+              "nthWeek",
+              "weekday",
+              "endDate",
+              "count"
+            ],
+            "properties": {
+              "freq": {
+                "type": "string",
+                "enum": [
+                  "daily",
+                  "weekly",
+                  "monthly",
+                  "yearly"
+                ]
+              },
+              "interval": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "daysOfWeek": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "monthlyMode": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "nthWeek": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "weekday": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "endDate": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "count": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "ideas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "title",
+          "notes"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "notes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "guidance": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "steps",
+        "rationale"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rationale": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "calming": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "title",
+        "steps",
+        "durationSec"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "breathing",
+            "grounding",
+            "micro_step"
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "durationSec": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      }
+    },
+    "chatReply": {
+      "type": "string"
+    }
+  }
+}
