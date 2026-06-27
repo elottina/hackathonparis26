@@ -23,6 +23,7 @@ Test every milestone I hand off (run it, judge the wow, call iterate/go). Direct
 ## Who we "break it" on (the demo-target decision)
 - **Hero demo, on camera = FinBuddy** (our controlled target). Deterministic, looks great, the behavior-oracle moment is clean and reproducible. **This is what the video shows.** It can't fail.
 - **Proof / traction = real agents** — from (a) hackathon-room teams and (b) founder friends. Show their **(redacted) breach screenshot + a quote** in the deck and a 10-sec clip in the video.
+- **✅ Design Partner #1 already landed = Clarity** — a real consumer AI app on the App Store, now **deployed + broken live** at `clary-web-ten.vercel.app` (verbatim system-prompt leak + forbidden financial advice; on the dashboard). Presented as a contact's product (co-founder = owner). Full brief: [CLARITY.md](./CLARITY.md).
 - **Why not break a real company live on camera?** Real endpoints are flaky, asleep, or auth-gated; a failed live break kills the wow. Break FinBuddy for the clean demo; show real breaches as *evidence*. Best of both — bulletproof demo **+** real traction.
 - **Optional resonance move:** I can reskin FinBuddy in ~10 min to match your strongest design partner's vertical (e.g. an HR assistant, a support SaaS, a fintech copilot) so the demo feels like *their* world. Tell me the vertical and I'll do it.
 
@@ -41,4 +42,4 @@ Test every milestone I hand off (run it, judge the wow, call iterate/go). Direct
 At each milestone I hand you: **a runnable build + how to test it + what's next.** You run it, judge the wow, and reply **iterate** (what to change) or **go** (build the next milestone). I never run ahead of your sign-off.
 
 ### Milestones (see [ROADMAP.md](./ROADMAP.md))
-`M0 engine ✅` → `M1 live dashboard` → `M2 behavior oracle (the differentiator)` → `M3 report/PDF` → `M4 real-target adapters` → `M5 freeze + record video`.
+`M0 engine ✅` → `M1 live dashboard` → `M2 behavior oracle (the differentiator)` → `M3 report/PDF` → `M4 real-target adapters ✅ (Clarity live)` → `M5 freeze + record video`.
