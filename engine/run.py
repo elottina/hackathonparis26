@@ -15,7 +15,7 @@ from pathlib import Path
 import strategies as strat
 from orchestrator import run_swarm
 from sink import EgressSink
-from target import DEMO_SECRET, DemoTarget, HTTPTarget, ToolTarget
+from target import DEMO_SECRET, DemoTarget, HTTPTarget, NaiveToolTarget, ToolTarget
 
 SEV_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3}
 COLOR = {"critical": "\033[91m", "high": "\033[93m", "medium": "\033[96m",
@@ -53,6 +53,8 @@ def build_target(args):
         return DemoTarget()
     if args.target == "tool":
         return ToolTarget()
+    if args.target == "naive":
+        return NaiveToolTarget()
     if args.target == "http":
         if not args.url:
             sys.exit("--url is required for --target http")
@@ -62,7 +64,8 @@ def build_target(args):
 
 async def main():
     ap = argparse.ArgumentParser(description="Rogue — red-team swarm for AI agents")
-    ap.add_argument("--target", default="demo", choices=["demo", "http", "mock", "tool"])
+    ap.add_argument("--target", default="demo",
+                    choices=["demo", "http", "mock", "tool", "naive"])
     ap.add_argument("--url", help="target URL for --target http")
     ap.add_argument("--strategies", nargs="*", help="subset of strategy keys")
     ap.add_argument("--runs", type=int, default=3, help="attackers per strategy")
@@ -92,6 +95,12 @@ async def main():
     if args.target == "mock":
         from mock import MockAttacker, MockJudge
         swarm_kwargs = {"attacker": MockAttacker(), "judge": MockJudge()}
+    elif args.target == "naive":
+        # Deterministic, known-effective injections delivered to a REAL model. The
+        # attack input is fixed (our playbook); the target's decision to exfiltrate
+        # is genuine — that's what makes the behavior breach both real and reliable.
+        from mock import MockAttacker
+        swarm_kwargs = {"attacker": MockAttacker()}
 
     sink = EgressSink(DEMO_SECRET)
     results = await run_swarm(
