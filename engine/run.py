@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import os
 import re
 import sys
 from collections import Counter
@@ -18,6 +19,22 @@ import strategies as strat
 from orchestrator import run_swarm
 from sink import EgressSink
 from target import DEMO_SECRET, DemoTarget, HTTPTarget, NaiveToolTarget, ToolTarget
+
+
+def load_env() -> None:
+    """Load engine/.env into the process so real scans 'just work' without a manual
+    `export` (ANTHROPIC_API_KEY for the attacker/judge, FIREBASE_* for sync). A real
+    environment variable always wins over the file (setdefault)."""
+    env_path = Path(__file__).resolve().parent / ".env"
+    if not env_path.exists():
+        return
+    for line in env_path.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        k, _, v = line.partition("=")
+        os.environ.setdefault(k.strip(), v.strip())
+
 
 SEV_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3}
 COLOR = {"critical": "\033[91m", "high": "\033[93m", "medium": "\033[96m",
@@ -65,6 +82,7 @@ def build_target(args):
 
 
 async def main():
+    load_env()  # make engine/.env available before the attacker/judge read the key
     ap = argparse.ArgumentParser(description="Rogue — red-team swarm for AI agents")
     ap.add_argument("--target", default="demo",
                     choices=["demo", "http", "mock", "tool", "naive"])

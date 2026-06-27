@@ -143,8 +143,17 @@ async def run_swarm(
 
     async def guarded(strategy: Strategy, run_id: int):
         async with sem:
-            return await run_attack(target, strategy, attacker, judge,
-                                    run_id, sink, max_turns, on_event, egress)
+            try:
+                return await run_attack(target, strategy, attacker, judge,
+                                        run_id, sink, max_turns, on_event, egress)
+            except Exception as e:
+                # One attack crashing (target 5xx, model hiccup, bad JSON) must not
+                # sink the whole swarm — degrade this attack to a graceful failure.
+                if on_event:
+                    on_event({"kind": "attack_failed", "run_id": run_id,
+                              "strategy": strategy.key, "error": str(e)[:160]})
+                return {"strategy": strategy.key, "strategy_name": strategy.name,
+                        "success": False, "run_id": run_id, "error": str(e)[:160]}
 
     tasks = []
     rid = 0

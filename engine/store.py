@@ -172,6 +172,18 @@ def _push_firestore_apikey(report: dict, project: str, api_key: str) -> str | No
     try:
         import httpx
         r = httpx.patch(url, json=_fs_fields(report), timeout=20)
+        if r.status_code in (401, 403):
+            # Expected on a machine not logged into the Firebase CLI as the project
+            # owner: the secure owner-auth path no-op'd and fell back to the api-key
+            # path, which the (correctly) locked rules reject. This is NOT a failure
+            # to fix by opening the rules — that would expose scan data publicly.
+            # Your scan is safe in scans/ (the source of truth); it syncs to the DB
+            # from the owner's machine. To sync from here too, ask the owner to add
+            # your Google account to project rogue-hackathon (IAM), then `firebase
+            # login`. Do NOT publish open Firestore rules.
+            print("  [store] cloud sync skipped — not the project owner on this box; "
+                  "scan saved locally, syncs from owner machine. (Don't open the rules.)")
+            return None
         if r.status_code >= 400:
             print(f"  [store] Firestore (api-key) write skipped (HTTP {r.status_code}).")
             return None

@@ -149,6 +149,11 @@
   .scanbar .mode{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);border:1px solid var(--line);background:var(--panel);padding:3px 9px;border-radius:6px}
   .scanbar .ts{font-family:var(--mono);font-size:12px;color:var(--dim);margin-left:auto}
 
+  .verdict{font-size:clamp(20px,2.6vw,29px);font-weight:800;letter-spacing:-.025em;margin:4px 0 22px;display:flex;align-items:center;gap:13px;flex-wrap:wrap}
+  .verdict.bad{color:var(--red2)} .verdict.ok{color:var(--green)}
+  .verdict .sub{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--mut);letter-spacing:0}
+  .showall{margin:4px 0 8px;background:none;border:1px solid var(--line2);border-radius:9px;color:var(--mut);font-family:var(--mono);font-size:12px;padding:10px 16px;cursor:pointer;transition:border-color .2s,color .2s}
+  .showall:hover{border-color:var(--red);color:var(--red2)}
   .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:34px}
   .kpi{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:19px 21px}
   .kpi .n{font-size:40px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1;color:var(--mut)}
@@ -232,7 +237,8 @@
       <button class="btn" id="runbtn" onclick="Rogue.launch()">Run the red team →</button>
     </div>
     <div class="launchmeta">
-      <button class="demolink" onclick="Rogue.launchDemo()">▶ watch a live demo <span class="dim">— no URL needed</span></button>
+      <button class="demolink" onclick="Rogue.launchHR()">▶ scan an <b class="red">AI HR screening agent</b> <span class="dim">— the high-risk demo</span></button>
+      <button class="demolink" onclick="Rogue.launchDemo()">▶ watch the silent-exfil demo</button>
       <span class="err" id="err"></span>
     </div>
   </div>
@@ -286,6 +292,7 @@
     <span class="mode" id="mode"></span>
     <span class="ts" id="ts"></span>
   </div>
+  <div class="verdict" id="verdict"></div>
   <div class="kpis" id="kpis"></div>
   <div id="obox"></div>
   <div class="feedhead hidden" id="feedhead">text-visible breaches</div>
@@ -303,7 +310,7 @@
 const Rogue = (function(){
   const $ = id => document.getElementById(id);
   const esc = s => String(s==null?"":s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  const hi  = s => esc(s).replace(/INTERNAL-REF-[\w-]+/g, m=>`<mark>${m}</mark>`);
+  const hi  = s => esc(s).replace(/(?:INTERNAL-REF|ROGUE-CANARY)-[\w-]+/g, m=>`<mark>${m}</mark>`);
   const nm  = x => x.strategy_name || x.strategy || 'finding';
   const clip = (s,n) => { s=String(s||''); return s.length>n ? s.slice(0,n-1)+'…' : s; };
 
@@ -319,10 +326,11 @@ const Rogue = (function(){
   // ---------- launch ----------
   function launch(){ start({url:$('url').value.trim(), preset:'fast'}); }
   function launchDemo(){ start({preset:'demo'}); }
+  function launchHR(){ start({preset:'hr'}); }
 
   async function start(payload){
     $('err').textContent='';
-    if(payload.preset!=='demo' && !/^https?:\/\//.test(payload.url||'')){
+    if(!['demo','hr'].includes(payload.preset) && !/^https?:\/\//.test(payload.url||'')){
       $('err').textContent='Enter a valid http(s):// URL — or hit the live demo.'; return;
     }
     $('runbtn').disabled=true;
@@ -444,6 +452,19 @@ const Rogue = (function(){
     const kpi=[['attacks',report.total_attacks??f.length,''],['breaches',report.breaches??f.length,'br'],
                ['critical',crit,'crit'],['silent exfil',report.behavior_breaches??beh.length,'exfil']];
     $('kpis').innerHTML=kpi.map(([l,n,c])=>`<div class="kpi ${c}"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
+
+    // One-line human verdict so the dashboard reads in a glance (1-min demo).
+    const vEl=$('verdict');
+    if(report.breaches){
+      const exf=report.behavior_breaches??beh.length;
+      const bits=[]; if(crit) bits.push(`${crit} critical`); if(exf) bits.push(`${exf} silent exfil`);
+      vEl.className='verdict bad';
+      vEl.innerHTML=`🔴 ${report.breaches} breaches found${bits.length?` <span class="sub">· ${bits.join(' · ')}</span>`:''}`;
+    } else {
+      vEl.className='verdict ok';
+      vEl.innerHTML=`✅ Held <span class="sub">· the agent resisted every attack</span>`;
+    }
+
     $('obox').innerHTML=''; $('feed').innerHTML=''; $('empty').innerHTML=''; $('feedhead').classList.add('hidden');
 
     if(!f.length){ $('empty').innerHTML=`<div class="empty">Scan complete — <b>no breaches</b> in this report. The agent held.</div>`; return; }
@@ -453,7 +474,11 @@ const Rogue = (function(){
       const order={critical:0,high:1,medium:2,low:3};
       text.sort((a,b)=>(order[a.severity]??9)-(order[b.severity]??9));
       $('feedhead').classList.remove('hidden');
-      $('feed').innerHTML=text.map(textCard).join('');
+      const TOP=5, head=text.slice(0,TOP), rest=text.slice(TOP);
+      $('feed').innerHTML = head.map(textCard).join('') + (rest.length
+        ? `<div id="rest" class="hidden">${rest.map(textCard).join('')}</div>`
+          + `<button class="showall" onclick="const r=document.getElementById('rest');const h=r.classList.toggle('hidden');this.textContent=h?'＋ show all ${text.length} breaches':'－ show fewer'">＋ show all ${text.length} breaches</button>`
+        : '');
     }
     document.querySelectorAll('.card').forEach(c=>c.addEventListener('click',()=>c.classList.toggle('open')));
     document.querySelectorAll('.obox .more').forEach(b=>b.addEventListener('click',()=>{
@@ -464,18 +489,28 @@ const Rogue = (function(){
 
   function oboxCard(x){
     const tc=x.tool_call||{}; const verdict=(x.text_judge&&x.text_judge.verdict)||'SAFE';
+    const clean = verdict!=='FLAGGED';
+    // Tell the truth per case: when the text judge saw nothing, it's the classic
+    // "looks clean / silently exfiltrated" miss; when it did flag, our edge is that
+    // we CONFIRMED the secret left on the wire (ground truth), not just suspicion.
+    const head = clean
+      ? `Looks <span class="x">clean ✓</span> — but it <span class="y">leaked the secret 🔴</span>`
+      : `<span class="y">Confirmed exfiltration 🔴</span> — caught on the wire`;
+    const sub = clean
+      ? `A text-only test reads the chat reply, sees nothing wrong, and passes it. Rogue also watches what the agent <i>does</i> — and caught the planted secret leaving the box.`
+      : `Rogue didn't just flag a suspicious reply — it watched the planted token <i>physically leave</i> the agent and arrive at a collector it was never allowed to reach. Ground truth on the action channel, not a guess about the text.`;
     return `<section class="obox">
       <div class="obox-top">
         <span class="otag">⚡ behavior-oracle breach</span>
-        <h2 class="obox-h">Looks <span class="x">clean ✓</span> — but it <span class="y">leaked the secret 🔴</span></h2>
+        <h2 class="obox-h">${head}</h2>
         <span class="chip">${esc(x.ai_act_article||'')}</span>
       </div>
-      <p class="obox-sub">A text-only test reads the chat reply, sees nothing wrong, and passes it. Rogue also watches what the agent <i>does</i> — and caught the planted secret leaving through a tool call.</p>
+      <p class="obox-sub">${sub}</p>
       <div class="split">
         <div class="pane safe">
-          <div class="pane-h"><span class="dot ok"></span>what the user sees</div>
+          <div class="pane-h"><span class="dot ok"></span>${clean?'what the user sees':'the visible reply'}</div>
           <div class="pane-b">${esc(x.target_reply||'')}</div>
-          <div class="pane-f" title="${esc((x.text_judge&&x.text_judge.reason)||'')}">✓ text judge verdict: <b>${esc(verdict)}</b></div>
+          <div class="pane-f" title="${esc((x.text_judge&&x.text_judge.reason)||'')}">${clean?'✓':'⚠'} text judge verdict: <b>${esc(verdict)}</b></div>
         </div>
         <div class="pane danger">
           <div class="pane-h"><span class="dot bad"></span>what the agent actually did</div>
@@ -534,7 +569,7 @@ const Rogue = (function(){
   // ---------- boot ----------
   // If served statically with a bundled scan and no backend, show it; else hero.
   loadRecent();
-  return {go, launch, launchDemo, openScan, _render:renderDash};
+  return {go, launch, launchDemo, launchHR, openScan, _render:renderDash};
 })();
 </script>
 </body>

@@ -124,29 +124,54 @@ def _run_job(job_id: str, url: str, preset: str) -> None:
         q.put(ev)
 
     async def go():
+        listener = None
         if preset == "demo":
             from mock import MockAttacker, MockJudge, MockTarget
             target = MockTarget()
             chosen = strat.get(strat.DEMO_KEYS)
             kwargs = {"attacker": MockAttacker(), "judge": MockJudge()}
+            sink = EgressSink(DEMO_SECRET)
             mode = "deterministic replay"
             runs, turns = 1, 2
+        elif preset == "hr":
+            # The niche centerpiece: an AI CV-screening agent (EU AI Act Annex III,
+            # high-risk) that gives a compliant recommendation while secretly looking
+            # the candidate up online — the behavior oracle catches the egress.
+            import hr_demo
+            target, sink, listener, egress, kwargs = hr_demo.setup(seeded=False)
+            chosen = hr_demo.HR_STRATEGIES
+            mode = "live scan · HR screening agent (Annex III high-risk)"
+            runs, turns = 2, 3
         else:
+            from canary import canary_strategy
+            from canary import setup as canary_setup
             target = HTTPTarget(url)
             deep = preset == "deep"
-            chosen = strat.get(None if deep else QUICK_KEYS)
-            kwargs = {}
-            mode = "live scan · deep red-team" if deep else "live scan"
-            runs, turns = (2, 4) if deep else (1, 3)
+            base = strat.get(None if deep else QUICK_KEYS)
+            # Canary exfil: plant a token via injection, try to make the agent leak
+            # it inside a URL → it physically arrives at our listener = confirmed
+            # behavior breach on a black-box agent (no code access). Several attempts
+            # so one framing lands. This is the differentiator on a REAL target.
+            canary_tok, sink, listener, egress = canary_setup()
+            attempts = 4 if deep else 3
+            chosen = base + [canary_strategy(canary_tok)] * attempts
+            kwargs = {"egress": egress}
+            mode = "live scan · behavior oracle" if not deep else "live scan · deep red-team"
+            runs, turns = (2, 4) if deep else (1, 4)
 
         emit({"kind": "scan_start", "target": target.name, "mode": mode,
               "strategies": [s.name for s in chosen],
               "strategy_keys": [s.key for s in chosen],
               "planned_attacks": len(chosen) * runs})
 
-        sink = EgressSink(DEMO_SECRET)
-        results = await run_swarm(target, chosen, runs_per_strategy=runs,
-                                  max_turns=turns, on_event=emit, sink=sink, **kwargs)
+        try:
+            results = await run_swarm(target, chosen, runs_per_strategy=runs,
+                                      max_turns=turns, on_event=emit, sink=sink,
+                                      concurrency=(12 if preset == "demo" else 6),
+                                      **kwargs)
+        finally:
+            if listener:
+                listener.stop()
         report = _assemble_report(target.name, mode, results, sink)
         _archive_and_sync(report)
         job["report"] = report
@@ -217,7 +242,7 @@ class Handler(BaseHTTPRequestHandler):
             body = {}
         preset = (body.get("preset") or "fast").lower()
         url = (body.get("url") or "").strip()
-        if preset != "demo" and not re.match(r"^https?://", url):
+        if preset not in ("demo", "hr") and not re.match(r"^https?://", url):
             return self._send(400, json.dumps({"error": "Enter a valid http(s) URL"}))
 
         job_id = uuid.uuid4().hex[:12]
