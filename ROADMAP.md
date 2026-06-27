@@ -19,7 +19,7 @@ Every block ends with a **stable, demoable build**. If we stop at any block, wha
 
 | Block (wall clock) | 🛠️ DEV-CORE — engine | 🖥️ DEV-2 — dashboard/demo | 🎤 pitch + customers | ✅ Demo state if we stop here |
 |---|---|---|---|---|
-| **H0–H1** · Sat 10–11 | **M0:** restore Hydra (`git checkout 15e345d -- engine data README.md`), fix model IDs, `pip install`, smoke-test `run.py --target demo` | Watch restore; scaffold dashboard (Vite **or** plain HTML+JS); agree event contract w/ DEV-CORE | Draft 15–20 outreach DMs; list room teams building agents | **Working swarm + findings.json in CLI** (already a full demo) |
+| **H0–H1** · Sat 10–11 | **M0:** restore Rogue (`git checkout 15e345d -- engine data README.md`), fix model IDs, `pip install`, smoke-test `run.py --target demo` | Watch restore; scaffold dashboard (Vite **or** plain HTML+JS); agree event contract w/ DEV-CORE | Draft 15–20 outreach DMs; list room teams building agents | **Working swarm + findings.json in CLI** (already a full demo) |
 | **H1–H4** · Sat 11–14 | Tee `on_event` → JSONL + SSE endpoint (FastAPI); keep CLI working | Live dashboard: swarm grid + breach feed + findings, reading SSE/JSONL | Fire DMs; **walk the room**, lock ≥1 in-person target before lunch | **Live web dashboard** of the swarm vs FinBuddy |
 | **H4–H6** · Sat 14–16 | **M2 SPIKE:** 30-line sink + 1 Claude tool on FinBuddy + ONE hand-crafted injection until secret hits sink w/ clean reply | **REPORT-LITE:** findings.json → simple HTML summary (forwardable); stub sink panel | Run first TEXT-graded scans on real endpoints as they arrive; send report-lite same-day | **Dashboard + secret-to-sink proven once** → `GATE B` |
 | **H6–H12** · Sat 16–22 | **M2:** generalize → `ToolTarget` + deterministic controlled-tool exfil + oracle grades on tool-calls/sink + **`--seeded` replay** | Split-screen "clean reply / sink hit" view + sink panel; polish | More real scans; follow-ups w/ a real breach screenshot; lock 3 partners | **Deterministic jaw-drop demo** via `--seeded` + live dashboard |
@@ -54,7 +54,7 @@ M0 restored engine **+** a deterministic behavior-oracle demo (one seeded inject
 **Logic:** the demo + 3 real customers are what win the room — but both rest on the core working. So the strongest engineer goes heads-down on the core and is shielded from everything else; the second builder owns the surface + makes the demo unbreakable; PERS 2 owns the two things that actually win (pitch + real users).
 
 ### 👤 Person 1 — DEV-CORE *(strongest engineer)*
-- **Owns:** Hydra engine restore · the behavior oracle (tool-enabled target + sink + oracle) · `--seeded` determinism · real-target `HTTPTarget` shims.
+- **Owns:** Rogue engine restore · the behavior oracle (tool-enabled target + sink + oracle) · `--seeded` determinism · real-target `HTTPTarget` shims.
 - **Cadence:** H0–1 restore (→GATE A) · H1–4 event tee (SSE/JSONL) · H4–6 oracle **spike** (→GATE B) · H6–12 generalize + seeded path · H12–16 real-target shims + run a real scan · then frozen, tech Q&A standby.
 - **Never:** slides, outreach, design. Fully shielded.
 - **Win condition:** secret deterministically hits the sink by H6; build frozen & green by H16.

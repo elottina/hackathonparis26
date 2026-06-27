@@ -1,4 +1,4 @@
-"""Hydra CLI.
+"""Rogue CLI.
 
     python run.py --target demo
     python run.py --target http --url https://example.com/agent
@@ -65,7 +65,7 @@ def build_target(args):
 
 
 async def main():
-    ap = argparse.ArgumentParser(description="Hydra — red-team swarm for AI agents")
+    ap = argparse.ArgumentParser(description="Rogue — red-team swarm for AI agents")
     ap.add_argument("--target", default="demo",
                     choices=["demo", "http", "mock", "tool", "naive"])
     ap.add_argument("--url", help="target URL for --target http")
@@ -92,7 +92,7 @@ async def main():
     # Real targets with no explicit subset get the FULL deep arsenal (all strategies).
     chosen = strat.get(args.strategies)
 
-    print(f"\n  HYDRA  ·  target: {target.name}")
+    print(f"\n  ROGUE  ·  target: {target.name}")
     print(f"  swarm: {len(chosen)} strategies × {args.runs} attackers "
           f"= {len(chosen) * args.runs} concurrent attacks\n")
 

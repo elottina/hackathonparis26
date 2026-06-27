@@ -1,4 +1,4 @@
-"""Offline mock swarm — runs the full Hydra pipeline with ZERO API calls.
+"""Offline mock swarm — runs the full Rogue pipeline with ZERO API calls.
 
 Lets the engine run end-to-end without an ANTHROPIC_API_KEY or any third-party
 package installed. Two uses:

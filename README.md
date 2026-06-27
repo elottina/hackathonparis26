@@ -1,8 +1,8 @@
-# Hydra
+# Rogue
 
 **Penetration testing for AI agents, run by an AI agent.**
 
-Hydra is an autonomous red-team swarm. You point it at any deployed AI agent (a
+Rogue is an autonomous red-team swarm. You point it at any deployed AI agent (a
 URL, an API endpoint, a chat widget) and it spawns attacker agents that adapt in
 real time to break the target: extract its system prompt, jailbreak its policy,
 leak data, trigger unauthorized actions. Agent-on-agent, no human in the core
