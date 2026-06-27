@@ -171,12 +171,12 @@ async def main():
     except Exception:
         pass
 
-    # Optional cloud sync (Supabase) — no-op unless SUPABASE_URL/KEY are set.
+    # Optional cloud sync (Firestore) — no-op unless FIREBASE_* (or SUPABASE_*) set.
     try:
         import store
         sid = store.push_scan(report)
         if sid:
-            print(f"  synced → Supabase (scan {sid})")
+            print(f"  synced → cloud (scan {sid})")
     except Exception:
         pass
 
