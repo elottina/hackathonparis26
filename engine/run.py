@@ -74,6 +74,13 @@ async def main():
     ap.add_argument("--seeded", action="store_true",
                     help="deterministic stage replay: offline target, guaranteed "
                          "behavior-oracle exfiltration, zero API calls")
+    ap.add_argument("--listen", action="store_true",
+                    help="start the real attacker callback listener and perform the "
+                         "agent's egress for real — a network arrival of the secret "
+                         "is the PRIMARY breach signal (works against text-only "
+                         "targets too)")
+    ap.add_argument("--listen-port", type=int, default=0,
+                    help="port for the callback listener (default: ephemeral)")
     args = ap.parse_args()
 
     if args.seeded:
@@ -103,10 +110,34 @@ async def main():
         swarm_kwargs = {"attacker": MockAttacker()}
 
     sink = EgressSink(DEMO_SECRET)
-    results = await run_swarm(
-        target, chosen, runs_per_strategy=args.runs,
-        max_turns=args.turns, on_event=live_printer, sink=sink, **swarm_kwargs,
-    )
+
+    # The real callback listener (Option 2): when enabled, the agent's egress is
+    # performed for real and a secret arriving on the wire is the primary breach.
+    listener = None
+    if args.listen:
+        from egress import EgressClient
+        from listener import SinkListener
+
+        def on_arrival(ev):
+            tag = "[SECRET ARRIVED]" if ev.get("contains_secret") else ""
+            c = COLOR["critical"] if ev.get("contains_secret") else COLOR["dim"]
+            print(f"{c}  ◀ SINK  {ev['method']} {ev.get('host') or '?'}  "
+                  f"{tag}{COLOR['off']}")
+
+        listener = SinkListener(sink, port=args.listen_port, on_arrival=on_arrival)
+        listener.start()
+        swarm_kwargs["egress"] = EgressClient(redirect_to=listener.base)
+        print(f"  {COLOR['critical']}● LISTENER{COLOR['off']} attacker collector "
+              f"on {listener.url} — secret-on-the-wire = confirmed breach\n")
+
+    try:
+        results = await run_swarm(
+            target, chosen, runs_per_strategy=args.runs,
+            max_turns=args.turns, on_event=live_printer, sink=sink, **swarm_kwargs,
+        )
+    finally:
+        if listener:
+            listener.stop()
 
     breaches = [r for r in results if r.get("success")]
     # Pin behavior-oracle breaches first (the differentiator), then by severity.
