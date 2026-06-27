@@ -1,213 +1,476 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rogue — scan dashboard</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rogue — autonomous red team for AI agents</title>
+<meta name="description" content="Point Rogue at any AI agent and watch a swarm of adversarial AI break in. Every breach mapped to the EU AI Act.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0A0A0B; --card:#141416; --line:rgba(255,255,255,.08);
-    --ink:#FAFAFA; --ink2:#9A9AA2; --ink3:#646469;
-    --red:#FF4438; --red2:#FF6A5E; --amber:#FBBF24; --green:#34D399;
-    --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
-    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    --bg:#070809; --bg2:#0C0E11; --panel:#101317; --panel2:#15191F; --line:#21252D; --line2:#2C313A;
+    --ink:#EAEDF0; --mut:#9097A0; --dim:#646B74;
+    --red:#FF4438; --red2:#FF6A5E; --red-glow:rgba(255,68,56,.30);
+    --green:#34D399; --green-dim:#1f8f6b; --amber:#FFC247; --blue:#6FB1FF; --violet:#B79CFF;
+    --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.4}
-  .wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;font-size:16px;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh;
+    background-image:radial-gradient(1100px 520px at 78% -8%,rgba(255,68,56,.08),transparent 60%),radial-gradient(900px 500px at 8% 6%,rgba(111,177,255,.04),transparent 55%)}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 26px}
+  .mono{font-family:var(--mono)}
+  .red{color:var(--red2)} .mut{color:var(--mut)} .dim{color:var(--dim)} .grn{color:var(--green)}
+  a{color:var(--red2);text-decoration:none}
+  .hidden{display:none!important}
 
-  /* header */
-  header{border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;background:rgba(10,10,11,.85);backdrop-filter:blur(10px)}
-  .nav{display:flex;align-items:center;justify-content:space-between;height:60px}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:19px;letter-spacing:-.02em}
-  .brand .mark{width:20px;height:20px;color:var(--red)}
-  .brand small{font-family:var(--mono);font-size:11px;color:var(--ink3);font-weight:400;letter-spacing:.04em;text-transform:uppercase}
-  .status{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px;color:var(--ink2);text-transform:uppercase;letter-spacing:.05em}
-  .status .pip{width:7px;height:7px;border-radius:50%;background:var(--green)}
+  /* nav */
+  nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);background:rgba(7,8,9,.72);border-bottom:1px solid var(--line)}
+  nav .row{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:-.02em;cursor:pointer}
+  .brand .mark{width:22px;height:22px;color:var(--red)}
+  .brand .d{color:var(--red)}
+  .navmeta{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.04em}
+  .navmeta b{color:var(--mut);font-weight:500}
 
-  /* scan meta */
-  .scanbar{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 14px;padding:30px 0 22px}
-  .scanbar h1{font-size:14px;font-weight:500;color:var(--ink2)}
-  .scanbar .tgt{color:var(--ink);font-weight:600}
-  .scanbar .mode{display:none;font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2);border:1px solid var(--line);background:rgba(255,255,255,.03);padding:3px 9px;border-radius:6px}
-  .scanbar .ts{font-family:var(--mono);font-size:12px;color:var(--ink3);margin-left:auto}
+  /* ===== STAGE 1 · HERO ===== */
+  .hero{padding:92px 0 30px}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--red2);margin-bottom:22px;display:flex;align-items:center;gap:11px}
+  .eyebrow::before{content:"";width:30px;height:1px;background:var(--red)}
+  h1{font-size:clamp(36px,6vw,68px);line-height:1.02;letter-spacing:-.038em;font-weight:800}
+  h1 .alt{color:var(--red2);text-shadow:0 0 42px var(--red-glow)}
+  .hero p.sub{margin-top:26px;max-width:60ch;color:var(--mut);font-size:17.5px;line-height:1.6}
+  .hero p.sub b{color:var(--ink);font-weight:600}
 
-  /* KPIs */
+  .launch{margin-top:40px;max-width:760px}
+  .inputrow{display:flex;gap:12px;flex-wrap:wrap}
+  .urlfield{flex:1;min-width:300px;position:relative}
+  .urlfield .pre{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:13px;color:var(--dim);pointer-events:none}
+  input[type=url]{width:100%;height:58px;background:var(--panel);border:1px solid var(--line2);border-radius:12px;
+    color:var(--ink);font-family:var(--mono);font-size:15px;padding:0 18px 0 44px;outline:none;transition:border-color .2s,box-shadow .2s}
+  input[type=url]:focus{border-color:var(--red);box-shadow:0 0 0 4px rgba(255,68,56,.12)}
+  input[type=url]::placeholder{color:var(--dim)}
+  .btn{height:58px;padding:0 28px;border:0;border-radius:12px;background:var(--red);color:#0a0a0a;font-family:var(--sans);
+    font-weight:700;font-size:16px;letter-spacing:-.01em;cursor:pointer;white-space:nowrap;transition:transform .12s,box-shadow .2s,background .2s;
+    box-shadow:0 0 0 1px rgba(255,68,56,.4),0 8px 30px rgba(255,68,56,.22)}
+  .btn:hover{transform:translateY(-1px);background:var(--red2)}
+  .btn:active{transform:translateY(0)}
+  .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+  .launchmeta{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:18px}
+  .demolink{background:none;border:0;color:var(--mut);font-family:var(--mono);font-size:12.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;padding:4px 0}
+  .demolink:hover{color:var(--red2)}
+  .err{color:var(--red2);font-family:var(--mono);font-size:12.5px;min-height:16px}
+
+  .heromETA{display:flex;flex-wrap:wrap;gap:8px;margin-top:34px}
+  .chip{font-family:var(--mono);font-size:11px;color:var(--mut);border:1px solid var(--line);border-radius:20px;padding:6px 13px}
+  .chip b{color:var(--red2);font-weight:600}
+
+  .recent{margin-top:54px;border-top:1px solid var(--line);padding-top:26px}
+  .recent .rh{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--dim);margin-bottom:14px}
+  .rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+  .rcard{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:14px 16px;cursor:pointer;transition:border-color .2s}
+  .rcard:hover{border-color:var(--line2)}
+  .rcard .rt{font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rcard .rm{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:5px}
+  .rcard .rb{font-family:var(--mono);font-size:12px;margin-top:9px}
+  .rcard .rb b{color:var(--red2)} .rcard .rb.clean b{color:var(--green)}
+
+  /* ===== STAGE 2 · LIVE ===== */
+  .liveflash{position:fixed;inset:0;background:radial-gradient(circle at 50% 40%,rgba(255,68,56,.4),transparent 60%);
+    opacity:0;pointer-events:none;z-index:80;transition:opacity .12s}
+  .liveflash.on{opacity:1}
+  .livehead{padding:40px 0 22px}
+  .liveeyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--red2);
+    display:flex;align-items:center;gap:11px;margin-bottom:14px}
+  .pulse{width:9px;height:9px;border-radius:50%;background:var(--red);box-shadow:0 0 0 0 var(--red-glow);animation:pp 1.4s infinite}
+  @keyframes pp{0%{box-shadow:0 0 0 0 rgba(255,68,56,.5)}70%{box-shadow:0 0 0 9px rgba(255,68,56,0)}100%{box-shadow:0 0 0 0 rgba(255,68,56,0)}}
+  .livehead h2{font-size:clamp(24px,3.4vw,36px);letter-spacing:-.03em;font-weight:800;line-height:1.1}
+  .livehead h2 .t{color:var(--red2)}
+  .livesub{color:var(--mut);font-size:14px;margin-top:8px;font-family:var(--mono)}
+
+  .counters{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin:26px 0 30px}
+  .ctr{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px 18px}
+  .ctr .n{font-size:34px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1;color:var(--mut);transition:color .3s}
+  .ctr .l{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--dim);margin-top:9px}
+  .ctr.br .n{color:var(--ink)} .ctr.crit .n,.ctr.exfil .n{color:var(--red2)}
+  .ctr.exfil{border-color:rgba(255,68,56,.28)}
+
+  .livegrid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;padding-bottom:60px}
+  @media(max-width:880px){.livegrid{grid-template-columns:1fr}.counters{grid-template-columns:1fr 1fr}}
+
+  .swarm{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;align-content:start}
+  .node{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 15px;min-height:104px;
+    display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden;transition:border-color .3s,background .3s}
+  .node::before{content:"";position:absolute;inset:0;background:radial-gradient(120px 60px at 80% -10%,rgba(255,68,56,.12),transparent 60%);opacity:0;transition:opacity .3s}
+  .node.active::before{opacity:1}
+  .node.active{border-color:rgba(255,68,56,.45)}
+  .node.held{border-color:rgba(52,211,153,.4)}
+  .node.breached{border-color:var(--red)}
+  .node.breached.critical{box-shadow:0 0 0 1px var(--red),0 0 26px rgba(255,68,56,.25)}
+  .node .nh{display:flex;align-items:center;gap:9px}
+  .node .led{width:8px;height:8px;border-radius:50%;background:var(--dim);flex:none}
+  .node.active .led{background:var(--red);animation:pp 1.2s infinite}
+  .node.held .led{background:var(--green)}
+  .node.breached .led{background:var(--red);box-shadow:0 0 10px var(--red-glow)}
+  .node .nm{font-weight:600;font-size:13.5px;line-height:1.25}
+  .node .mv{font-family:var(--mono);font-size:11px;color:var(--mut);line-height:1.45;min-height:30px;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .node .st{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);margin-top:auto}
+  .node.active .st{color:var(--red2)} .node.held .st{color:var(--green)} .node.breached .st{color:var(--red2)}
+
+  .terminal{background:#05070A;border:1px solid var(--line);border-radius:13px;overflow:hidden;display:flex;flex-direction:column;height:540px;position:sticky;top:80px}
+  .term-h{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);
+    padding:11px 15px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+  .term-h .led{width:7px;height:7px;border-radius:50%;background:var(--red);animation:pp 1.4s infinite}
+  .term-b{flex:1;overflow-y:auto;padding:12px 15px;font-family:var(--mono);font-size:12px;line-height:1.65}
+  .ln{margin-bottom:3px;word-break:break-word;animation:fadein .25s}
+  @keyframes fadein{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+  .ln .tag{color:var(--dim)}
+  .ln.atk .tag{color:var(--red2)} .ln.tgt .tag{color:var(--blue)}
+  .ln.tool .tag{color:var(--amber)} .ln.exfil{color:var(--red2);font-weight:600}
+  .ln.breach{color:var(--red2)} .ln.held{color:var(--green-dim)}
+  .ln .txt{color:var(--mut)}
+  .ln.exfil .txt,.ln.breach .txt{color:var(--red2)}
+
+  /* ===== STAGE 3 · DASHBOARD ===== */
+  .dashtop{padding:34px 0 4px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .backbtn{background:none;border:1px solid var(--line2);border-radius:9px;color:var(--mut);font-family:var(--mono);font-size:12px;
+    padding:8px 14px;cursor:pointer;transition:border-color .2s,color .2s}
+  .backbtn:hover{border-color:var(--red);color:var(--red2)}
+  .donetag{font-family:var(--mono);font-size:11.5px;color:var(--green);text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:7px}
+  .donetag .pip{width:7px;height:7px;border-radius:50%;background:var(--green)}
+  .scanbar{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 14px;padding:18px 0 22px}
+  .scanbar h1.t2{font-size:15px;font-weight:500;color:var(--mut);letter-spacing:0}
+  .scanbar .tgt{color:var(--ink);font-weight:700}
+  .scanbar .mode{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);border:1px solid var(--line);background:var(--panel);padding:3px 9px;border-radius:6px}
+  .scanbar .ts{font-family:var(--mono);font-size:12px;color:var(--dim);margin-left:auto}
+
   .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:34px}
-  .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
-  .kpi .n{font-size:38px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1}
-  .kpi .l{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-top:8px}
-  .kpi .n{color:var(--ink2)}
-  .kpi.br .n{color:var(--ink)}
-  .kpi.crit .n,.kpi.exfil .n{color:var(--red2)}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:19px 21px}
+  .kpi .n{font-size:40px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1;color:var(--mut)}
+  .kpi .l{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);margin-top:9px}
+  .kpi.br .n{color:var(--ink)} .kpi.crit .n,.kpi.exfil .n{color:var(--red2)}
   .kpi.exfil{border-color:rgba(255,68,56,.28);background:linear-gradient(180deg,rgba(255,68,56,.06),transparent)}
 
-  /* fade-in */
-  .reveal-anim{opacity:0;transform:translateY(8px);transition:opacity .4s ease,transform .4s ease}
-  .reveal-anim.in{opacity:1;transform:none}
-
-  /* HERO — behavior-oracle split-screen (the pitch) */
-  .hero{background:var(--card);border:1px solid rgba(255,68,56,.24);border-radius:16px;padding:22px;margin-bottom:34px}
-  .hero-top{display:flex;align-items:center;gap:12px 14px;flex-wrap:wrap;margin-bottom:6px}
-  .otag{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.04em;color:#0a0a0a;background:var(--red);padding:4px 9px;border-radius:6px;white-space:nowrap}
-  .hero-h{font-size:21px;font-weight:700;letter-spacing:-.02em}
-  .hero-h .x{color:var(--green)} .hero-h .y{color:var(--red2)}
-  .chip{font-family:var(--mono);font-size:11px;color:var(--ink2);border:1px solid var(--line);border-radius:6px;padding:3px 9px;white-space:nowrap}
-  .hero-top .chip{margin-left:auto}
-  .hero-sub{color:var(--ink2);font-size:13px;line-height:1.55;margin:8px 0 16px;max-width:78ch}
-
+  .obox{background:var(--panel);border:1px solid rgba(255,68,56,.26);border-radius:16px;padding:22px;margin-bottom:30px}
+  .obox-top{display:flex;align-items:center;gap:12px 14px;flex-wrap:wrap;margin-bottom:6px}
+  .otag{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.04em;color:#0a0a0a;background:var(--red);padding:4px 9px;border-radius:6px}
+  .obox-h{font-size:21px;font-weight:800;letter-spacing:-.02em}
+  .obox-h .x{color:var(--green)} .obox-h .y{color:var(--red2)}
+  .obox-top .chip{margin-left:auto}
+  .obox-sub{color:var(--mut);font-size:13.5px;line-height:1.55;margin:8px 0 16px;max-width:80ch}
   .split{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  .pane{border:1px solid var(--line);border-radius:11px;overflow:hidden;display:flex;flex-direction:column;background:rgba(255,255,255,.015)}
+  .pane{border:1px solid var(--line);border-radius:11px;overflow:hidden;display:flex;flex-direction:column;background:var(--bg2)}
   .pane-h{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:10px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center}
   .dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:8px}
   .dot.ok{background:var(--green)} .dot.bad{background:var(--red)}
-  .pane-b{padding:14px;font-size:13.5px;line-height:1.6;flex:1;color:var(--ink)}
+  .pane-b{padding:14px;font-size:13.5px;line-height:1.6;flex:1}
   .pane-b.mono{font-family:var(--mono);font-size:12.5px;white-space:pre-wrap;word-break:break-word}
-  .pane-f{font-family:var(--mono);font-size:11px;padding:10px 14px;border-top:1px solid var(--line);letter-spacing:.01em}
-  .pane.safe .pane-h{color:var(--green)}
-  .pane.safe .pane-f{color:var(--green)}
+  .pane-f{font-family:var(--mono);font-size:11px;padding:10px 14px;border-top:1px solid var(--line)}
+  .pane.safe .pane-h,.pane.safe .pane-f{color:var(--green)}
   .pane.danger{border-color:rgba(255,68,56,.4)}
-  .pane.danger .pane-h{color:var(--red2)}
-  .pane.danger .pane-f{color:var(--red2)}
-  .method{color:var(--red2);font-weight:700}
-  .url{color:var(--ink);word-break:break-all}
+  .pane.danger .pane-h,.pane.danger .pane-f{color:var(--red2)}
+  .method{color:var(--red2);font-weight:700} .url{color:var(--ink);word-break:break-all}
 
-  .more{margin-top:14px;background:none;border:0;color:var(--ink3);font-family:var(--mono);font-size:11.5px;letter-spacing:.03em;cursor:pointer;padding:4px 0;display:inline-flex;align-items:center;gap:6px}
-  .more:hover{color:var(--ink2)}
-  .more .car{transition:transform .25s}
-  .open .more .car{transform:rotate(90deg)}
-
-  /* section label */
-  .feedhead{display:flex;align-items:center;gap:12px;margin:0 0 16px;font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3)}
+  .feedhead{display:flex;align-items:center;gap:12px;margin:0 0 16px;font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--dim)}
   .feedhead::after{content:"";flex:1;height:1px;background:var(--line)}
-
-  /* text breach cards */
-  .card{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--ink3);border-radius:12px;padding:16px 18px;margin-bottom:12px;cursor:pointer;transition:border-color .2s}
-  .card:hover{border-color:rgba(255,255,255,.18)}
-  .card.sev-critical{border-left-color:var(--red)} .card.sev-high{border-left-color:var(--amber)}
+  .card{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--dim);border-radius:12px;padding:16px 18px;margin-bottom:12px;cursor:pointer;transition:border-color .2s}
+  .card:hover{border-color:var(--line2)}
+  .card.sev-critical{border-left-color:var(--red)} .card.sev-high{border-left-color:var(--amber)} .card.sev-medium{border-left-color:var(--blue)}
   .crow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-  .badge{font-family:var(--mono);font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;padding:4px 8px;border-radius:6px;background:rgba(255,255,255,.07);color:var(--ink2)}
+  .badge{font-family:var(--mono);font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;padding:4px 8px;border-radius:6px;background:var(--panel2);color:var(--mut)}
   .badge.critical{background:rgba(255,68,56,.14);color:var(--red2)}
-  .badge.high{background:rgba(251,191,36,.14);color:var(--amber)}
+  .badge.high{background:rgba(255,194,71,.14);color:var(--amber)}
+  .badge.medium{background:rgba(111,177,255,.14);color:var(--blue)}
   .cname{font-weight:600;font-size:15px}
   .crow .chip{margin-left:auto}
-  .ev{color:var(--ink2);font-size:13.5px;margin-top:10px;line-height:1.55}
+  .ev{color:var(--mut);font-size:13.5px;margin-top:10px;line-height:1.55}
   .ev b{color:var(--ink);font-weight:600}
-
-  /* expandable transcript (shared) */
   .det{max-height:0;overflow:hidden;transition:max-height .35s ease}
-  .open .det{max-height:640px}
+  .open .det{max-height:760px}
   .det-inner{margin-top:14px;padding-top:14px;border-top:1px dashed var(--line);font-family:var(--mono);font-size:12.5px;line-height:1.7}
   .turn{margin-bottom:11px}
-  .who{color:var(--ink3);font-size:10px;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:4px}
+  .who{color:var(--dim);font-size:10px;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:4px}
   .who.atk{color:var(--red2)}
   .msg{color:var(--ink);white-space:pre-wrap;word-break:break-word}
-  .rat{color:var(--ink3);font-style:italic;margin-top:10px}
+  .rat{color:var(--dim);font-style:italic;margin-top:10px}
+  .more{margin-top:14px;background:none;border:0;color:var(--dim);font-family:var(--mono);font-size:11.5px;cursor:pointer;padding:4px 0;display:inline-flex;align-items:center;gap:6px}
+  .more:hover{color:var(--mut)} .more .car{transition:transform .25s} .obox.open .more .car{transform:rotate(90deg)}
   mark{background:rgba(255,68,56,.22);color:var(--red2);padding:1px 4px;border-radius:3px;font-weight:600}
+  .empty{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:40px;text-align:center;color:var(--mut);line-height:1.7}
 
-  /* empty state */
-  .empty{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:44px;text-align:center;color:var(--ink2);line-height:1.7}
-  .empty code{font-family:var(--mono);background:#0A0A0B;border:1px solid var(--line);padding:4px 10px;border-radius:6px;color:var(--ink);font-size:13px}
-
-  footer{color:var(--ink3);font-size:12px;text-align:center;padding:34px 0 44px}
-
-  @media(max-width:760px){
-    .kpis{grid-template-columns:1fr 1fr}
-    .split{grid-template-columns:1fr}
-    .crow .chip,.hero-top .chip{margin-left:0}
-  }
+  footer{padding:48px 0 70px;color:var(--dim);font-family:var(--mono);font-size:11.5px;line-height:1.8;border-top:1px solid var(--line);margin-top:40px}
 </style>
 </head>
 <body>
-<header><div class="wrap nav">
-  <div class="brand">
-    <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 3v5M12 16v5M3 12h5M16 12h5" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="2.3" fill="currentColor"/></svg>
-    Rogue <small>red team for AI agents</small>
-  </div>
-  <div class="status"><span class="pip"></span> scan complete</div>
-</div></header>
+<div class="liveflash" id="flash"></div>
 
-<main class="wrap">
+<nav><div class="wrap row">
+  <div class="brand" onclick="Rogue.go('hero')">
+    <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 3v5M12 16v5M3 12h5M16 12h5" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="2.3" fill="currentColor"/></svg>
+    Rogue<span class="d">.</span>
+  </div>
+  <div class="navmeta">AUTONOMOUS RED TEAM · <b>for AI agents</b></div>
+</div></nav>
+
+<!-- ===== STAGE 1 · HERO ===== -->
+<main id="stage-hero"><header class="hero"><div class="wrap">
+  <div class="eyebrow">Autonomous red-team for AI agents</div>
+  <h1>Every AI agent has a<br>breaking point.<br><span class="alt">Rogue finds it.</span></h1>
+  <p class="sub">Paste an agent's URL. Rogue unleashes a <b>swarm of adversarial AI attackers</b> — extracting secrets, hijacking instructions, exfiltrating data — then grades not what the agent <i>says</i>, but what it <b>actually does</b>. Every breach mapped to the <b>EU AI Act</b>.</p>
+
+  <div class="launch">
+    <div class="inputrow">
+      <div class="urlfield">
+        <span class="pre">▸</span>
+        <input id="url" type="url" placeholder="https://your-agent.com/api/chat" autocomplete="off" spellcheck="false">
+      </div>
+      <button class="btn" id="runbtn" onclick="Rogue.launch()">Run the red team →</button>
+    </div>
+    <div class="launchmeta">
+      <button class="demolink" onclick="Rogue.launchDemo()">▶ watch a live demo <span class="dim">— no URL needed</span></button>
+      <span class="err" id="err"></span>
+    </div>
+  </div>
+
+  <div class="heromETA">
+    <span class="chip"><b>16</b> attack vectors</span>
+    <span class="chip">behavior oracle <b>· sees what it does</b></span>
+    <span class="chip">EU AI Act <b>mapped</b></span>
+    <span class="chip">OWASP <b>LLM Top 10</b></span>
+    <span class="chip">MITRE <b>ATLAS</b></span>
+  </div>
+
+  <div class="recent hidden" id="recent">
+    <div class="rh">scans on record</div>
+    <div class="rgrid" id="rgrid"></div>
+  </div>
+</div></header></main>
+
+<!-- ===== STAGE 2 · LIVE ===== -->
+<main id="stage-live" class="hidden"><div class="wrap">
+  <div class="livehead">
+    <div class="liveeyebrow"><span class="pulse"></span> Live · red-team in progress</div>
+    <h2>Breaking into <span class="t" id="liveTarget">the target</span></h2>
+    <div class="livesub" id="liveSub">spinning up the swarm…</div>
+  </div>
+
+  <div class="counters">
+    <div class="ctr"><div class="n" id="cAttacks">0</div><div class="l">attacks launched</div></div>
+    <div class="ctr br"><div class="n" id="cBreaches">0</div><div class="l">breaches</div></div>
+    <div class="ctr crit"><div class="n" id="cCrit">0</div><div class="l">critical</div></div>
+    <div class="ctr exfil"><div class="n" id="cExfil">0</div><div class="l">silent exfil</div></div>
+  </div>
+
+  <div class="livegrid">
+    <div class="swarm" id="swarm"></div>
+    <div class="terminal">
+      <div class="term-h"><span class="led"></span> live attack feed</div>
+      <div class="term-b" id="term"></div>
+    </div>
+  </div>
+</div></main>
+
+<!-- ===== STAGE 3 · DASHBOARD ===== -->
+<main id="stage-dash" class="hidden"><div class="wrap">
+  <div class="dashtop">
+    <button class="backbtn" onclick="Rogue.go('hero')">← new scan</button>
+    <span class="donetag"><span class="pip"></span> scan complete</span>
+  </div>
   <div class="scanbar">
-    <h1>target: <span class="tgt" id="tgt">—</span></h1>
+    <h1 class="t2">target: <span class="tgt" id="tgt">—</span></h1>
     <span class="mode" id="mode"></span>
     <span class="ts" id="ts"></span>
   </div>
-
   <div class="kpis" id="kpis"></div>
-  <div id="hero"></div>
-  <div class="feedhead" id="feedhead" style="display:none">text-visible breaches</div>
+  <div id="obox"></div>
+  <div class="feedhead hidden" id="feedhead">text-visible breaches</div>
   <div id="feed"></div>
   <div id="empty"></div>
-</main>
+</div></main>
 
-<footer>Rogue · autonomous red team for AI agents · breaches mapped to the EU AI Act · Paris Builds 2026</footer>
+<footer><div class="wrap">
+  ROGUE · autonomous red team for AI agents · breaches graded on behavior, mapped to the EU AI Act · OWASP LLM Top 10 · MITRE ATLAS<br>
+  the attacker swarm and judge are real models · the behavior oracle watches tool calls &amp; egress, not just text
+</div></footer>
 
 <script src="data.js" onerror="window.__noData=true"></script>
 <script>
-(function(){
+const Rogue = (function(){
+  const $ = id => document.getElementById(id);
   const esc = s => String(s==null?"":s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const hi  = s => esc(s).replace(/INTERNAL-REF-[\w-]+/g, m=>`<mark>${m}</mark>`);
   const nm  = x => x.strategy_name || x.strategy || 'finding';
+  const clip = (s,n) => { s=String(s||''); return s.length>n ? s.slice(0,n-1)+'…' : s; };
 
-  function render(report){
-    const f = report.findings || [];
-    document.getElementById('tgt').textContent = report.target || 'unknown';
-    document.getElementById('ts').textContent  = report.generated_at ? new Date(report.generated_at).toLocaleString() : '';
-    const modeEl = document.getElementById('mode');
-    if(report.mode){ modeEl.textContent = report.mode; modeEl.style.display='inline-block'; }
+  let es=null, counters={a:0,b:0,c:0,x:0}, nodes={};
 
-    const crit = f.filter(x=>x.severity==='critical').length;
-    const beh  = f.filter(x=>x.detection==='behavior');
-    const kpi = [
-      ['attacks',      report.total_attacks ?? f.length,             ''],
-      ['breaches',     report.breaches ?? f.length,                  'br'],
-      ['critical',     crit,                                         'crit'],
-      ['silent exfil', report.behavior_breaches ?? beh.length,       'exfil'],
-    ];
-    document.getElementById('kpis').innerHTML = kpi.map(([l,n,c])=>
-      `<div class="kpi ${c}"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
-
-    if(!f.length){
-      document.getElementById('empty').innerHTML =
-        `<div class="empty">Scan loaded — <b>no breaches</b> in this report.</div>`;
-      return;
-    }
-
-    // Centerpiece: the behavior-oracle breach(es), pinned at top.
-    document.getElementById('hero').innerHTML = beh.map(heroCard).join('');
-
-    // Everything a plain text test would also catch.
-    const text = f.filter(x=>x.detection!=='behavior');
-    if(text.length){
-      const order = {critical:0,high:1,medium:2,low:3};
-      text.sort((a,b)=>(order[a.severity]??9)-(order[b.severity]??9));
-      document.getElementById('feedhead').style.display='flex';
-      document.getElementById('feed').innerHTML = text.map(textCard).join('');
-    }
-
-    // click / button toggles expandable detail
-    document.querySelectorAll('.card').forEach(c=>c.addEventListener('click',()=>c.classList.toggle('open')));
-    document.querySelectorAll('.more').forEach(b=>b.addEventListener('click',()=>{
-      const h=b.closest('.hero'); const open=h.classList.toggle('open');
-      b.setAttribute('aria-expanded',open); b.querySelector('.lbl').textContent= open?'Hide attack & AI Act mapping':'Show attack & AI Act mapping';
-    }));
-
-    // gentle reveal so it reads as a live scan landing
-    document.querySelectorAll('.reveal-anim').forEach((el,i)=>setTimeout(()=>el.classList.add('in'),80+i*90));
+  function go(stage){
+    if(es){ es.close(); es=null; }
+    ['hero','live','dash'].forEach(s=>$('stage-'+s).classList.toggle('hidden', s!==stage));
+    if(stage==='hero'){ loadRecent(); $('err').textContent=''; }
+    window.scrollTo(0,0);
   }
 
-  function heroCard(x){
-    const tc = x.tool_call||{};
-    const verdict = (x.text_judge&&x.text_judge.verdict)||'SAFE';
-    return `
-    <section class="hero reveal-anim">
-      <div class="hero-top">
+  // ---------- launch ----------
+  function launch(){ start({url:$('url').value.trim(), preset:'fast'}); }
+  function launchDemo(){ start({preset:'demo'}); }
+
+  async function start(payload){
+    $('err').textContent='';
+    if(payload.preset!=='demo' && !/^https?:\/\//.test(payload.url||'')){
+      $('err').textContent='Enter a valid http(s):// URL — or hit the live demo.'; return;
+    }
+    $('runbtn').disabled=true;
+    let job;
+    try{
+      const r = await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      job = await r.json();
+      if(!r.ok || !job.job_id) throw new Error(job.error||'could not start scan');
+    }catch(e){
+      $('runbtn').disabled=false;
+      // No backend (e.g. static deploy): fall back to a bundled scan if present.
+      if(window.ROGUE_FINDINGS){ renderDash(window.ROGUE_FINDINGS); go('dash'); return; }
+      $('err').textContent = 'Backend offline — start it with:  python3 engine/server.py';
+      return;
+    }
+    $('runbtn').disabled=false;
+    resetLive(payload);
+    go('live');
+    es = new EventSource('/api/stream/'+job.job_id);
+    es.onmessage = e => handle(JSON.parse(e.data));
+    es.onerror = () => { /* stream closes after done; ignore */ };
+  }
+
+  // ---------- live stage ----------
+  function resetLive(payload){
+    counters={a:0,b:0,c:0,x:0}; nodes={};
+    ['cAttacks','cBreaches','cCrit','cExfil'].forEach(id=>$(id).textContent='0');
+    $('swarm').innerHTML=''; $('term').innerHTML='';
+    $('liveTarget').textContent = payload.preset==='demo' ? 'the demo target' : 'the target';
+    $('liveSub').textContent='spinning up the swarm…';
+  }
+  function setCtr(id,key){ $(id).textContent = counters[key]; }
+  function flash(){ const f=$('flash'); f.classList.add('on'); setTimeout(()=>f.classList.remove('on'),140); }
+
+  function term(cls, tag, txt){
+    const b=$('term');
+    const d=document.createElement('div');
+    d.className='ln '+cls;
+    d.innerHTML=`<span class="tag">${esc(tag)}</span> <span class="txt">${hi(clip(txt,160))}</span>`;
+    b.appendChild(d);
+    while(b.childNodes.length>120) b.removeChild(b.firstChild);
+    b.scrollTop=b.scrollHeight;
+  }
+
+  function nodeEl(runId, name){
+    if(nodes[runId]) return nodes[runId];
+    const el=document.createElement('div');
+    el.className='node active';
+    el.innerHTML=`<div class="nh"><span class="led"></span><span class="nm">${esc(name)}</span></div>
+      <div class="mv">probing…</div><div class="st">breaching</div>`;
+    $('swarm').appendChild(el);
+    nodes[runId]={el, mv:el.querySelector('.mv'), st:el.querySelector('.st')};
+    return nodes[runId];
+  }
+
+  function handle(ev){
+    const k=ev.kind;
+    if(k==='scan_start'){
+      $('liveTarget').textContent = clip(ev.target,52);
+      $('liveSub').textContent = `${ev.strategies.length} attack vectors · ${ev.planned_attacks} concurrent attackers · ${esc(ev.mode)}`;
+    }
+    else if(k==='attack_start'){
+      nodeEl(ev.run_id, ev.strategy_name||ev.strategy);
+    }
+    else if(k==='attacker_msg'){
+      const n=nodeEl(ev.run_id,ev.strategy); if(n.mv) n.mv.textContent='“'+clip(ev.text,90)+'”';
+      term('atk','▸ attacker', ev.text);
+    }
+    else if(k==='target_reply'){
+      term('tgt','◂ target  ', ev.text);
+    }
+    else if(k==='tool_call'){
+      if(ev.contains_secret && ev.external){
+        counters.x++; setCtr('cExfil','x'); flash();
+        const n=nodes[ev.run_id]; if(n){ n.el.classList.add('breached','critical'); }
+        term('exfil','⇄ EGRESS ', `${ev.tool} → ${ev.host}  [SECRET EXFILTRATED]`);
+      } else {
+        term('tool','⇄ tool   ', `${ev.tool} → ${ev.host||'(local)'}`);
+      }
+    }
+    else if(k==='breach'){
+      counters.b++; setCtr('cBreaches','b');
+      if(ev.severity==='critical'){ counters.c++; setCtr('cCrit','c'); }
+      const n=nodeEl(ev.run_id, ev.strategy_name||ev.strategy);
+      n.el.classList.remove('active','held');
+      n.el.classList.add('breached'); if(ev.severity==='critical') n.el.classList.add('critical');
+      if(n.st) n.st.textContent = (ev.severity||'breach')+' · breached';
+      if(n.mv) n.mv.textContent = clip(ev.evidence||ev.reason||'policy broken',90);
+      const beh = ev.detection==='behavior';
+      term(beh?'exfil':'breach', beh?'✖ BEHAVIOR':'✖ breach ', `${ev.strategy_name||ev.strategy} → ${ev.ai_act_article||''}`);
+    }
+    else if(k==='attack_failed'){
+      const n=nodes[ev.run_id];
+      if(n){ n.el.classList.remove('active'); n.el.classList.add('held'); n.st.textContent='held ✓'; n.mv.textContent='target refused / held'; }
+      term('held','✓ held   ', `${ev.strategy} resisted`);
+      counters.a++; setCtr('cAttacks','a');
+    }
+    else if(k==='done'){
+      // count any unfinished as attacks too (breaches already counted)
+      $('liveSub').textContent='operation complete — compiling report…';
+      setTimeout(()=>{ renderDash(ev.report); go('dash'); }, 900);
+    }
+    else if(k==='error'){
+      $('liveSub').textContent='';
+      go('hero'); $('err').textContent='Scan error: '+clip(ev.message,120);
+    }
+    // keep "attacks launched" rising on every attack_start too
+    if(k==='attack_start'){ counters.a = Math.max(counters.a, Object.keys(nodes).length); setCtr('cAttacks','a'); }
+  }
+
+  // ---------- dashboard stage ----------
+  function renderDash(report){
+    const f = report.findings || [];
+    $('tgt').textContent = report.target || 'unknown';
+    $('ts').textContent  = report.generated_at ? new Date(report.generated_at).toLocaleString() : '';
+    const modeEl=$('mode'); if(report.mode){ modeEl.textContent=report.mode; modeEl.classList.remove('hidden'); }
+    const crit=f.filter(x=>x.severity==='critical').length;
+    const beh =f.filter(x=>x.detection==='behavior');
+    const kpi=[['attacks',report.total_attacks??f.length,''],['breaches',report.breaches??f.length,'br'],
+               ['critical',crit,'crit'],['silent exfil',report.behavior_breaches??beh.length,'exfil']];
+    $('kpis').innerHTML=kpi.map(([l,n,c])=>`<div class="kpi ${c}"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
+    $('obox').innerHTML=''; $('feed').innerHTML=''; $('empty').innerHTML=''; $('feedhead').classList.add('hidden');
+
+    if(!f.length){ $('empty').innerHTML=`<div class="empty">Scan complete — <b>no breaches</b> in this report. The agent held.</div>`; return; }
+    $('obox').innerHTML = beh.map(oboxCard).join('');
+    const text=f.filter(x=>x.detection!=='behavior');
+    if(text.length){
+      const order={critical:0,high:1,medium:2,low:3};
+      text.sort((a,b)=>(order[a.severity]??9)-(order[b.severity]??9));
+      $('feedhead').classList.remove('hidden');
+      $('feed').innerHTML=text.map(textCard).join('');
+    }
+    document.querySelectorAll('.card').forEach(c=>c.addEventListener('click',()=>c.classList.toggle('open')));
+    document.querySelectorAll('.obox .more').forEach(b=>b.addEventListener('click',()=>{
+      const h=b.closest('.obox'); const open=h.classList.toggle('open');
+      b.querySelector('.lbl').textContent= open?'Hide attack & AI Act mapping':'Show attack & AI Act mapping';
+    }));
+  }
+
+  function oboxCard(x){
+    const tc=x.tool_call||{}; const verdict=(x.text_judge&&x.text_judge.verdict)||'SAFE';
+    return `<section class="obox">
+      <div class="obox-top">
         <span class="otag">⚡ behavior-oracle breach</span>
-        <h2 class="hero-h">Looks <span class="x">clean ✓</span> &nbsp;—&nbsp; but it <span class="y">leaked the secret 🔴</span></h2>
+        <h2 class="obox-h">Looks <span class="x">clean ✓</span> — but it <span class="y">leaked the secret 🔴</span></h2>
         <span class="chip">${esc(x.ai_act_article||'')}</span>
       </div>
-      <p class="hero-sub">A text-only test reads the chat reply, sees nothing wrong, and passes it. Rogue also watches what the agent <i>does</i> — and caught the planted secret leaving through a tool call.</p>
+      <p class="obox-sub">A text-only test reads the chat reply, sees nothing wrong, and passes it. Rogue also watches what the agent <i>does</i> — and caught the planted secret leaving through a tool call.</p>
       <div class="split">
         <div class="pane safe">
           <div class="pane-h"><span class="dot ok"></span>what the user sees</div>
@@ -220,7 +483,7 @@
           <div class="pane-f">🔴 secret exfiltrated to external host · <b>CRITICAL</b></div>
         </div>
       </div>
-      <button class="more" type="button" aria-expanded="false"><span class="car">›</span><span class="lbl">Show attack &amp; AI Act mapping</span></button>
+      <button class="more" type="button"><span class="car">›</span><span class="lbl">Show attack &amp; AI Act mapping</span></button>
       <div class="det"><div class="det-inner">
         ${x.attacker_msg?`<div class="turn"><span class="who atk">indirect injection — attacker-controlled content</span><span class="msg">${hi(x.attacker_msg)}</span></div>`:''}
         ${x.evidence?`<div class="turn"><span class="who">oracle evidence</span><span class="msg">${hi(x.evidence)}</span></div>`:''}
@@ -230,8 +493,7 @@
   }
 
   function textCard(x){
-    return `
-    <div class="card reveal-anim sev-${esc(x.severity)}">
+    return `<div class="card sev-${esc(x.severity)}">
       <div class="crow">
         <span class="badge ${esc(x.severity)}">${esc(x.severity)}</span>
         <span class="cname">${esc(nm(x))}</span>
@@ -246,18 +508,33 @@
     </div>`;
   }
 
-  function noData(){
-    document.getElementById('empty').innerHTML =
-      `<div class="empty">No scan loaded yet.<br><br>Run a scan from the repo root:<br><br>
-       <code>python3 engine/run.py --seeded --runs 1 --turns 3</code><br><br>
-       then refresh (serve via <code>python3 -m http.server</code> if opening over http).</div>`;
+  // ---------- recent scans on hero ----------
+  async function loadRecent(){
+    try{
+      const r=await fetch('/api/history'); if(!r.ok) return;
+      const rows=await r.json(); if(!rows.length) return;
+      $('recent').classList.remove('hidden');
+      $('rgrid').innerHTML = rows.slice(0,8).map(s=>{
+        const clean = !s.breaches;
+        return `<div class="rcard" onclick="Rogue.openScan('${esc(s.id)}')">
+          <div class="rt">${esc(clip(s.target,38))}</div>
+          <div class="rm">${esc(s.mode||'')} · ${s.generated_at?new Date(s.generated_at).toLocaleDateString():''}</div>
+          <div class="rb ${clean?'clean':''}"><b>${s.breaches||0}</b> breaches / ${s.total_attacks||0} attacks</div>
+        </div>`;
+      }).join('');
+    }catch(e){ /* no backend; hide */ }
+  }
+  async function openScan(id){
+    try{
+      const r=await fetch('/api/scan/'+encodeURIComponent(id)); const rep=await r.json();
+      if(rep && rep.findings!==undefined){ renderDash(rep); go('dash'); }
+    }catch(e){}
   }
 
-  if (window.ROGUE_FINDINGS) { render(window.ROGUE_FINDINGS); }
-  else {
-    fetch('../findings.json').then(r=>r.ok?r.json():Promise.reject()).then(render)
-      .catch(()=>fetch('findings.json').then(r=>r.ok?r.json():Promise.reject()).then(render).catch(noData));
-  }
+  // ---------- boot ----------
+  // If served statically with a bundled scan and no backend, show it; else hero.
+  loadRecent();
+  return {go, launch, launchDemo, openScan, _render:renderDash};
 })();
 </script>
 </body>

@@ -39,6 +39,25 @@
 
 **MCP copilot →** *"Hey [name] — saw you're wiring [copilot] to MCP servers/tools. You already know MCP is the least-tested attack surface right now (tool-description poisoning, the lethal trifecta). I'm building a self-serve red team for exactly this and I'll run it against your copilot for free this weekend — graded on real tool calls + egress, not string-matching. You'll get a reproducible trace of any exfil/hijack + an audit-ready report your next enterprise buyer's security team will ask for. In exchange: a short quote + OK to name you as a design partner. Just need a staging URL or your tool config — 5 mins."*
 
+## What a real customer must provide (access tiers — we're black-box, never need their code)
+**Principle: Rogue red-teams from the OUTSIDE. We never need their source code.** What a prospect must HAVE to be scannable:
+
+**Floor — unlocks text-graded findings (jailbreak, system-prompt leak, policy/advice violations):**
+1. **A callable agent surface** — *one* of: (a) an **HTTP endpoint** (any request/response shape — we write a ~15-line shim; auth via a scoped staging token in a header), or (b) a public/staging **chat widget or web app** we drive via browser automation (zero integration on their side). If their agent has *no* callable surface (mobile-only / embedded — the hard case, e.g. **Clarity**), they stand up **one thin staging `/chat` endpoint** from a ~30-line template we hand them — that code is *theirs*, never shared with us.
+2. **Written permission** — scope + time window + **prod vs staging** (always prefer staging). Non-negotiable.
+3. **Their "must never do" list** — guardrails/policies, even informal ("never gives financial advice", "never reveals another user's data"). Defines what counts as a breach.
+4. **(Best) a planted canary** — one unique fake "other-customer record" / fake API key seeded in staging; the judge flags it CRITICAL the instant it surfaces = cleanest, most objective finding.
+
+**Upgrade — unlocks the BEHAVIOR ORACLE (what the agent DID), still no code:**
+- They **register one tool / MCP endpoint we provide** in their staging agent config → our sink catches any exfil / unauthorized action, **or**
+- They **share tool-call traces** (LangSmith / Datadog LLM-obs / their own logs) → we grade the trajectory, **or**
+- Their staging agent can make outbound calls → we hand them a **unique callback sink URL**; any data that arrives = proof.
+- Can't wire any of these in time → fall back to text-graded (still real findings).
+
+**Practical heads-ups (say them — they build trust):** scanning makes real model calls (their token cost) and can trip rate-limits/alerts → staging + a heads-up; attacks can create junk records → throwaway account / staging DB.
+
+**Qualifier for the hunt:** a prospect is scannable *today* if they have **at least a callable surface** (endpoint or widget). That's the 5-minute-yes filter. No surface at all → they expose one thin endpoint first.
+
 ## Running the scan fast
 Fastest path (no install): a URL taking `POST {message, history} → {reply}` *is* the Rogue `HTTPTarget` contract. Most partners won't match exactly → DEV-CORE keeps a ~15-line **shim** per partner (translate body, pull `.reply`; OpenAI-style `{choices…}`, widget WS frame, etc.) ~5–20 min each. No clean API? drive the widget with claude-in-chrome as a last-resort backend. **Plant a canary:** seed a unique fake "other-customer record"/API key — the judge's verbatim shortcut flags it CRITICAL the instant it appears = cleanest finding. **Behavior oracle (if it calls tools):** give them our dummy tool + sink to wire in; grade on what hit the sink. Can't wire in time → fall back to TEXT-graded findings (already works), note tool-action coverage as "continuous tier."
 **Deliverable, same day:** (1) ranked report — findings by severity, each w/ trace + OWASP/LLM Top 10 + MITRE ATLAS + EU AI Act article + a 1-line fix; (2) 1-page "Agent Security & EU AI Act Readiness" one-pager to forward. **Turnaround target: in their hands within 2h of getting the endpoint.**

@@ -8,7 +8,9 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import re
 import sys
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -88,10 +90,13 @@ async def main():
         # the deterministic offline swarm so the behavior-oracle moment fires the
         # same way every single time.
         args.target = "mock"
+        if not args.strategies:
+            args.strategies = strat.DEMO_KEYS   # keep the clean 5-card stage demo
         print(f"\n  {COLOR['critical']}● SEEDED DETERMINISTIC REPLAY{COLOR['off']}"
               f"{COLOR['dim']} — offline, guaranteed behavior-oracle exfil{COLOR['off']}")
 
     target = build_target(args)
+    # Real targets with no explicit subset get the FULL deep arsenal (all strategies).
     chosen = strat.get(args.strategies)
 
     print(f"\n  ROGUE  ·  target: {target.name}")
@@ -165,6 +170,44 @@ async def main():
             (dash / "data.js").write_text(
                 "window.ROGUE_FINDINGS = " + json.dumps(report) + ";\n"
             )
+    except Exception:
+        pass
+
+    # Archive every scan so nothing is ever lost — one file per scan + a manifest.
+    # This is the local source of truth and the exact shape we sync to the DB.
+    try:
+        root = Path(__file__).resolve().parent.parent
+        scans_dir = root / "scans"
+        scans_dir.mkdir(exist_ok=True)
+        slug = (re.sub(r"[^a-z0-9]+", "-", report["target"].lower()).strip("-")[:40]
+                or "scan")
+        ts = report["generated_at"].replace(":", "").replace("-", "")[:15]
+        rel = f"scans/{ts}-{slug}.json"
+        (root / rel).write_text(json.dumps(report, indent=2))
+        idx_path = scans_dir / "index.json"
+        idx = json.loads(idx_path.read_text()) if idx_path.exists() else []
+        idx = [e for e in idx if e.get("file") != rel]
+        idx.insert(0, {
+            "id": f"{ts}-{slug}",
+            "target": report["target"],
+            "mode": report.get("mode"),
+            "generated_at": report["generated_at"],
+            "breaches": report["breaches"],
+            "total_attacks": report.get("total_attacks"),
+            "by_severity": dict(Counter(f.get("severity") for f in report["findings"])),
+            "file": rel,
+        })
+        idx_path.write_text(json.dumps(idx, indent=2))
+        print(f"  archived → {rel}")
+    except Exception:
+        pass
+
+    # Optional cloud sync (Firestore) — no-op unless FIREBASE_* (or SUPABASE_*) set.
+    try:
+        import store
+        sid = store.push_scan(report)
+        if sid:
+            print(f"  synced → cloud (scan {sid})")
     except Exception:
         pass
 
