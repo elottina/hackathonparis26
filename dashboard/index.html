@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Rogue · autonomous red-team for AI agents</title>
-<meta name="description" content="Point Rogue at any AI agent and watch a swarm of adversarial AI break in. Every breach mapped to the EU AI Act.">
+<meta name="description" content="Point Rogue at any AI agent and watch an army of adversarial AI break in. Every breach mapped to the EU AI Act.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -238,33 +238,16 @@
     <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 3v5M12 16v5M3 12h5M16 12h5" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="2.3" fill="currentColor"/></svg>
     Rogue<span class="d">.</span>
   </div>
-  <div class="navmeta">AUTONOMOUS RED TEAM · <b>for AI agents</b></div>
+  <div class="navmeta">Autonomous red-team for AI agents</div>
 </div></nav>
 
 <!-- ===== STAGE 1 · HERO ===== -->
 <main id="stage-hero"><header class="hero"><div class="wrap">
-  <div class="eyebrow">Autonomous red-team for AI agents</div>
   <h1>Every AI agent has a breaking point.<br><span class="alt">Rogue finds it.</span></h1>
-  <p class="sub">Rogue sends a swarm of AI attackers at your agent, then grades what it <b>actually does</b>: its tool calls and data egress, not just what it <i>says</i>. Every breach maps to the EU AI Act.</p>
+  <p class="sub">An <b>army</b> of AI attackers breaks any agent — your own running locally before you ship it, or one already live in production — and Rogue grades what it <b>actually does</b>: the data it leaks on the wire, not what it <i>says</i>.</p>
 
   <div class="launch">
-    <div class="pickhead">See Rogue break an agent live — pick a demo</div>
-    <div class="demos">
-      <button class="demobtn primary" onclick="Rogue.launchHR()">
-        <span class="dt">Scan an HR screening agent<span class="tagi">the wow demo</span></span>
-        <span class="ds">TalentScreen — a high-risk hiring bot (EU AI Act Annex III). It exposes zero tools, yet Rogue catches it leaking the candidate on the wire.</span>
-      </button>
-      <button class="demobtn" onclick="Rogue.launchCowork()">
-        <span class="dt">Red-team a real, shipping agent</span>
-        <span class="ds">A real production agent screening a candidate live — it reaches off-box for her data while its written reply stays perfectly clean.</span>
-      </button>
-      <button class="demobtn ghost" onclick="Rogue.launchDemo()">
-        <span class="dt">Watch the 20-second demo</span>
-        <span class="ds">A canned, offline replay — no API key, nothing to set up. The bulletproof stage fallback.</span>
-      </button>
-    </div>
     <div class="ownscan">
-      <div class="ownlabel">— or point Rogue at your own agent —</div>
       <div class="inputrow">
         <div class="urlfield">
           <span class="pre">▸</span>
@@ -275,11 +258,6 @@
       <span class="err" id="err"></span>
     </div>
   </div>
-
-  <div class="recent hidden" id="recent">
-    <div class="rh">recent scans · click any to reopen its report</div>
-    <div class="rgrid" id="rgrid"></div>
-  </div>
 </div></header></main>
 
 <!-- ===== STAGE 2 · LIVE ===== -->
@@ -287,7 +265,7 @@
   <div class="livehead">
     <div class="liveeyebrow"><span class="pulse"></span> Live · red-team in progress</div>
     <h2>Breaking into <span class="t" id="liveTarget">the target</span></h2>
-    <div class="livesub" id="liveSub">spinning up the swarm…</div>
+    <div class="livesub" id="liveSub">spinning up the army…</div>
   </div>
 
   <div class="counters">
@@ -327,7 +305,7 @@
 
 <footer><div class="wrap">
   Rogue · autonomous red-team for AI agents · every breach graded on behavior and mapped to the EU AI Act.<br>
-  The attacker swarm and the judge are real models. The behavior oracle watches tool calls and egress, not just text.
+  The attacker army and the judge are real models. The behavior oracle watches tool calls and egress, not just text.
 </div></footer>
 
 <script src="data.js" onerror="window.__noData=true"></script>
@@ -354,7 +332,14 @@ const Rogue = (function(){
   }
 
   // ---------- launch ----------
-  function launch(){ start({url:$('url').value.trim(), preset:'fast'}); }
+  function launch(){
+    const url=$('url').value.trim();
+    // The demo agent (TalentScreen — local :8788 or its deployed URL) runs the full
+    // black-box behaviour scan that surfaces the wire-level leak; any other URL runs
+    // the general attack suite.
+    const preset = /talentscreen|:8788(\/|$)/.test(url) ? 'hr' : 'fast';
+    start({url, preset});
+  }
   function launchDemo(){ start({preset:'demo'}); }
   function launchHR(){ start({preset:'hr'}); }
   function launchCowork(){ start({preset:'cowork'}); }
@@ -391,7 +376,7 @@ const Rogue = (function(){
     ['cAttacks','cBreaches','cCrit','cExfil'].forEach(id=>$(id).textContent='0');
     $('swarm').innerHTML=''; $('term').innerHTML='';
     $('liveTarget').textContent = payload.preset==='demo' ? 'the demo target' : 'the target';
-    $('liveSub').textContent='spinning up the swarm…';
+    $('liveSub').textContent='spinning up the army…';
   }
   function setCtr(id,key){ $(id).textContent = counters[key]; }
   function flash(){ const f=$('flash'); f.classList.add('on'); setTimeout(()=>f.classList.remove('on'),140); }
