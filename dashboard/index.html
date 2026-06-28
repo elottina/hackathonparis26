@@ -248,15 +248,15 @@
   <p class="sub">Rogue sends a swarm of AI attackers at your agent, then grades what it <b>actually does</b>: its tool calls and data egress, not just what it <i>says</i>. Every breach maps to the EU AI Act.</p>
 
   <div class="launch">
-    <div class="pickhead">Pick a target — Rogue breaks in live</div>
+    <div class="pickhead">See Rogue break an agent live — pick a demo</div>
     <div class="demos">
-      <button class="demobtn primary" onclick="Rogue.launchCowork()">
-        <span class="dt">Red-team a real, live AI agent<span class="tagi">the wow demo</span></span>
-        <span class="ds">A shipping AI agent doing CV screening, scanned live over its own API — it leaks the candidate off-box while its written reply stays clean. <span class="need">needs the agent running on :8790</span></span>
+      <button class="demobtn primary" onclick="Rogue.launchHR()">
+        <span class="dt">Scan an HR screening agent<span class="tagi">the wow demo</span></span>
+        <span class="ds">TalentScreen — a high-risk hiring bot (EU AI Act Annex III). It exposes zero tools, yet Rogue catches it leaking the candidate on the wire.</span>
       </button>
-      <button class="demobtn" onclick="Rogue.launchHR()">
-        <span class="dt">Scan an HR screening agent</span>
-        <span class="ds">TalentScreen — a high-risk hiring bot (EU AI Act Annex III). Rogue catches its secret candidate lookup. <span class="need">needs the target on :8788</span></span>
+      <button class="demobtn" onclick="Rogue.launchCowork()">
+        <span class="dt">Red-team a real, shipping agent</span>
+        <span class="ds">A real production agent screening a candidate live — it reaches off-box for her data while its written reply stays perfectly clean.</span>
       </button>
       <button class="demobtn ghost" onclick="Rogue.launchDemo()">
         <span class="dt">Watch the 20-second demo</span>
@@ -349,7 +349,7 @@ const Rogue = (function(){
   function go(stage){
     if(es){ es.close(); es=null; }
     ['hero','live','dash'].forEach(s=>$('stage-'+s).classList.toggle('hidden', s!==stage));
-    if(stage==='hero'){ loadRecent(); $('err').textContent=''; }
+    if(stage==='hero'){ $('err').textContent=''; }
     window.scrollTo(0,0);
   }
 
@@ -593,8 +593,8 @@ const Rogue = (function(){
   }
 
   // ---------- boot ----------
-  // If served statically with a bundled scan and no backend, show it; else hero.
-  loadRecent();
+  // Recording-clean hero: the recent-scans strip is intentionally not shown
+  // (kept in the DOM + reachable via Rogue.openScan for reuse, just not auto-loaded).
   return {go, launch, launchDemo, launchHR, launchCowork, openScan, _render:renderDash};
 })();
 </script>
