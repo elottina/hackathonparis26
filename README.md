@@ -109,6 +109,19 @@ Expected response:
 For basic text-graded scans, `reply` is enough. For behavior-oracle findings, Rogue needs a canary,
 tool-call trace, callback sink hit, or staging tool integration.
 
+## Pitch deck, video & proof
+
+- **[pitch-deck.html](./pitch-deck.html)** — the submission deck (13 slides, self-contained, arrow-key nav). Open in any browser; print to PDF for 16:9.
+- **[Rogue-Pitch-Deck.pdf](./Rogue-Pitch-Deck.pdf)** — the exported deck PDF.
+- [DECK.md](./DECK.md) — slide-by-slide copy + rubric mapping.
+- [VIDEO-DIRECTION.md](./VIDEO-DIRECTION.md) — the ≤5-min video: timecoded script, 60s cut, capture list.
+
+**Proof, not vibes:** every number on the deck comes from a committed scan you can open:
+
+- [`/scans`](./scans) — real saved scans. The HR black-box breach (TalentScreen, the candidate's name arriving at `lookup.talent-verify.io`) and the live Cowork scan are here.
+- [`clarity_deep_findings.json`](./clarity_deep_findings.json) — the deep adaptive run on the third-party Clary agent (60 attacks → 29 graded breaches).
+- Top-level `findings.json` is the **offline deterministic mock** (FinBuddy) used as a zero-API demo backup; the real HR/Clary proof lives in `/scans`.
+
 ## Business Direction
 
 Current documents:

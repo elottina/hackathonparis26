@@ -1,6 +1,8 @@
 # ROGUE — PITCH DECK
 
-*Visual system: case-file / true-crime. Near-black background, evidence-grey panels, one signal-red accent. Mono stamps ("CASE #0427", "CLOSED"). One idea per slide. The same three red exfil pins recur as a motif: appear (S1) → glow under the alibi (S4) → rhyme + resolve on the hero card (S6–S7) → file closed (S13). Date is always **Dec 2027.** Never "first to red-team agents," never "Giskard can't test agents," never "read its mind" — only "watch what it does."*
+*Visual system: case-file / true-crime. Near-black background, evidence-grey panels, one signal-red accent. Mono stamps ("CASE #0427", "CLOSED"). One idea per slide. The ONE real exfil host (`lookup.talent-verify.io?candidate=Amina%20Khoury`) is the recurring motif: the data leaving under the alibi (S4) → the said-vs-did hero card (S6) → the same host plus a real committed-scan scoreboard (S7) → file closed (S13). Numbers on S7/S8/S9 come from committed scans in `/scans` + `clarity_deep_findings.json`. Date is always **Dec 2027.** Never "first to red-team agents," never "Giskard can't test agents," never "read its mind", only "watch what it does."*
+
+> **Produced deck:** the slides below are implemented as `pitch-deck.html` (self-contained, arrow-key nav, exports to `Rogue-Pitch-Deck.pdf` at 16:9). Open the HTML or the PDF for the actual artifact.
 
 ---
 
@@ -197,4 +199,4 @@
 
 ---
 
-**Throughline check:** three red pings (S1) → alibi (S4) → hands/moat (S5) → said-vs-did card (S6) → pins rhyme + resolve (S7) → depth shown (S8) → proofs (S9) → file closed (S13). Date is always **Dec 2027.** No "first to red-team," no "Giskard can't test agents," no "read its mind" — only "watch what it does."
+**Throughline check:** the crime (S1) → buyer (S2) → why-now + law (S3) → alibi (S4) → hands/moat (S5) → said-vs-did card (S6) → same host + real committed-scan scoreboard (S7) → depth shown with a real run number (S8) → three real proofs + repo link (S9) → 2×2 (S10) → pricing (S11) → GTM (S12) → file closed + repo link (S13). Date is always **Dec 2027.** No "first to red-team," no "Giskard can't test agents," no "read its mind", only "watch what it does."
