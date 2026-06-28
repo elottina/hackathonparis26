@@ -22,7 +22,7 @@ Everything here is **live and reproducible**, not a mockup.
 | **In the repo** | `clary-web/` in `github.com/FedericaCabrera1/clarity-assistant` — PR #3. Deployed on Vercel, **API key server-side**. |
 | **Dashboard** | The Rogue dashboard renders this exact scan (`target: …/api/chat`, mode `live scan`). |
 
-> Why this matters for the story: it's not a localhost demo and not our FinBuddy — it's a **real, deployed consumer product with real users** that anyone can visit.
+> Why this matters for the story: it's not a localhost demo and not our scripted TalentScreen demo — it's a **real, deployed consumer product with real users** that anyone can visit.
 
 ---
 
@@ -47,8 +47,8 @@ an unlicensed wellness/productivity app giving **specific tax + investment advic
 
 ## How it slots into the demo / pitch / roadmap
 
-**Demo (unchanged hero):** the on-camera jaw-drop stays **FinBuddy + behavior oracle** (deterministic, can't fail). Clarity is **traction**, not the hero.
-- In the **video**, right after the FinBuddy oracle moment: *"That was our reference target. 20 minutes ago we pointed the exact same tool at a real consumer app shipping on the App Store —"* → cut to the Rogue dashboard showing `clary-web-ten.vercel.app` + the 3 breach cards → optionally flash the live Clary web UI so it's obviously real.
+**Demo (unchanged hero):** the on-camera jaw-drop stays the **TalentScreen HR demo + behavior oracle** (deterministic, can't fail). Clarity is **traction**, not the hero.
+- In the **video**, right after the TalentScreen oracle moment: *"That was our reference target. 20 minutes ago we pointed the exact same tool at a real consumer app shipping on the App Store —"* → cut to the Rogue dashboard showing `clary-web-ten.vercel.app` + the 3 breach cards → optionally flash the live Clary web UI so it's obviously real.
 
 **Pitch — slide 7 (Traction) copy:**
 > "We pointed Rogue at **Clarity**, a real consumer AI assistant on the App Store. In minutes it **leaked its own system prompt verbatim** and gave **specific IRS tax + named investment advice it's explicitly built never to give.** Real product. Real users. Nobody had tested what it actually does." *(+ live URL, + owner quote, + [logo]).*

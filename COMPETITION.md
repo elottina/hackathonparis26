@@ -64,9 +64,9 @@ We pitch four edges: *self-serve · behavior-aware · vendor-neutral · EU-aware
 1. **Behavior oracle** — we grade actions/egress; they grade the response.
 2. **Self-serve founder wedge** — they're going enterprise/regulated/managed; that *widens* our lane.
 
-> ⚠️ Our old [STRATEGY.md](./STRATEGY.md) line — "Giskard is chatbot-rooted, no autonomous adversary,
-> no agent testing" — is **now stale and dangerous**. They ship autonomous multi-turn agents and AI Act packs.
-> Say *"they grade the response, we grade the action,"* **never** *"they can't test agents."* A Paris jury knows Giskard.
+> ⚠️ Stale/dangerous line to avoid: "Giskard is chatbot-rooted, no autonomous adversary, no agent
+> testing." They ship autonomous multi-turn agents and AI Act packs. Say *"they grade the response,
+> we grade the action,"* **never** *"they can't test agents."* A Paris jury knows Giskard.
 
 ---
 
@@ -92,7 +92,7 @@ This is a **category difference, not a feature difference.** We don't have "more
 
 ### How it sets us apart **and** complicates our work (the honest part)
 The reason they don't do it is **the same reason it's hard for us**:
-- Our oracle fires perfectly **because we control the environment** — FinBuddy, the planted secret, the
+- Our oracle fires perfectly **because we control the environment** — the TalentScreen HR harness, the planted secret (the candidate's name), the
   allowlist, the sink. On a stranger's production agent we hit the *exact* integration wall that pushed
   them to text-grading: we don't know their legit tool calls, can't plant a secret, can't see egress without cooperation.
 - So the behavior oracle is not a thing we *have* and they *lack* — it's a hard problem we've solved **in a
@@ -114,7 +114,7 @@ Behavior-grading needs to **see the agent's actions**, so it needs more than Tie
 | Tier | What we need from the client | What it catches | Friction |
 |---|---|---|---|
 | **0 — Endpoint only** | `POST {message} → {reply}` | Text-graded only (extraction, jailbreak, verbal leaks, action *confirmations*) | None |
-| **1 — Controlled harness** | A **staging** agent wired to our dummy tools + sink (= FinBuddy) | Full oracle, but on a test rig | Low |
+| **1 — Controlled harness** | A **staging** agent wired to our dummy tools + sink (= the TalentScreen HR harness) | Full oracle, but on a test rig | Low |
 | **2 — Tool/MCP proxy** | Repoint the agent's tool/MCP base-URL through our proxy (a **config change**) | Real tool calls + egress, near-prod | Medium |
 | **3 — Telemetry SDK** | A few lines of middleware emitting tool calls + outbound requests | Most production-realistic | Medium |
 | **4 — Network egress capture** | Run the tool sandbox behind our egress proxy / sidecar | Exfil through channels we never modeled | High |

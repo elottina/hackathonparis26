@@ -1,175 +1,124 @@
-# Rogue — Outreach Kit (EN + FR)
+# Rogue — Outreach Kit
 
-Cold messages, email templates, a personalization system, and a prospect tracker for landing the first design partners. Pairs with [CUSTOMERS.md](./CUSTOMERS.md).
+Cold/warm messages for landing HR-screening design partners.
 
-**Landing:** https://rogue-gamma.vercel.app · **Reply-to / inbox:** federica@rowads.studio
-
----
-
-## 0. How the funnel actually works (read first)
-
-Two different "URLs" — don't confuse them:
-
-1. **The landing URL** (`rogue-gamma.vercel.app`) — **must be public.** It is. You send this in DMs/emails so prospects can read the offer and (optionally) paste their endpoint.
-2. **The prospect's agent endpoint** (what they paste into the SCAN box / send you) — this is the URL of *their* AI agent that Rogue attacks. It must be **reachable by your scanner**, which in practice means one of:
-   - a **public HTTPS URL** (staging or OK-to-hit prod) — easiest;
-   - a URL **behind an API key** (they give you the key) — fine;
-   - a **localhost / private** agent → they expose it with a tunnel (`ngrok`, `cloudflared`) for an hour, or hand you a staging URL;
-   - **no clean API** (just a chat widget) → you drive the widget with browser automation as a fallback.
-   It does **not** have to be "listed / indexed" — just network-reachable from wherever you run `engine/run.py`.
-
-**The two channels feeding you endpoints:**
-- **Inbound (the landing):** every SCAN / "Break my agent" button opens a pre-filled email **to federica@rowads.studio** with whatever endpoint they typed. ⚠️ It opens *their* mail client — if they don't hit send, nothing reaches you, and there's no database. The real volume comes from ↓
-- **Outbound (this kit):** you proactively DM/email 15–20 qualified founders. They reply with an endpoint. **This is the main motion** per CUSTOMERS.md.
-
-**Then, per prospect:** take the endpoint → `python engine/run.py --target http --url <endpoint>` (≈15-line shim if their request/response shape differs) → `findings.json` → send the ranked report + the 1-page readiness sheet, **same day, within ~2h**. Then ask for logo + quote + WTP.
+**Landing:** https://rogue-gamma.vercel.app  
+**Reply-to:** federica@rowads.studio
 
 ---
 
-## 1. Qualify in 30 seconds (the ICP filter)
+## 1. Funnel
 
-Send only to contacts that pass most of these:
-- **Live/staging agent** (support bot, chat widget, copilot, automation) pointable at a URL — not just an idea.
-- **Touches tools or private data** (APIs, DB, user records, refunds/bookings/email/code) → **P0**, the behavior-oracle demo is strongest. Pure FAQ bot = weak.
-- **Sells up-market / to regulated buyers** → the "a security questionnaire is blocking my deal" wedge applies → higher willingness-to-pay.
-- **Founder reachable in one hop** (DM/email, no procurement).
-- **Can hand over an endpoint in <1 day.**
-- **WTP tell:** recently got a security questionnaire / SOC2 ask / "is your AI safe?" from a prospect.
+Two URLs matter:
 
----
+1. **Rogue landing URL** — what we send prospects.
+2. **Prospect agent endpoint** — the staging/demo URL Rogue scans.
 
-## 2. DM templates (short — WhatsApp / Telegram / LinkedIn / X)
+Best-case scan input:
 
-`tu` is intentional in the French (founder-to-founder). Swap to `vous` for colder/senior contacts.
-Replace every `{token}` — see §5 for the list and a 30-sec research routine.
+```text
+POST /chat { "message": "...", "history": [...] }
+→ { "reply": "...", "tool_calls": [...] }
+```
 
-### A) Support / chatbot agent
-
-**EN**
-> Hey {first_name} — quick one, founder to founder. I'm building **Rogue**, automated red-teaming for AI agents, and I want to break {product}'s chatbot this weekend, **for free**. Send me a link (staging is fine) and in a couple hours you get a ranked report of how I jailbroke it, got it to leak another user's data, or talked it into something it shouldn't do — plus a 1-page "AI security & EU AI Act readiness" sheet you can forward to your next enterprise security review. All I ask if it's useful: a 2-line quote + an OK to call {company} a design partner. Got 5 min to send the link?
-
-**FR**
-> Salut {first_name} — vite fait, de fondateur à fondateur. Je construis **Rogue**, du red-teaming automatisé pour agents IA, et je veux casser le chatbot de {product} ce week-end, **gratuitement**. Envoie-moi un lien (un endpoint de staging suffit) et dans deux heures tu reçois un rapport classé : comment je l'ai jailbreaké, comment je lui ai fait fuiter les données d'un autre client, ou comment je l'ai convaincu de faire un truc interdit — plus une fiche d'1 page « sécurité IA & conformité EU AI Act » à transférer à ta prochaine revue de sécurité enterprise. Tout ce que je demande si c'est utile : 2 lignes de citation + l'accord pour citer {company} comme design partner. T'as 5 min pour m'envoyer le lien ?
-
-### B) Tool-using / automation agent (books, refunds, sends, ops, code/PRs)
-
-**EN**
-> {first_name} — your agent that {action} is exactly what I built a red team for. This weekend I'll point an autonomous attacker swarm at it, **free**, and show you not just what it SAYS but what it actually DID — like an unauthorized tool call, or data quietly leaving to a sink while the chat reply looks totally innocent. You get a ranked vuln report (OWASP Agentic Top 10 + the EU AI Act articles it touches) same day. Tiny catch if it's useful: a 2-line quote + permission to show {company}'s logo. Drop me a staging endpoint?
-
-**FR**
-> {first_name} — ton agent qui {action} c'est exactement ce pour quoi j'ai construit un red team. Ce week-end je lance un essaim d'attaquants autonomes dessus, **gratuit**, et je te montre pas seulement ce qu'il DIT mais ce qu'il a vraiment FAIT — genre un appel d'outil non autorisé, ou des données qui partent discrètement vers un sink pendant que la réponse du chat a l'air totalement clean. Tu reçois un rapport de vulnérabilités classé (OWASP Agentic Top 10 + les articles de l'EU AI Act concernés) le jour même. Petite contrepartie si c'est utile : 2 lignes de citation + l'accord pour afficher le logo de {company}. Tu m'envoies un endpoint de staging ?
-
-### C) MCP-connected copilot
-
-**EN**
-> Hey {first_name} — saw you're wiring {product} to MCP servers/tools. You already know MCP is the least-tested attack surface right now — tool-description poisoning, the lethal trifecta. I built a self-serve red team for exactly this; I'll run it against your copilot this weekend, **free**, graded on real tool calls + egress, not string-matching. You'll get a reproducible trace of any exfil/hijack + an audit-ready report your next enterprise buyer's security team will ask for. In exchange: a short quote + OK to name you as a design partner. Just need a staging URL or your tool config — 5 min.
-
-**FR**
-> Salut {first_name} — j'ai vu que tu connectes {product} à des serveurs/outils MCP. Tu sais déjà que MCP est la surface d'attaque la moins testée en ce moment — tool-description poisoning, la « lethal trifecta ». J'ai construit un red team self-serve pour exactement ça ; je le lance sur ton copilot ce week-end, **gratuit**, évalué sur les vrais appels d'outils + l'exfiltration, pas du string-matching. Tu reçois une trace reproductible de toute exfil/hijack + un rapport prêt pour l'audit que l'équipe sécurité de ton prochain client enterprise va demander. En échange : une courte citation + l'accord pour te citer comme design partner. J'ai juste besoin d'une URL de staging ou de ta config d'outils — 5 min.
+If their shape differs, we write a small shim. If they only have a widget, we can still test text-level
+behavior. For behavior-oracle proof, ask for one planted canary, tool trace, callback sink, or returned
+`tool_calls`.
 
 ---
 
-## 3. Email templates (a bit longer — for non-IM contacts)
+## 2. Qualify Before Sending
 
-**Subject lines (A/B these — keep them lowercase + specific):**
-- EN: `breaking {product}'s AI agent this weekend (free)` · `free red-team of {product}'s agent` · `{first_name} — I think I can get {product}'s agent to leak data`
-- FR: `je casse l'agent IA de {product} ce week-end (gratuit)` · `red-team gratuit de l'agent de {product}` · `{first_name} — je crois pouvoir faire fuiter des données à l'agent de {product}`
+Send only if the person/company likely has:
 
-**EN — body**
-> Hi {first_name},
->
-> Founder to founder — I'm building **Rogue** (https://rogue-gamma.vercel.app), an autonomous red team for AI agents. We point a swarm of attacker agents at a live agent and grade what it actually **did** — tool calls, data egress — not the polite text it said.
->
-> I'd like to break {product}'s agent this weekend, **for free**. Send me a link or a staging endpoint and within a couple hours you'll get:
-> • a **ranked vulnerability report** — each finding with a reproducible trace, mapped to OWASP + MITRE ATLAS + the exact EU AI Act article, with a one-line fix
-> • a 1-page **"AI Security & EU AI Act Readiness"** sheet you can forward straight to your next enterprise prospect's security review
->
-> All I ask if it's useful: a two-line quote and your OK to call {company} a design partner.
->
-> {personal_hook}
->
-> Worth 5 minutes?
+- HR-tech, ATS, recruiting automation, candidate ranking, or CV-screening AI.
+- Candidate PII or candidate decisioning.
+- European, enterprise, or regulated customers.
+- A founder/CTO/product lead reachable directly.
+- A staging/demo surface we can test quickly.
+
+Use generic AI-agent prospects only as backup proof, not as the main wedge.
+
+---
+
+## 3. Short DM
+
+> Hey {first_name} — quick founder-to-founder note. I’m building **Rogue**, an autonomous red-team
+> for AI HR / CV-screening agents.  
+>  
+> I’d like to run a free exposure scan on {product}: candidate PII leaks, hidden web lookup, proxy
+> bias, missing human oversight, and prompt injection. The output is a blurred GDPR / EU AI Act
+> exposure report you can keep.  
+>  
+> If it’s useful, I’ll ask for a short quote or a paid deep scan. Can you send a staging endpoint or
+> demo login?
+
+---
+
+## 4. Email
+
+**Subject options**
+
+- `free exposure scan for {product}'s screening agent`
+- `{first_name} — can Rogue catch candidate-data leakage in {product}?`
+- `red-team of {product}'s CV-screening agent`
+
+**Body**
+
+> Hi {first_name},  
+>  
+> I’m building **Rogue**, an autonomous red-team for AI agents, focused on HR / CV-screening systems.  
+>  
+> We test what the agent **did**, not only what it said: prompt injection, candidate PII leakage,
+> hidden external lookup, proxy discrimination, missing human oversight, and unsafe tool calls. Each
+> finding is mapped to GDPR / EU AI Act risk.  
+>  
+> I’d like to run a free exposure scan on {product}. You get a blurred report with finding count,
+> severity, and mapped obligations. If it is useful, we can do a paid deep scan with full trace and
+> remediation.  
+>  
+> {personal_hook}  
+>  
+> Worth sending a staging endpoint or demo login?  
 > {your_name}
 
-**FR — body**
-> Salut {first_name},
->
-> De fondateur à fondateur — je construis **Rogue** (https://rogue-gamma.vercel.app), un red team autonome pour agents IA. On lance un essaim d'agents attaquants sur un agent en prod et on évalue ce qu'il a réellement **fait** — appels d'outils, fuites de données — pas le texte poli qu'il a répondu.
->
-> J'aimerais casser l'agent de {product} ce week-end, **gratuitement**. Envoie-moi un lien ou un endpoint de staging et en deux heures tu reçois :
-> • un **rapport de vulnérabilités classé** — chaque faille avec une trace reproductible, mappée à OWASP + MITRE ATLAS + l'article exact de l'EU AI Act, avec un correctif en une ligne
-> • une fiche d'1 page **« Sécurité IA & Conformité EU AI Act »** à transférer directement à la revue de sécurité de ton prochain client enterprise
->
-> Tout ce que je demande si c'est utile : deux lignes de citation et ton accord pour citer {company} comme design partner.
->
-> {accroche_perso}
->
-> Ça vaut 5 minutes ?
-> {ton_prénom}
+---
+
+## 5. Follow-Up
+
+> {first_name} — quick proof bump. Rogue catches the case text-only tests miss: a screening agent
+> gives a clean candidate recommendation while candidate data leaves via a tool call / external
+> lookup.  
+>  
+> Happy to run the free exposure scan on {product}; you keep the report either way.
 
 ---
 
-## 4. Follow-up bump (send ~4h later, with a redacted breach screenshot)
-
-Social proof roughly doubles reply rate — attach a real, anonymized breach.
-
-**EN**
-> {first_name} — bumping with proof: I pointed Rogue at another founder's production agent and it leaked a *different* customer's record in under 4 minutes (screenshot, redacted). Takes ~10 min on yours and you keep the report. Still up for it? Just need a link.
-
-**FR**
-> {first_name} — petite relance avec une preuve : j'ai lancé Rogue sur l'agent en prod d'un autre fondateur, il a fuité la donnée d'un *autre* client en moins de 4 minutes (capture, anonymisée). Sur le tien ça me prend ~10 min et tu gardes le rapport. Toujours partant ? J'ai juste besoin d'un lien.
-
----
-
-## 5. Personalization system
-
-**Tokens to fill every time:**
+## 6. Personalisation Tokens
 
 | Token | Meaning | Example |
 |---|---|---|
 | `{first_name}` | First name | Maya |
-| `{company}` | Company | Lumen |
-| `{product}` | Product / agent name | Lumen Assistant |
-| `{action}` | What a tool-agent DOES (verb phrase) | "books demos and issues refunds" |
-| `{personal_hook}` / `{accroche_perso}` | One specific, true detail | "loved your Show HN on the support copilot" |
-| `{your_name}` / `{ton_prénom}` | You | Federica |
+| `{company}` | Company | MeetPia |
+| `{product}` | Product / agent name | MeetPia screening agent |
+| `{personal_hook}` | One true detail | "Saw you process thousands of CVs/day." |
+| `{your_name}` | Sender | Federica |
 
-**30-second research routine (do this per contact before sending):**
-1. **Their site** → is there a chat widget / "AI assistant"? → picks archetype A/B/C **and** often gives you the endpoint.
-2. **Do they sell enterprise?** "Contact sales", SOC2 badge, big customer logos, a "/security" page → use the WTP / questionnaire hook.
-3. **Recent signal** → Show HN / Product Hunt / a LinkedIn or X post → that's your `{personal_hook}`.
-4. **Name + face** → LinkedIn/X for the founder + one thing they said recently.
+Research routine:
 
-**Worked examples (illustrative — replace with real contacts):**
-- *Maya, founder of a YC support-bot startup (sells to mid-market):*
-  > Hey Maya — quick one, founder to founder. I'm building Rogue, automated red-teaming for AI agents, and I want to break Lumen Assistant this weekend, for free. Loved your Show HN last week. Send me a staging link and in a couple hours you get a ranked report of how I jailbroke it or got it to leak another user's data — plus a 1-page EU AI Act readiness sheet you can forward to your next enterprise security review. All I ask: a 2-line quote + OK to call Lumen a design partner. 5 min?
-- *Thomas, fondateur d'un agent qui prend des RDV et envoie des emails :*
-  > Thomas — ton agent qui prend les RDV et envoie les relances, c'est exactement ce pour quoi j'ai construit un red team. Ce week-end je lance un essaim d'attaquants dessus, gratuit, et je te montre ce qu'il a vraiment FAIT — genre un appel d'outil non autorisé pendant que la réponse a l'air clean. Rapport classé le jour même (OWASP + EU AI Act). Si c'est utile : 2 lignes de citation + le logo. Tu m'envoies un endpoint de staging ?
-- *An MCP copilot dev you saw in the Anthropic Discord:*
-  > Hey {first_name} — saw you wiring your copilot to MCP servers in the Anthropic Discord. You know MCP is the least-tested surface right now. I'll run a self-serve red team against it this weekend, free, graded on real tool calls + egress. You get a reproducible exfil trace + an audit-ready report. In exchange: a short quote + OK to name you as a design partner. Staging URL or tool config?
+1. Does the product screen/rank/recommend candidates?
+2. Does it mention Europe, enterprise, compliance, GDPR, or AI Act?
+3. Is there a demo, widget, API, or public workflow?
+4. Who is the founder/CTO/product owner?
 
 ---
 
-## 6. Prospect list — tracker + where to source the right people
+## 7. Tracker Fields
 
-Rogue's ICP is **founders/CTOs shipping a customer-facing AI agent** — NOT the Cannes/advertising audience. Source from:
+| Name | Company | Product | HR use case | Endpoint? | Canary? | Status | WTP |
+|---|---|---|---|---|---|---|---|
+| | | | CV screen / ATS / recruiter copilot | y/n | y/n | new → sent → endpoint → scanned → quote | € |
 
-| Pri | Where to find them | Channel |
-|---|---|---|
-| **P0** | **Hackathon room (Paris Builds 2026)** — teams building tool/MCP agents | Walk the room; Discord: "who's building an agent that calls tools or an MCP server?" |
-| **P0** | Founder friends w/ a live support/chat agent selling to businesses | Your direct network; founder WhatsApp/Telegram groups |
-| **P0** | Founder friends w/ a tool-using / automation agent | Devtool / AI-ops founders; YC batch Slack (2 hops) |
-| **P1** | MCP copilot builders | MCP/Anthropic Discords, r/mcp, MCP server repo authors |
-| **P1** | Friends-of-friends via a teammate's warm intro | Ask each teammate + mentors |
-| **P2** | AI-builder Discord/Slack/X communities | Post "I'll free-red-team the first 3 agents below" |
-| **P2** | Public "try our AI" widgets / HF Spaces | For your own screenshots; retro-consent before naming |
+Status flow:
 
-**Fill this tracker (one row per contact):**
-
-| Name | Company | Role | Archetype (A/B/C) | Agent does what | Sells enterprise? (WTP) | Reach via | Endpoint? | Lang | Personal hook | Status |
-|---|---|---|---|---|---|---|---|---|---|---|
-| | | | | | | DM / email / warm | y/n | EN/FR | | new → sent → replied → scanned → quote |
-| | | | | | | | | | | |
-| | | | | | | | | | | |
-
-> Status flow: `new → sent → bumped → replied → endpoint → scanned → report sent → logo+quote → WTP $`. Screenshot every "yes I'd pay $X/mo" (DM, not verbal).
+`new → sent → replied → endpoint → scanned → report sent → readout → quote → WTP → paid scan`

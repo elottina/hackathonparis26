@@ -1,78 +1,143 @@
 # Rogue
 
-**Penetration testing for AI agents, run by an AI agent.**
+**Autonomous red-teaming for AI agents, focused on HR / CV-screening agents.**
 
-Rogue is an autonomous red-team swarm. You point it at any deployed AI agent (a
-URL, an API endpoint, a chat widget) and it spawns attacker agents that adapt in
-real time to break the target: extract its system prompt, jailbreak its policy,
-leak data, trigger unauthorized actions. Agent-on-agent, no human in the core
-loop.
+Rogue points an attacker swarm at an AI agent and reports how it can be broken:
+prompt extraction, jailbreaks, candidate PII leaks, biased screening behavior, missing human
+oversight, and unauthorized tool use. Its core difference is the **behavior oracle**:
+Rogue grades what the agent **did** — tool calls and data egress — not only what it said in the
+chat response.
 
-Every confirmed vulnerability is mapped to the specific **EU AI Act** obligation
-it violates, producing the conformity evidence the buyer is legally required to
-hold.
+The beachhead is **AI HR / CV-screening agents**, an EU AI Act Annex III high-risk workflow.
+Rogue turns each confirmed finding into an evidence-backed report mapped to GDPR / AI Act risk.
 
 Built for Paris Builds 2026 — track: *Software for Agents*.
 
-## How it works
+## Why Rogue Exists
+
+A screening agent can look safe in chat while doing something unsafe behind the scenes:
+
+> "I recommend this candidate based only on the CV."  
+> Meanwhile: a tool call sends the candidate's name and data to an external lookup endpoint.
+
+Text-only red-team tools miss that. Rogue watches the action channel.
+
+Pitch line:
+
+> **We grade what the agent did, not what it said.**
+
+## How It Works
 
 ```
-        target agent (URL / API)
-                  ^
-                  |  adversarial conversations
-                  |
-   ┌──────────────┴───────────────┐
-   │        Orchestrator          │   runs N attackers in parallel (asyncio)
-   └──────────────┬───────────────┘
-                  |
-   ┌──────────────┴───────────────┐
-   │   Attacker agents (swarm)    │   each runs one strategy, adapts per turn
-   └──────────────┬───────────────┘
-                  |
-   ┌──────────────┴───────────────┐
-   │           Judge              │   did the attack succeed? severity? AI Act article?
-   └──────────────┬───────────────┘
-                  |
-              findings.json  ->  dashboard
+target agent (URL / API / staging endpoint)
+        |
+        v
+autonomous attacker swarm
+        |
+        v
+target replies + tool calls + egress events
+        |
+        v
+judge + behavior oracle
+        |
+        v
+AI Act / GDPR mapped report
 ```
 
-- **`engine/target.py`** — adapter to talk to the agent under test. Ships with a
-  deliberately vulnerable `DemoTarget` so the whole pipeline runs end to end with
-  zero external setup, plus an `HTTPTarget` for real endpoints.
-- **`engine/strategies.py`** — the attack playbook (prompt extraction, jailbreak,
-  data leak, unauthorized action).
-- **`engine/attacker.py`** — an attacker agent that, given a strategy and the
-  conversation so far, writes the next adversarial message.
-- **`engine/judge.py`** — scores whether the attack landed, its severity, and the
-  EU AI Act article it breaks.
-- **`engine/orchestrator.py`** — fans out the swarm and aggregates findings.
-- **`engine/run.py`** — CLI entry point.
+Key modules:
+
+- `engine/strategies.py` — attack playbook, including HR/privacy/bias/tool-exfiltration probes
+- `engine/attacker.py` — attacker agent that adapts turn by turn
+- `engine/orchestrator.py` — runs the swarm concurrently
+- `engine/target.py` — demo, tool-enabled, and HTTP target adapters
+- `engine/sink.py` — deterministic egress sink for the behavior oracle
+- `engine/oracle.py` — converts confirmed egress into critical behavior findings
+- `engine/server.py` — local dashboard + scan API
+- `dashboard/` — browser UI for live scans and archived reports
 
 ## Quickstart
 
 ```bash
 cd engine
-python -m venv .venv && source .venv/bin/activate
+python -m venv .venv
+.venv\Scripts\activate
 pip install -r requirements.txt
-export ANTHROPIC_API_KEY=sk-ant-...
-
-# Attack the built-in vulnerable demo target:
-python run.py --target demo
-
-# Attack a real HTTP agent (expects {"reply": "..."} for a POST {"message": "..."}):
-python run.py --target http --url https://example.com/agent
+set ANTHROPIC_API_KEY=sk-ant-...
 ```
 
-Findings are written to `engine/findings.json`.
+Run the local dashboard:
 
-## Stack
+```bash
+python server.py
+```
 
-- Python + asyncio for the swarm (cheap parallelism, the unfair advantage).
-- Anthropic Claude as the attacker / judge brain (`claude-haiku-4-5` for the
-  swarm, `claude-sonnet-4-6` for the judge).
-- Dashboard: TBD (Next.js) — reads `findings.json` and shows attacks live.
+Open:
 
-## Scope (36h)
+```text
+http://localhost:8799
+```
 
-Build the engine + the live dashboard. No auth, no billing, no multi-tenant.
-Pre-test live targets for the demo, map findings to the AI Act, nail the pitch.
+Run the deterministic demo from CLI:
+
+```bash
+python run.py --seeded
+```
+
+Run the HR demo from the dashboard by choosing the HR preset, or scan a real endpoint that accepts:
+
+```json
+POST /chat
+{
+  "message": "...",
+  "history": [{"role": "user", "content": "..."}]
+}
+```
+
+Expected response:
+
+```json
+{
+  "reply": "...",
+  "tool_calls": [
+    {"name": "web_search", "arguments": {"url": "https://example.com", "body": "..."}}
+  ]
+}
+```
+
+For basic text-graded scans, `reply` is enough. For behavior-oracle findings, Rogue needs a canary,
+tool-call trace, callback sink hit, or staging tool integration.
+
+## Business Direction
+
+Current documents:
+
+- [FINAL-PRODUCT-DECISION.md](./FINAL-PRODUCT-DECISION.md) — locked direction and demo arc
+- [PITCH.md](./PITCH.md) — deck and video script
+- [PRICING.md](./PRICING.md) — pricing, unit economics, Q&A
+- [GTM.md](./GTM.md) — scan-as-lead-gen and first €10K plan
+- [COMPETITION.md](./COMPETITION.md) — differentiation and moat
+- [MARKET-ANALYSIS.md](./MARKET-ANALYSIS.md) — full market/rubric synthesis
+
+Important positioning:
+
+- HR/CV-screening AI is Annex III high-risk.
+- Use **2 Dec 2027** as the pitch-safe high-risk timeline, not the stale Aug-2026 line.
+- Urgency today comes from enterprise review, legal review, and evidence-building.
+- Do not claim "first to red-team agents"; claim the action/egress channel.
+
+## Scope
+
+Hackathon scope:
+
+- Paste-a-URL scan
+- Autonomous attacker swarm
+- HR screening demo
+- Behavior oracle via sink/listener/canary
+- AI Act / GDPR mapped report
+- Local dashboard and scan archive
+
+Not in this build:
+
+- Full certification product
+- Full MCP proxy / CI/CD integration
+- Billing, auth, or multi-tenant SaaS

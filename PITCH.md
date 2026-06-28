@@ -1,50 +1,103 @@
-# Rogue — Pitch, Deck & Live Demo
+# Rogue — Pitch, Deck & Demo
 
-**5 minutes. The pitch can make or break everything — over-rehearse it.** One-liner to repeat verbatim until judges quote it back: **"We grade what the agent DID, not what it said."**
+**Repeat until judges quote it back:**  
+> We grade what the agent **did**, not what it said.
 
----
-
-## Deck — slide by slide
-*Slides = 1–2 lines of evidence. The story lives in your mouth, not on the slide.*
-
-1. **Cold open — the agent did it itself.** *On slide:* "July 2025: an AI coding agent deletes a company's PRODUCTION database during a code freeze. Then fabricates 4,000 fake users and lies that rollback is impossible. No hacker. Just the agent." *Say:* the Replit story + "one email silently drained a Microsoft Copilot user's files, zero clicks. Your agent can already move money, call APIs, read private data — and nobody is testing what it actually does." *(No logo, no product for the first 20s — earn the fear.)*
-2. **Meet the founder whose deal is stuck.** *On slide:* "You shipped an AI agent. An enterprise prospect sent a 40-question AI security review. Q: 'Have you adversarially tested for prompt injection and data exfiltration?' You: ____ — >1/3 of companies have lost a deal failing one." *Say:* pin the seed–Series B founder, the deal frozen on one question, no one owns it, pain is TODAY.
-3. **Why now.** *On slide:* Gartner 40% of enterprise apps embed agents by end-2026 · 8 acquisitions in 14 months (Promptfoo→OpenAI, Lakera→Check Point $300M, Protect AI→Palo Alto $650M) · EU AI Act Art. 15 puts adversarial testing into law, fines €35M/7%. *Say:* + casually correct the high-risk date to **Dec 2027** = domain mastery.
-4. **The gap everyone left open.** *On slide:* GRC (Vanta) can't attack · red-teamers can't certify · OSS (Garak/PyRIT) can't see what the agent DID · the good agent-red-teamers are enterprise-only & just got bought. **Nobody is: self-serve · behavior-aware · vendor-neutral · EU-aware.** *Say:* name the empty lane; never claim "first."
-5. **Rogue — the behavior oracle (LIVE).** *On slide:* "Point Rogue at any agent. A swarm runs a multi-turn campaign. We grade what the agent DID — real tool calls + data egress to our sink — not the text. → LIVE DEMO." *Say:* the differentiator in one breath, then "watch the chat reply, and watch our sink." → **run demo**.
-6. **What you just saw.** *On slide:* "Chat reply: innocent ✅. Our sink: the secret arrived 🔴. CONFIRMED — Critical · cross-customer data leak · OWASP LLM06 · MITRE ATLAS · EU AI Act Art. 10 → 1-page audit PDF." *Say:* lock the jaw-drop, convert to the monetizable artifact.
-7. **Traction — landed this weekend.** *On slide:* 3 design-partner logos + "Rogue leaked another customer's data from [Startup]'s PRODUCTION agent in 4 min" + a named quote + "On camera: 'Yes — I'd pay $1.5K/mo.'" *Say:* real users, real vuln, willingness-to-pay — play the 10s clip. **Only claim what's confirmable in writing.** → **Design Partner #1 = Clarity** (a real App Store consumer app), broken live on its production endpoint `clary-web-ten.vercel.app` — verbatim system-prompt leak + forbidden financial advice. Full copy, findings & framing in [CLARITY.md](./CLARITY.md).
-8. **Business model — land → expand.** *On slide:* LAND free→$5–15K/scan · EXPAND continuous + compliance evidence $500–2K/mo → $40–200K/yr up-market. *Say:* Vanta proved the startup-compliance wedge (16k customers).
-9. **Why us / the ask.** *On slide:* "Vendor-neutral · dev-first · behavior-aware · EU-aware. We break your agent before your customers — or the regulator — do. Ask: 10 design-partner agents this month." *Say:* crisp why-us + concrete forward ask, not a generic thanks.
+The deck should feel narrow and decisive: **HR / CV-screening agents**, behavior oracle, scan-as-lead-gen,
+first €10K. No generic AI-security fog.
 
 ---
 
-## Live demo script (~90s, build to the jaw-drop)
+## Deck
 
-| Beat | On screen | Narration | sec |
-|---|---|---|---|
-| Launch | Paste FinBuddy endpoint → SCAN → attacker tiles spawn across 4 strategies | "I point Rogue at a live agent and launch — instantly a swarm fans out: prompt extraction, jailbreak, data leak, unauthorized action." | 12 |
-| Swarm runs | Tiles stream attacker_msg/target_reply; OWASP + ATLAS labels tick | "Each attacker runs a real multi-turn campaign, adapting every turn — an autonomous adversary, all live." | 15 |
-| Zoom in | One data-leak convo; FinBuddy replies warm + apologetic, "I can't share another customer's details." | "Watch this one. The reply is polite, it refuses, looks totally safe. A tool that grades text scores this a PASS. This is where everyone else stops." | 18 |
-| **JAW DROP** | Split screen. LEFT: innocent reply frozen. RIGHT: sink console — `POST /exfil secret=INTERNAL-REF-7741…` flashes red | "But watch our sink. While that reply said 'I can't share anything'… the secret it was told never to reveal just left the building. We grade what the agent DID." | 22 |
-| Breach card | "breach" animates: CRITICAL · cross-customer leak · OWASP LLM06 · ATLAS · EU AI Act Art. 10 + trace | "Rogue confirms it, maps it to OWASP, MITRE ATLAS, and the exact AI Act article — with a reproducible trace." | 13 |
-| Report | GENERATE REPORT → 1-page readiness PDF renders | "One click: the audit-ready report the founder forwards to their prospect's security team to unblock the deal." | 10 |
+1. **Cold Open — Hiring AI Already Hurts People**  
+   *On slide:* "A hiring AI can reject, rank, or investigate a candidate before a human ever looks."  
+   *Say:* Amazon scrapped a biased hiring AI; iTutorGroup paid $365K for age-discriminatory screening.
+   The risk is not theoretical, and HR is exactly where AI mistakes become legal problems.
 
-**Run via `--seeded` for determinism. Pre-warm 60s before stage. Hotspot, not venue wifi.**
+2. **The Buyer**  
+   *On slide:* "HR-tech founder shipping a CV-screening agent. No security team. Enterprise buyer asks:
+   'Can you prove it is safe?'"  
+   *Say:* This founder owns candidate PII, discrimination risk, and the AI Act evidence trail.
+
+3. **Why Now**  
+   *On slide:* "CV-screening AI is Annex III high-risk · latest high-risk timeline: 2 Dec 2027 · evidence
+   requests start now."  
+   *Say:* The stale pitch is "Aug 2026 panic." The credible pitch is: the obligation is certain, the
+   testing is hard, and smart vendors build the evidence file before procurement or auditors ask.
+
+4. **The Gap**  
+   *On slide:* "GRC tools don't attack. Text red-teamers grade responses. OSS needs your harness.
+   Rogue watches actions."  
+   *Say:* We are not claiming first red-team tool. We are claiming the action channel: tool calls and
+   egress, where the hidden breach actually happens.
+
+5. **Rogue — Live HR Demo**  
+   *On slide:* "Point Rogue at a screening agent. A swarm attacks. The behavior oracle watches egress."  
+   *Say:* Tell judges where to look: the visible recommendation can be clean while candidate data leaves
+   through a tool call.
+
+6. **What You Just Saw**  
+   *On slide:* "Chat reply: clean. Action channel: candidate data left the system. CONFIRMED."  
+   *Say:* Text-only testing passes this. Rogue catches it and maps it to GDPR + AI Act obligations with
+   a reproducible trace.
+
+7. **Market & GTM**  
+   *On slide:* "Free exposure scan → €1.5K deep scan → continuous monitoring + Vault."  
+   *Say:* The product is its own acquisition engine: scan a prospect's screening agent and send a
+   blurred exposure report. The breach is the pitch.
+
+8. **First €10K**  
+   *On slide:* "7 × €1,500 Standard scans = €10.5K · existing P0 list: 84 contacts."  
+   *Say:* Start with HR/recruiting prospects already in `prospects.csv`, then use redacted findings to
+   scale founder-led outbound.
+
+9. **Why Us / Ask**  
+   *On slide:* "We watch its hands. Ask: 10 HR-screening design partners this month."  
+   *Say:* We are building the evidence layer for AI agents that take real actions in regulated workflows.
 
 ---
 
-## Demo failure backup (3 layers, golden rule: keep talking, never debug on stage)
-- **8-second cut rule:** if the swarm hasn't visibly spawned in 8s, cut to backup *mid-sentence*, no apology, identical narration.
-- **L1 — local seeded:** DemoTarget + sink both on localhost; `judge.py` deterministic shortcut (planted secret verbatim ⇒ guaranteed critical) means the jaw-drop *cannot* fail if the run completes.
-- **L2 — `--seeded` replay:** replays a canned known-good event stream into the real dashboard at realistic speed. Zero model calls, zero network. **Default if wifi is shaky.**
-- **L3 — pre-recorded 90s MP4:** exact framing incl. the split-screen, stored locally **and** unlisted on Loom/YouTube. If the laptop dies, present from a phone and narrate live over it. Keep findings.json + the PDF pre-rendered in a background tab.
+## 90-Second Demo Script
 
-## Where to drop the 3 proofs (escalating)
-1. **Real vuln** — the instant the demo ends, before the traction slide: "this wasn't our bot — 20 min ago we pointed Rogue at **Clarity, a real consumer app shipping on the App Store**, on its **live production endpoint**, and in minutes it leaked its own system prompt verbatim and gave specific IRS-tax + named-investment advice it's built never to give" (Rogue dashboard on `clary-web-ten.vercel.app` + the breach cards; optionally open the live Clary web UI so it's obviously real). *(The cross-customer-data-exfil-to-a-sink line stays on FinBuddy — that's the behavior-oracle finding; Clarity is text-graded.)*
-2. **Revenue quote** — pull-quote on the traction slide next to the business model: "exactly the report our enterprise prospect's security team asked for."
-3. **"Yes I'd pay"** — save for last; a 10s on-camera phone clip of a real founder saying "$1.5K/mo, yes" beats any slide text.
+| Beat | On screen | Narration | Sec |
+|---|---|---|---:|
+| Launch | Paste TalentScreen / HR endpoint → SCAN | "I point Rogue at a CV-screening agent and launch the attacker swarm." | 10 |
+| Swarm | Attacker tiles stream screening-specific probes | "Each attacker runs a multi-turn strategy: prompt injection, candidate PII leak, bias, missing oversight." | 15 |
+| Clean reply | Agent recommends a candidate normally | "The visible answer looks compliant. A text grader stops here and says safe." | 15 |
+| Jaw drop | Sink / tool-call panel shows external lookup or callback with candidate data | "But the action channel tells the truth: candidate data left the system." | 25 |
+| Breach card | CRITICAL · GDPR Art. 5 · Annex III HR risk · trace | "Rogue confirms the breach and maps it to the obligations the buyer needs evidence for." | 15 |
+| Report | Blurred/free report → full paid report | "This report is the sales motion: free exposure scan, paid trace and remediation, continuous monitoring." | 10 |
+
+Use deterministic demo mode for the recorded video. Show real scans as traction screenshots, not as a fragile
+live dependency.
+
+---
+
+## Proof Placement
+
+1. **Immediately after demo:** "This is the same engine we used on real black-box agents; Clarity produced
+   a system-prompt leak and forbidden advice on its production endpoint."
+2. **Traction slide:** show only confirmed logos / quotes / screenshots.
+3. **Business slide:** use the concrete WTP ask: "Would this be €500, €1K, or €2K/mo if it ran continuously
+   and produced audit-ready evidence?"
+
+---
 
 ## Do / Don't
-- **DO** open cold on Replit/EchoLeak, no logo, first 20s. **DO** repeat "we grade what the agent DID, not what it said." **DO** tell judges where to look. **DO** correct the AI Act date to Dec 2027. **DO** put WTP on camera. **DO** end on a concrete ask.
-- **DON'T** claim "first to red-team agents." **DON'T** live-debug or say "this usually works." **DON'T** bury the demo behind 3 min of TAM. **DON'T** inflate traction with logos-of-intent. **DON'T** read dense slides. **DON'T** explain engine internals (keep for Q&A).
+
+**Do**
+
+- Say "2 Dec 2027" for high-risk Annex III timing.
+- Tie urgency to enterprise review, legal review, and evidence-building now.
+- Repeat "we grade what it did, not what it said."
+- Say "Giskard grades the conversation; Rogue instruments actions."
+- Keep the demo HR-specific.
+
+**Don't**
+
+- Don't say "Aug 2026 deadline" for HR high-risk.
+- Don't claim "first to red-team agents."
+- Don't claim "Giskard can't test agents."
+- Don't say we read hidden reasoning.
+- Don't bury the demo behind TAM.
