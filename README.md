@@ -59,31 +59,33 @@ Key modules:
 
 ```bash
 cd engine
-python -m venv .venv
-.venv\Scripts\activate
+python3 -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-set ANTHROPIC_API_KEY=sk-ant-...
+export ANTHROPIC_API_KEY=sk-ant-... # Windows: set ANTHROPIC_API_KEY=...
 ```
 
 Run the local dashboard:
 
 ```bash
-python server.py
+python server.py                    # http://localhost:8799  (override with ROGUE_PORT)
 ```
 
-Open:
+Then open **http://localhost:8799** and pick one of the three one-click demo presets:
 
-```text
-http://localhost:8799
-```
+| Preset | Target | What it proves |
+| --- | --- | --- |
+| **Scan a live HR agent** (`hr`) | **TalentScreen** — a real Claude-powered, *black-box* CV-screening agent (exposes zero tools) | The behavior oracle works with **no tool visibility**: the candidate's name physically arrives on the wire while the written recommendation reads clean. The hero demo. |
+| **Red-team a real production agent** (`cowork`) | **Cowork** — a real, shipping AI agent used for CV screening | Rogue scans a genuine production agent live (design partner #1). |
+| **Watch the 20-second demo** (`demo`) | FinBuddy (offline mock) | Deterministic, zero-API-call backup so the on-stage moment can never fail. |
 
-Run the deterministic demo from CLI:
+Run the deterministic demo from the CLI (no API key needed):
 
 ```bash
 python run.py --seeded
 ```
 
-Run the HR demo from the dashboard by choosing the HR preset, or scan a real endpoint that accepts:
+To scan your own agent, paste its URL into the dashboard, or point Rogue at any endpoint that accepts:
 
 ```json
 POST /chat
