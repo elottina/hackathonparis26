@@ -12,8 +12,9 @@ we grade what the agent **did**, not how it "thinks".*
 CV-screening vendors**.
 
 **Why now:** CV-screening and candidate-ranking AI is an **EU AI Act Annex III high-risk**
-use case. The latest pitch-safe timeline is **2 Dec 2027** for Annex III high-risk obligations,
-not the stale "Aug 2026 cliff." The urgency today is still real: enterprise buyers, legal teams,
+use case. The high-risk obligations were **originally due Aug 2026, then deferred to 2 Dec 2027**
+(the Digital Omnibus) — most teams still parrot the stale "Aug 2026 cliff," so knowing the date
+moved is itself a credibility signal. The urgency today is still real: enterprise buyers, legal teams,
 and future auditors need evidence before the deadline, and the vendor owns discrimination + GDPR
 liability as soon as the agent screens real candidates.
 
@@ -87,6 +88,19 @@ euros of model calls and runs in minutes.
 the judge uses the stronger model. Sink/listener infrastructure is negligible. The target agent's
 own tokens are on the client's bill.
 
+### The three numbers a VC scores on
+
+| Metric | Value | Why |
+|---|---|---|
+| **ACV** (annual contract value) | **€20–30K** by month 12 | €1.5K wedge scan → continuous monitoring + Vault; mix ~30% scans / 55% monitoring / 15% Vault |
+| **CAC** | **≈ €0–100** | The free scan (~€1–2 of compute) *is* the outreach — founder-led, no paid acquisition; the report is the pitch |
+| **LTV** | **~€40–60K** (3-yr) | AI Act conformity is a lifecycle obligation; the Vault creates switching cost (leaving loses the accumulated conformity history) |
+| **LTV : CAC** | **100×+ early** | 99% gross margin on a self-funding, report-driven sales motion |
+
+**Wedge-vs-business (preempt "is €1.5K too small to be venture-scale?"):** €1.5K is the *wedge*, not
+the business. The business is recurring conformity monitoring + the evidence Vault (lock-in), and the
+market is *every* EU AI Act Annex III high-risk agent — HR is just the beachhead.
+
 ---
 
 ## 4. Expansion Path
@@ -116,7 +130,7 @@ One-off scans create cash and proof; continuous + Vault create retention.
 
 ## 6. Judge Q&A
 
-- **"Is the AI Act deadline really Aug 2026?"** → No. The pitch-safe date for Annex III high-risk obligations is **2 Dec 2027**. We use that as credibility, then sell the current pain: enterprise reviews and evidence-building start now.
+- **"Is the AI Act deadline really Aug 2026?"** → It *was* — then it moved. Annex III high-risk obligations were **deferred from Aug 2026 to 2 Dec 2027** (the Digital Omnibus). Knowing the real date is the credibility; the current pain is what sells: enterprise reviews and evidence-building start now.
 - **"Why would a startup pay €1.5K?"** → Because the alternative is a weeks-long audit, legal exposure, and a blocked enterprise buyer. A scan that finds and documents the issue is cheap.
 - **"Why not a one-time consultant?"** → Agents change every time the team reprompts, changes tools, or swaps models. The recurring product is regression monitoring plus the evidence trail.
 - **"Do the economics work?"** → Yes. A Standard scan is ~€5 of model calls sold for €1,500. The margin funds R&D and founder-led sales.

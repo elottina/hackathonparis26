@@ -21,9 +21,9 @@ first €10K. No generic AI-security fog.
    *Say:* This founder owns candidate PII, discrimination risk, and the AI Act evidence trail.
 
 3. **Why Now**  
-   *On slide:* "CV-screening AI is Annex III high-risk · latest high-risk timeline: 2 Dec 2027 · evidence
+   *On slide:* "CV-screening AI is Annex III high-risk · deadline moved Aug 2026 → **2 Dec 2027** (Digital Omnibus) · evidence
    requests start now."  
-   *Say:* The stale pitch is "Aug 2026 panic." The credible pitch is: the obligation is certain, the
+   *Say:* Most teams still parrot "Aug 2026" — the high-risk deadline was deferred to 2 Dec 2027, and knowing it moved shows we understand the regulation. The credible pitch is: the obligation is certain, the
    testing is hard, and smart vendors build the evidence file before procurement or auditors ask.
 
 4. **The Gap**  
