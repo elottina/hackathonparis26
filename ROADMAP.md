@@ -3,6 +3,10 @@
 *Direction locked: HR / CV-screening agents. The roadmap is about turning the hackathon build into
 a customer pilot, not broadening back into generic AI security.*
 
+> This is the **tactical** plan (submission → first €10K → month 2). For the long-horizon 0–36-month
+> projection — revenue curve, product/moat compounding, funding, and risks — see
+> [PROJECTION.md](./PROJECTION.md).
+
 ---
 
 ## Now: Submission / Demo

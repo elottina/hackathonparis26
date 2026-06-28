@@ -132,6 +132,8 @@ Current documents:
 - [GTM.md](./GTM.md) — scan-as-lead-gen and first €10K plan
 - [COMPETITION.md](./COMPETITION.md) — differentiation and moat
 - [MARKET-ANALYSIS.md](./MARKET-ANALYSIS.md) — full market/rubric synthesis
+- [ROADMAP.md](./ROADMAP.md) — tactical next-8-weeks plan
+- [PROJECTION.md](./PROJECTION.md) — long-horizon 0–36-month projection (revenue, moat, funding, risks)
 
 Important positioning:
 

@@ -21,13 +21,6 @@ The art of the company is making that integration light enough to keep our self-
 
 ## 1. Who we compete with (and who we don't)
 
-### Name collisions to kill first
-- **Venta AI** (getventa.ai, YC, German, $2M) — an **AI sales employee (SDR)** for Europe that does
-  GDPR-compliant *outreach*. **Not a competitor — a potential design partner / ICP.** "Compliant"
-  means *their agent obeys GDPR*, not *they audit other agents*. Do **not** put them on a competitive slide.
-- **Vanta** (vanta.com, ~16k customers) — GRC / compliance paperwork (SOC2, ISO, EU AI Act module).
-  **A foil, not a rival:** never touches the agent, can't produce a vuln. We're upstream of them
-  (we generate the evidence their register wants). Their 16k customers are our *business-model proof point*.
 
 ### Direct rivals — agent-native red-teamers (the real fight)
 | Player | What they do | The lane they left open |
@@ -41,7 +34,7 @@ The art of the company is making that integration light enough to keep our self-
 8+ acquisitions in ~14 months: **Promptfoo→OpenAI**, SplxAI→Zscaler, Lakera→Check Point (~$300M),
 Protect AI→Palo Alto (~$650M), Prompt Security→SentinelOne (~$250M), CalypsoAI→F5 (~$180M),
 Apex→Tenable (~$105M), Robust Intelligence→Cisco. Each now points at the acquirer's enterprise CISO.
-Vendor-neutral independence is suddenly scarce — true today, but transient (gone the moment *we're* acquired).
+Vendor-neutral independence is suddenly scarce. Also shows the market has real traction.
 
 ### Defense-first / OSS substrate (not rivals)
 - **Zenity / Operant** — runtime *defense*; offense is free OSS lead-gen.
