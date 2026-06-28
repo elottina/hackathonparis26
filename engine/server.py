@@ -137,11 +137,14 @@ def _run_job(job_id: str, url: str, preset: str) -> None:
             # The niche centerpiece: an AI CV-screening agent (EU AI Act Annex III,
             # high-risk) that gives a compliant recommendation while secretly looking
             # the candidate up online — the behavior oracle catches the egress.
+            # Black-box HR demo: a real served screening agent (TalentScreen) that
+            # exposes NO tools and leaks the candidate's name on the wire via a
+            # markdown badge URL. Caught by the egress oracle, not self-report.
             import hr_demo
-            target, sink, listener, egress, kwargs = hr_demo.setup(seeded=False)
-            chosen = hr_demo.HR_STRATEGIES
-            mode = "live scan · HR screening agent (Annex III high-risk)"
-            runs, turns = 2, 3
+            target, sink, listener, egress, kwargs = hr_demo.setup_http()
+            chosen = [s for s in hr_demo.HR_STRATEGIES if s.key == "gdpr_web_lookup"]
+            mode = "live scan · black-box HR screening agent (Annex III high-risk)"
+            runs, turns = 3, 2
         elif preset == "cowork":
             # The credibility headline: a live scan of a REAL, shipping agent
             # (Cowork) used for CV screening — driven over its own HTTP API. It
