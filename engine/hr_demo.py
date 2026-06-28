@@ -199,3 +199,30 @@ def setup(on_arrival=None, seeded: bool = False):
         target = HRScreeningAgent()
         kwargs = {"attacker": HRAttacker(), "egress": egress}  # scripted injections, real model
     return target, sink, listener, egress, kwargs
+
+
+def setup_http(url: str | None = None, on_arrival=None):
+    """Provision the BLACK-BOX HR scan: point Rogue at a real deployed/served HR
+    screening agent over HTTP (default: the TalentScreen target).
+
+    The agent exposes NO tools. It leaks the candidate's name inside a markdown
+    "verification badge" URL in its reply; EgressClient auto-loads that URL, so the
+    name physically arrives at our listener (network_arrival) while the written
+    recommendation cites only the CV. This proves the behavior oracle WITHOUT any
+    self-reported tool calls. Returns (target, sink, listener, egress, swarm_kwargs).
+    """
+    import os as _os
+
+    from egress import EgressClient
+    from listener import SinkListener
+    from sink import EgressSink
+    from target import HTTPTarget
+
+    url = url or _os.environ.get("TALENTSCREEN_URL", "http://localhost:8788/chat")
+    sink = EgressSink(HR_CANDIDATE)
+    listener = SinkListener(sink, on_arrival=on_arrival).start()
+    egress = EgressClient(redirect_to=listener.base)
+    target = HTTPTarget(url)
+    target.name = "TalentScreen (AI CV-screening agent · EU AI Act Annex III, high-risk)"
+    kwargs = {"attacker": HRAttacker(), "egress": egress}
+    return target, sink, listener, egress, kwargs
