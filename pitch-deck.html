@@ -172,6 +172,32 @@
   .posmap .end.xl{left:0;top:50%;transform:translateY(-50%);width:114px;text-align:center}
   .posmap .end.xr{right:0;top:50%;transform:translateY(-50%);width:114px;text-align:center}
 
+  /* early traction — real-screenshot collage */
+  .trwall{display:flex;justify-content:center;align-items:flex-start;gap:13px;margin-top:0;padding:2px 0 0}
+  .shot{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:7px}
+  .shot .pic{position:relative;background:#fff;border-radius:11px;border:1px solid var(--line);
+    overflow:hidden;box-shadow:0 15px 32px rgba(0,0,0,.5)}
+  .shot .pic img{display:block;width:100%;height:100%;object-fit:cover;object-position:center bottom}
+  .shot .pic::after{content:"";position:absolute;inset:0;border-radius:11px;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);pointer-events:none}
+  .shot .cap{font-family:var(--mono);font-size:10px;line-height:1.3;color:var(--mut);text-align:center;max-width:190px}
+  .shot .cap b{display:block;color:var(--ink);font-size:11.5px}
+  .shot .cap .pl{display:block;color:var(--faint);font-size:8px;letter-spacing:.11em;text-transform:uppercase;margin-bottom:1px}
+  .shot.a .pic{width:194px;height:262px;transform:rotate(-2.6deg)}
+  .shot.b .pic{width:194px;height:262px;transform:rotate(2deg)}
+  .shot.hero .pic{width:226px;height:262px;border:2px solid var(--red);box-shadow:0 20px 44px rgba(214,40,40,.34)}
+  .shot.hero{z-index:3}
+  .shot.hero .cap b{color:var(--red)}
+  .shot.d .pic{width:194px;height:262px;transform:rotate(-2deg)}
+  .shot.e .pic{width:194px;height:262px;transform:rotate(2.8deg)}
+  /* hero money-quote */
+  .trquote{margin-top:7px;display:flex;gap:12px;align-items:flex-start;
+    background:var(--red-bg);border:1px solid var(--red);border-radius:12px;padding:10px 16px}
+  .trquote .qm{font-family:Georgia,serif;font-size:34px;line-height:.7;color:var(--red);flex:0 0 auto}
+  .trquote .qt{font-size:12.5px;line-height:1.46;color:var(--ink)}
+  .trquote .qt .r{color:var(--red);font-weight:650}
+  .trquote .qt .src{display:block;margin-top:4px;font-family:var(--mono);font-size:10px;color:var(--mut)}
+
   /* funnel + econ */
   .funnel{display:flex}
   .fstep{flex:1;background:var(--panel);border:1px solid var(--line);padding:15px 16px;display:flex;
@@ -248,7 +274,7 @@
       <div class="hero-sub">The autonomous red-team for AI agents.</div>
       <div class="hero-line">We grade what an agent <b>does</b>, not what it says: its real tool calls and the data it sends out.</div>
     </div>
-    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>01 / 13</span></div>
+    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>01 / 14</span></div>
   </section>
 
   <!-- 02 · PROBLEM -->
@@ -262,7 +288,7 @@
         <li><span class="mk">03</span><span>So the dangerous failure passes every test: an agent that <b>sounds compliant while it quietly leaks data.</b></span></li>
       </ul>
     </div>
-    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>02 / 13</span></div>
+    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>02 / 14</span></div>
   </section>
 
   <!-- 03 · WHY NOW -->
@@ -277,7 +303,7 @@
       </ul>
       <p class="src">Sources: Vision Compliance, 2026 EU AI Act Readiness Report · EU AI Act Art. 99 (fines) · GDPR Art. 83.</p>
     </div>
-    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>03 / 13</span></div>
+    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>03 / 14</span></div>
   </section>
 
   <!-- 04 · ALREADY REAL (precedent) -->
@@ -309,7 +335,7 @@
       <p class="quote" style="color:var(--ink)"><b>Every one of these is a hiring agent</b><span style="color:var(--mut)"> — which is exactly where Rogue starts.</span></p>
       <p class="src">Sources: Reuters (Amazon, 2018) · EPIC / FTC (HireVue, 2019–21) · Mobley v. Workday, N.D. Cal.</p>
     </div>
-    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>04 / 13</span></div>
+    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>04 / 14</span></div>
   </section>
 
   <!-- 05 · SOLUTION -->
@@ -327,7 +353,7 @@
       </div>
       <p class="quote"><b style="color:var(--ink)">The action channel</b> is the one nobody else watches.</p>
     </div>
-    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>05 / 13</span></div>
+    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>05 / 14</span></div>
   </section>
 
   <!-- 06 · AGENTIC DEPTH -->
@@ -353,7 +379,7 @@
         <div class="sc"><div class="n">0</div><div class="l">human steps in the loop</div></div>
       </div>
     </div>
-    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>06 / 13</span></div>
+    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>06 / 14</span></div>
   </section>
 
   <!-- 07 · PROOF / DEMO -->
@@ -383,7 +409,7 @@
         <span class="quote" style="color:var(--ink)"><b>Zero tools. No self-reporting. <span style="color:var(--red)">We caught the bytes anyway.</span></b></span>
       </div>
     </div>
-    <div class="foot"><span>Reproducible · this exact breach is a saved scan in /scans of the public repo</span><span>07 / 13</span></div>
+    <div class="foot"><span>Reproducible · this exact breach is a saved scan in /scans of the public repo</span><span>07 / 14</span></div>
   </section>
 
   <!-- 08 · DIFFERENTIATION -->
@@ -407,7 +433,7 @@
       </div>
       <p class="note">Everyone else grades the <b>conversation</b>; Rogue instruments the agent's <b>actions</b> before it ships. The innocent-reply, secret-exfiltrated breach is invisible to a text-grader, and it's the one we own.</p>
     </div>
-    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>08 / 13</span></div>
+    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>08 / 14</span></div>
   </section>
 
   <!-- 09 · BEACHHEAD -->
@@ -422,7 +448,7 @@
       </ul>
       <p class="quote" style="color:var(--ink)"><b>Why start here:</b> <span style="color:var(--mut)">CV-screening is the sharpest, most regulated agent to break first. Win it, then run the same engine at every high-risk agent: hiring, lending, education, insurance.</span></p>
     </div>
-    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>09 / 13</span></div>
+    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>09 / 14</span></div>
   </section>
 
   <!-- 10 · TRACTION -->
@@ -443,7 +469,7 @@
         </div>
       </div>
     </div>
-    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>10 / 13</span></div>
+    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>10 / 14</span></div>
   </section>
 
   <!-- 11 · BUSINESS MODEL -->
@@ -463,7 +489,7 @@
       </div>
       <p class="note">The free scan isn't a loss-leader, it's the lead-gen engine.</p>
     </div>
-    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>11 / 13</span></div>
+    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>11 / 14</span></div>
   </section>
 
   <!-- 12 · GO-TO-MARKET -->
@@ -482,12 +508,49 @@
       </div>
       <p class="note">Consent is the moat, not a constraint: we only scan an agent the vendor opts in to. The compliance product is itself compliant, and the same scan-first motion repeats per Annex III vertical.</p>
     </div>
-    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>12 / 13</span></div>
+    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>12 / 14</span></div>
   </section>
 
-  <!-- 13 · VISION -->
+  <!-- 13 · EARLY TRACTION -->
+  <section class="slide" style="--accent:96%">
+    <div class="top"><span class="kicker"><span class="sq"></span><span class="n">13</span> Early traction</span><span class="wm">Rogue</span></div>
+    <div class="body" style="gap:9px">
+      <h1 style="font-size:40px">We didn't just build it. <span class="red">People already want it.</span></h1>
+      <p class="sub" style="font-size:16px">Cold outreach during the hackathon — no warm intros, €0 spent. Real founders &amp; AI engineers wrote back:</p>
+      <div class="trwall">
+        <div class="shot a">
+          <div class="pic"><img src="assets/traction/r3.jpg" alt="WhatsApp reply"></div>
+          <div class="cap"><span class="pl">WhatsApp</span><b>Alexandre P.</b>builds with AI agents</div>
+        </div>
+        <div class="shot b">
+          <div class="pic"><img src="assets/traction/r2.jpg" alt="LinkedIn reply"></div>
+          <div class="cap"><span class="pl">LinkedIn</span><b>Tanguy V.</b>Founder, AI-agent startup</div>
+        </div>
+        <div class="shot hero">
+          <div class="pic"><img src="assets/traction/r1.jpg" alt="LinkedIn reply"></div>
+          <div class="cap"><span class="pl">LinkedIn · ran it himself</span><b>Henri C.</b>AI Eng · École Polytechnique</div>
+        </div>
+        <div class="shot d">
+          <div class="pic"><img src="assets/traction/r4.jpg" alt="LinkedIn reply"></div>
+          <div class="cap"><span class="pl">LinkedIn</span><b>Alana P.</b>AI Analyst · FlyRank</div>
+        </div>
+        <div class="shot e">
+          <div class="pic"><img src="assets/traction/r5.jpg" alt="LinkedIn reply"></div>
+          <div class="cap"><span class="pl">LinkedIn</span><b>Clémentine</b>builds a voice agent</div>
+        </div>
+      </div>
+      <div class="trquote">
+        <span class="qm">&ldquo;</span>
+        <div class="qt">I tested Rogue on a mock endpoint of our product — it caught <span class="r">system-prompt leakage and a structured-JSON jailbreak we'd missed</span>, plus gaps in our AI Act compliance. Could we hop on a call to discuss how we could work together?
+        <span class="src">— Henri C. · AI Engineer, École Polytechnique &nbsp;·&nbsp; unprompted, after running Rogue on his own agent</span></div>
+      </div>
+    </div>
+    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>13 / 14</span></div>
+  </section>
+
+  <!-- 14 · VISION -->
   <section class="slide" style="--accent:100%">
-    <div class="top"><span class="kicker"><span class="sq"></span><span class="n">13</span> Vision</span><span class="wm">Rogue</span></div>
+    <div class="top"><span class="kicker"><span class="sq"></span><span class="n">14</span> Vision</span><span class="wm">Rogue</span></div>
     <div class="body">
       <h1 class="lg">HR is the wedge. <span class="red">The platform is every agent.</span></h1>
       <div class="pipe" style="margin-top:0">
@@ -497,14 +560,14 @@
       </div>
       <p class="lead"><b>Every AI agent has a breaking point. Rogue finds it first</b>, before a real user does. Already stress-tested beyond HR: <b>29 graded breaches on a live third-party consumer agent.</b></p>
     </div>
-    <div class="foot"><span>We watch every move.</span><span>13 / 13</span></div>
+    <div class="foot"><span>We watch every move.</span><span>14 / 14</span></div>
   </section>
 
 </div></div>
 
 <div class="nav">
   <button id="prev">◂ prev</button>
-  <span id="count">01 / 13</span>
+  <span id="count">01 / 14</span>
   <button id="next">next ▸</button>
   <span class="hint">← → · F fullscreen · ⌘P → PDF</span>
 </div>
