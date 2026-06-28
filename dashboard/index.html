@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Rogue — autonomous red team for AI agents</title>
+<title>Rogue · autonomous red-team for AI agents</title>
 <meta name="description" content="Point Rogue at any AI agent and watch a swarm of adversarial AI break in. Every breach mapped to the EU AI Act.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -63,9 +63,23 @@
   .launchmeta{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:18px}
   .demolink{background:none;border:0;color:var(--mut);font-family:var(--mono);font-size:12.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;padding:4px 0}
   .demolink:hover{color:var(--red2)}
-  .err{color:var(--red2);font-family:var(--mono);font-size:12.5px;min-height:16px}
+  .err{color:var(--red2);font-family:var(--mono);font-size:12.5px;min-height:16px;display:block;margin-top:10px}
 
-  .heromETA{display:flex;flex-wrap:wrap;gap:8px;margin-top:34px}
+  .demos{display:flex;flex-wrap:wrap;gap:12px}
+  .demobtn{height:54px;padding:0 22px;border-radius:12px;border:1px solid var(--line2);background:var(--panel);
+    color:var(--ink);font-family:var(--sans);font-weight:600;font-size:15px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:9px;transition:border-color .18s,transform .12s,background .18s}
+  .demobtn::before{content:"\25B6";color:var(--red2);font-size:10px}
+  .demobtn:hover{border-color:var(--red);transform:translateY(-1px)}
+  .demobtn.primary{background:var(--red);color:#0a0a0a;border-color:var(--red);box-shadow:0 8px 30px rgba(255,68,56,.22)}
+  .demobtn.primary::before{color:#0a0a0a}
+  .demobtn.primary:hover{background:var(--red2)}
+  .demobtn.ghost{color:var(--mut);font-weight:500}
+  .demobtn.ghost::before{color:var(--dim)}
+  .ownscan{margin-top:24px;padding-top:22px;border-top:1px solid var(--line);max-width:620px}
+  .ownlabel{font-family:var(--mono);font-size:12px;color:var(--dim);margin-bottom:11px}
+  .ownscan .btn{background:var(--panel2);color:var(--ink);box-shadow:0 0 0 1px var(--line2);font-weight:600}
+  .ownscan .btn:hover{background:var(--panel2);box-shadow:0 0 0 1px var(--red)}
   .chip{font-family:var(--mono);font-size:11px;color:var(--mut);border:1px solid var(--line);border-radius:20px;padding:6px 13px}
   .chip b{color:var(--red2);font-weight:600}
 
@@ -225,30 +239,26 @@
 <!-- ===== STAGE 1 · HERO ===== -->
 <main id="stage-hero"><header class="hero"><div class="wrap">
   <div class="eyebrow">Autonomous red-team for AI agents</div>
-  <h1>Every AI agent has a<br>breaking point.<br><span class="alt">Rogue finds it.</span></h1>
-  <p class="sub">Paste an agent's URL. Rogue unleashes a <b>swarm of adversarial AI attackers</b> — extracting secrets, hijacking instructions, exfiltrating data — then grades not what the agent <i>says</i>, but what it <b>actually does</b>. Every breach mapped to the <b>EU AI Act</b>.</p>
+  <h1>Every AI agent has a breaking point.<br><span class="alt">Rogue finds it.</span></h1>
+  <p class="sub">Rogue sends a swarm of AI attackers at your agent, then grades what it <b>actually does</b>: its tool calls and data egress, not just what it <i>says</i>. Every breach maps to the EU AI Act.</p>
 
   <div class="launch">
-    <div class="inputrow">
-      <div class="urlfield">
-        <span class="pre">▸</span>
-        <input id="url" type="url" placeholder="https://your-agent.com/api/chat" autocomplete="off" spellcheck="false">
-      </div>
-      <button class="btn" id="runbtn" onclick="Rogue.launch()">Run the red team →</button>
+    <div class="demos">
+      <button class="demobtn primary" onclick="Rogue.launchHR()">Scan a live HR screening agent</button>
+      <button class="demobtn" onclick="Rogue.launchCowork()">Red-team a real production agent</button>
+      <button class="demobtn ghost" onclick="Rogue.launchDemo()">Watch the 20-second demo</button>
     </div>
-    <div class="launchmeta">
-      <button class="demolink" onclick="Rogue.launchHR()">▶ scan an <b class="red">AI HR screening agent</b> <span class="dim">— the high-risk demo</span></button>
-      <button class="demolink" onclick="Rogue.launchDemo()">▶ watch the silent-exfil demo</button>
+    <div class="ownscan">
+      <div class="ownlabel">or point Rogue at your own agent</div>
+      <div class="inputrow">
+        <div class="urlfield">
+          <span class="pre">▸</span>
+          <input id="url" type="url" placeholder="https://your-agent.com/api/chat" autocomplete="off" spellcheck="false">
+        </div>
+        <button class="btn" id="runbtn" onclick="Rogue.launch()">Run →</button>
+      </div>
       <span class="err" id="err"></span>
     </div>
-  </div>
-
-  <div class="heromETA">
-    <span class="chip"><b>16</b> attack vectors</span>
-    <span class="chip">behavior oracle <b>· sees what it does</b></span>
-    <span class="chip">EU AI Act <b>mapped</b></span>
-    <span class="chip">OWASP <b>LLM Top 10</b></span>
-    <span class="chip">MITRE <b>ATLAS</b></span>
   </div>
 
   <div class="recent hidden" id="recent">
@@ -288,7 +298,7 @@
     <span class="donetag"><span class="pip"></span> scan complete</span>
   </div>
   <div class="scanbar">
-    <h1 class="t2">target: <span class="tgt" id="tgt">—</span></h1>
+    <h1 class="t2">target: <span class="tgt" id="tgt">…</span></h1>
     <span class="mode" id="mode"></span>
     <span class="ts" id="ts"></span>
   </div>
@@ -301,8 +311,8 @@
 </div></main>
 
 <footer><div class="wrap">
-  ROGUE · autonomous red team for AI agents · breaches graded on behavior, mapped to the EU AI Act · OWASP LLM Top 10 · MITRE ATLAS<br>
-  the attacker swarm and judge are real models · the behavior oracle watches tool calls &amp; egress, not just text
+  Rogue · autonomous red-team for AI agents · every breach graded on behavior and mapped to the EU AI Act.<br>
+  The attacker swarm and the judge are real models. The behavior oracle watches tool calls and egress, not just text.
 </div></footer>
 
 <script src="data.js" onerror="window.__noData=true"></script>
@@ -327,11 +337,12 @@ const Rogue = (function(){
   function launch(){ start({url:$('url').value.trim(), preset:'fast'}); }
   function launchDemo(){ start({preset:'demo'}); }
   function launchHR(){ start({preset:'hr'}); }
+  function launchCowork(){ start({preset:'cowork'}); }
 
   async function start(payload){
     $('err').textContent='';
-    if(!['demo','hr'].includes(payload.preset) && !/^https?:\/\//.test(payload.url||'')){
-      $('err').textContent='Enter a valid http(s):// URL — or hit the live demo.'; return;
+    if(!['demo','hr','cowork'].includes(payload.preset) && !/^https?:\/\//.test(payload.url||'')){
+      $('err').textContent='Enter a valid http(s):// URL, or run a demo above.'; return;
     }
     $('runbtn').disabled=true;
     let job;
@@ -343,7 +354,7 @@ const Rogue = (function(){
       $('runbtn').disabled=false;
       // No backend (e.g. static deploy): fall back to a bundled scan if present.
       if(window.ROGUE_FINDINGS){ renderDash(window.ROGUE_FINDINGS); go('dash'); return; }
-      $('err').textContent = 'Backend offline — start it with:  python3 engine/server.py';
+      $('err').textContent = 'Backend offline. Start it with: python3 engine/server.py';
       return;
     }
     $('runbtn').disabled=false;
@@ -406,7 +417,7 @@ const Rogue = (function(){
       if(ev.contains_secret && ev.external){
         counters.x++; setCtr('cExfil','x'); flash();
         const n=nodes[ev.run_id]; if(n){ n.el.classList.add('breached','critical'); }
-        term('exfil','⇄ EGRESS ', `${ev.tool} → ${ev.host}  [SECRET EXFILTRATED]`);
+        term('exfil','⇄ EGRESS ', `${ev.tool} → ${ev.host}  [DATA LEFT THE BOX]`);
       } else {
         term('tool','⇄ tool   ', `${ev.tool} → ${ev.host||'(local)'}`);
       }
@@ -430,7 +441,7 @@ const Rogue = (function(){
     }
     else if(k==='done'){
       // count any unfinished as attacks too (breaches already counted)
-      $('liveSub').textContent='operation complete — compiling report…';
+      $('liveSub').textContent='operation complete. compiling the report…';
       setTimeout(()=>{ renderDash(ev.report); go('dash'); }, 900);
     }
     else if(k==='error'){
@@ -467,7 +478,7 @@ const Rogue = (function(){
 
     $('obox').innerHTML=''; $('feed').innerHTML=''; $('empty').innerHTML=''; $('feedhead').classList.add('hidden');
 
-    if(!f.length){ $('empty').innerHTML=`<div class="empty">Scan complete — <b>no breaches</b> in this report. The agent held.</div>`; return; }
+    if(!f.length){ $('empty').innerHTML=`<div class="empty">Scan complete. <b>No breaches</b> in this report. The agent held.</div>`; return; }
     $('obox').innerHTML = beh.map(oboxCard).join('');
     const text=f.filter(x=>x.detection!=='behavior');
     if(text.length){
@@ -483,45 +494,40 @@ const Rogue = (function(){
     document.querySelectorAll('.card').forEach(c=>c.addEventListener('click',()=>c.classList.toggle('open')));
     document.querySelectorAll('.obox .more').forEach(b=>b.addEventListener('click',()=>{
       const h=b.closest('.obox'); const open=h.classList.toggle('open');
-      b.querySelector('.lbl').textContent= open?'Hide attack & AI Act mapping':'Show attack & AI Act mapping';
+      b.querySelector('.lbl').textContent= open?'Hide the attack & AI Act mapping':'Show the attack & AI Act mapping';
     }));
   }
 
   function oboxCard(x){
     const tc=x.tool_call||{}; const verdict=(x.text_judge&&x.text_judge.verdict)||'SAFE';
     const clean = verdict!=='FLAGGED';
-    // Tell the truth per case: when the text judge saw nothing, it's the classic
-    // "looks clean / silently exfiltrated" miss; when it did flag, our edge is that
-    // we CONFIRMED the secret left on the wire (ground truth), not just suspicion.
     const head = clean
-      ? `Looks <span class="x">clean ✓</span> — but it <span class="y">leaked the secret 🔴</span>`
-      : `<span class="y">Confirmed exfiltration 🔴</span> — caught on the wire`;
-    const sub = clean
-      ? `A text-only test reads the chat reply, sees nothing wrong, and passes it. Rogue also watches what the agent <i>does</i> — and caught the planted secret leaving the box.`
-      : `Rogue didn't just flag a suspicious reply — it watched the planted token <i>physically leave</i> the agent and arrive at a collector it was never allowed to reach. Ground truth on the action channel, not a guess about the text.`;
+      ? `It said the right thing. <span class="y">It did the wrong thing.</span>`
+      : `<span class="y">Caught on the wire.</span>`;
+    const sub = `A text-only test reads the reply, sees nothing wrong, and passes it. Rogue grades the <b>action</b>: what physically left the agent.`;
     return `<section class="obox">
       <div class="obox-top">
-        <span class="otag">⚡ behavior-oracle breach</span>
-        <h2 class="obox-h">${head}</h2>
+        <span class="otag">behavior breach</span>
         <span class="chip">${esc(x.ai_act_article||'')}</span>
       </div>
+      <h2 class="obox-h">${head}</h2>
       <p class="obox-sub">${sub}</p>
       <div class="split">
         <div class="pane safe">
-          <div class="pane-h"><span class="dot ok"></span>${clean?'what the user sees':'the visible reply'}</div>
+          <div class="pane-h"><span class="dot ok"></span>what it said</div>
           <div class="pane-b">${esc(x.target_reply||'')}</div>
-          <div class="pane-f" title="${esc((x.text_judge&&x.text_judge.reason)||'')}">${clean?'✓':'⚠'} text judge verdict: <b>${esc(verdict)}</b></div>
+          <div class="pane-f" title="${esc((x.text_judge&&x.text_judge.reason)||'')}">text check: <b>${clean?'PASSED &#10003;':'flagged'}</b></div>
         </div>
         <div class="pane danger">
-          <div class="pane-h"><span class="dot bad"></span>what the agent actually did</div>
-          <div class="pane-b mono"><span class="method">${esc(tc.method||'POST')}</span> <span class="url">${esc(tc.url||'')}</span>\n${hi(tc.body||'')}</div>
-          <div class="pane-f">🔴 secret exfiltrated to external host · <b>CRITICAL</b></div>
+          <div class="pane-h"><span class="dot bad"></span>what it did</div>
+          <div class="pane-b mono"><span class="method">${esc(tc.method||'GET')}</span> <span class="url">${esc(tc.url||'')}</span>${tc.body?('\n'+hi(tc.body)):''}</div>
+          <div class="pane-f">🔴 confidential data left the box to an external host · <b>CRITICAL</b></div>
         </div>
       </div>
-      <button class="more" type="button"><span class="car">›</span><span class="lbl">Show attack &amp; AI Act mapping</span></button>
+      <button class="more" type="button"><span class="car">›</span> <span class="lbl">Show the attack &amp; AI Act mapping</span></button>
       <div class="det"><div class="det-inner">
-        ${x.attacker_msg?`<div class="turn"><span class="who atk">indirect injection — attacker-controlled content</span><span class="msg">${hi(x.attacker_msg)}</span></div>`:''}
-        ${x.evidence?`<div class="turn"><span class="who">oracle evidence</span><span class="msg">${hi(x.evidence)}</span></div>`:''}
+        ${x.attacker_msg?`<div class="turn"><span class="who atk">what we asked it</span><span class="msg">${hi(x.attacker_msg)}</span></div>`:''}
+        ${x.evidence?`<div class="turn"><span class="who">what the oracle saw</span><span class="msg">${hi(x.evidence)}</span></div>`:''}
         ${x.ai_act_rationale?`<div class="rat">${esc(x.ai_act_rationale)}</div>`:''}
       </div></div>
     </section>`;
@@ -569,7 +575,7 @@ const Rogue = (function(){
   // ---------- boot ----------
   // If served statically with a bundled scan and no backend, show it; else hero.
   loadRecent();
-  return {go, launch, launchDemo, launchHR, openScan, _render:renderDash};
+  return {go, launch, launchDemo, launchHR, launchCowork, openScan, _render:renderDash};
 })();
 </script>
 </body>

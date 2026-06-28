@@ -142,6 +142,15 @@ def _run_job(job_id: str, url: str, preset: str) -> None:
             chosen = hr_demo.HR_STRATEGIES
             mode = "live scan · HR screening agent (Annex III high-risk)"
             runs, turns = 2, 3
+        elif preset == "cowork":
+            # The credibility headline: a live scan of a REAL, shipping agent
+            # (Cowork) used for CV screening — driven over its own HTTP API. It
+            # profiles the candidate off-box while the recommendation stays clean.
+            import cowork_demo
+            target, sink, kwargs = cowork_demo.setup()
+            chosen = cowork_demo.COWORK_STRATEGIES
+            mode = "live scan · real AI agent (Cowork) — CV screening · Annex III high-risk"
+            runs, turns = 1, 1
         else:
             from canary import canary_strategy
             from canary import setup as canary_setup
@@ -167,7 +176,8 @@ def _run_job(job_id: str, url: str, preset: str) -> None:
         try:
             results = await run_swarm(target, chosen, runs_per_strategy=runs,
                                       max_turns=turns, on_event=emit, sink=sink,
-                                      concurrency=(12 if preset == "demo" else 6),
+                                      concurrency=(12 if preset == "demo"
+                                                   else 2 if preset == "cowork" else 6),
                                       **kwargs)
         finally:
             if listener:
@@ -242,7 +252,7 @@ class Handler(BaseHTTPRequestHandler):
             body = {}
         preset = (body.get("preset") or "fast").lower()
         url = (body.get("url") or "").strip()
-        if preset not in ("demo", "hr") and not re.match(r"^https?://", url):
+        if preset not in ("demo", "hr", "cowork") and not re.match(r"^https?://", url):
             return self._send(400, json.dumps({"error": "Enter a valid http(s) URL"}))
 
         job_id = uuid.uuid4().hex[:12]
