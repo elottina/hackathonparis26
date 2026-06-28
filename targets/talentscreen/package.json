@@ -1,0 +1,12 @@
+{
+  "name": "talentscreen-target",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Deliberately-vulnerable AI CV-screening agent — the target Rogue attacks (EU AI Act Annex III, high-risk).",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
