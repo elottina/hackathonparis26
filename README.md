@@ -16,6 +16,12 @@ Rogue turns each confirmed finding into an evidence-backed report mapped to GDPR
 
 Built for Paris Builds 2026 — track: *Software for Agents*.
 
+## Links
+
+- **Public repo:** https://github.com/elottina/hackathonparis26
+- **Run the tool:** one command, locally — see **Quickstart** below. A fully-hosted public version (one Render service serves the whole tool) is one step away: see **[DEPLOY.md](./DEPLOY.md)**.
+- **Deck, video & proof:** see **Pitch deck, video & proof** below.
+
 ## Why Rogue Exists
 
 A screening agent can look safe in chat while doing something unsafe behind the scenes:
@@ -114,7 +120,7 @@ tool-call trace, callback sink hit, or staging tool integration.
 
 ## Pitch deck, video & proof
 
-- **[pitch-deck.html](./pitch-deck.html)** — the submission deck (13 slides, self-contained, arrow-key nav). Open in any browser; print to PDF for 16:9.
+- **[pitch-deck.html](./pitch-deck.html)** — the submission deck (14 slides, self-contained, arrow-key nav). Open in any browser; print to PDF for 16:9.
 - **[Rogue-Pitch-Deck.pdf](./Rogue-Pitch-Deck.pdf)** — the exported deck PDF.
 - [DECK.md](./DECK.md) — slide-by-slide copy + rubric mapping.
 - [VIDEO-SCRIPT.md](./VIDEO-SCRIPT.md) — the final ≤5-min two-speaker narration (timecoded, slide-synced).
