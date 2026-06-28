@@ -334,6 +334,11 @@
 <script>
 const Rogue = (function(){
   const $ = id => document.getElementById(id);
+  // API base. Default = same-origin (''): works for localhost AND when the hosted
+  // backend (Render) serves this dashboard itself — one URL, no CORS. Only set
+  // window.ROGUE_API if the dashboard is served from a DIFFERENT origin than the
+  // backend (e.g. dashboard on Vercel, backend on Render) — then CORS kicks in.
+  const API = window.ROGUE_API || '';
   const esc = s => String(s==null?"":s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const hi  = s => esc(s).replace(/(?:INTERNAL-REF|ROGUE-CANARY)-[\w-]+/g, m=>`<mark>${m}</mark>`);
   const nm  = x => x.strategy_name || x.strategy || 'finding';
@@ -362,7 +367,7 @@ const Rogue = (function(){
     $('runbtn').disabled=true;
     let job;
     try{
-      const r = await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      const r = await fetch(API+'/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
       job = await r.json();
       if(!r.ok || !job.job_id) throw new Error(job.error||'could not start scan');
     }catch(e){
@@ -375,7 +380,7 @@ const Rogue = (function(){
     $('runbtn').disabled=false;
     resetLive(payload);
     go('live');
-    es = new EventSource('/api/stream/'+job.job_id);
+    es = new EventSource(API+'/api/stream/'+job.job_id);
     es.onmessage = e => handle(JSON.parse(e.data));
     es.onerror = () => { /* stream closes after done; ignore */ };
   }
@@ -567,7 +572,7 @@ const Rogue = (function(){
   // ---------- recent scans on hero ----------
   async function loadRecent(){
     try{
-      const r=await fetch('/api/history'); if(!r.ok) return;
+      const r=await fetch(API+'/api/history'); if(!r.ok) return;
       const rows=await r.json(); if(!rows.length) return;
       $('recent').classList.remove('hidden');
       $('rgrid').innerHTML = rows.slice(0,8).map(s=>{
@@ -582,7 +587,7 @@ const Rogue = (function(){
   }
   async function openScan(id){
     try{
-      const r=await fetch('/api/scan/'+encodeURIComponent(id)); const rep=await r.json();
+      const r=await fetch(API+'/api/scan/'+encodeURIComponent(id)); const rep=await r.json();
       if(rep && rep.findings!==undefined){ renderDash(rep); go('dash'); }
     }catch(e){}
   }

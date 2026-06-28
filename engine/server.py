@@ -32,7 +32,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DASH = ROOT / "dashboard"
-PORT = int(os.environ.get("ROGUE_PORT", "8799"))
+# Hosts like Render/Railway/Fly inject $PORT; fall back to ROGUE_PORT, then 8799 (local).
+PORT = int(os.environ.get("PORT") or os.environ.get("ROGUE_PORT") or "8799")
 
 
 def _load_env() -> None:
@@ -224,6 +225,17 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         if body:
             self.wfile.write(body)
+
+    # ---- CORS preflight: a cross-origin POST /api/scan (Content-Type: application/json)
+    # from the Vercel-hosted dashboard triggers an OPTIONS preflight. Answer it. ----
+    def do_OPTIONS(self):
+        self.send_response(204)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Access-Control-Max-Age", "86400")
+        self.send_header("Content-Length", "0")
+        self.end_headers()
 
     # ---- GET: static files + history + SSE stream ----
     def do_GET(self):

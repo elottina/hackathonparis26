@@ -1,0 +1,31 @@
+# Render Blueprint — deploys the Rogue backend (engine/server.py) as an always-on
+# web service. server.py ALSO serves the dashboard SPA at "/", so this ONE service
+# is the entire live tool (same-origin, no CORS, no second deploy).
+#
+# Deploy: render.com → New → Blueprint → connect this repo → it reads this file.
+# Then set the two secret env vars in the Render dashboard (NEVER commit them).
+#
+# Free plan note: the service sleeps after ~15 min idle and cold-starts in ~50s.
+# Hit the URL once right before the demo to warm it, or upgrade to Starter ($7/mo)
+# to keep it always warm for judging.
+services:
+  - type: web
+    name: rogue
+    runtime: python
+    plan: free
+    rootDir: engine
+    buildCommand: pip install -r requirements.txt
+    startCommand: python server.py
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      # Server-side only — set the real value in the Render dashboard, never here.
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      # Public URL of the deployed TalentScreen agent so the `hr` preset works
+      # from the cloud (defaults to localhost:8788, which Render can't reach).
+      # e.g. https://<talentscreen>.vercel.app/api/chat
+      - key: TALENTSCREEN_URL
+        sync: false
+      - key: PYTHON_VERSION
+        value: "3.12.4"
