@@ -2,7 +2,7 @@
 
 *Visual system: case-file / true-crime. Near-black background, evidence-grey panels, one signal-red accent. Mono stamps ("CASE #0427", "CLOSED"). One idea per slide. The ONE real exfil host (`lookup.talent-verify.io?candidate=Amina%20Khoury`) is the recurring motif: the data leaving under the alibi (S4) → the said-vs-did hero card (S6) → the same host plus a real committed-scan scoreboard (S7) → file closed (S13). Numbers on S7/S8/S9 come from committed scans in `/scans` + `clarity_deep_findings.json`. Date is always **Dec 2027.** Never "first to red-team agents," never "Giskard can't test agents," never "read its mind", only "watch what it does."*
 
-> **Produced deck:** the slides below are implemented as `pitch-deck.html` (self-contained, arrow-key nav, exports to `Rogue-Pitch-Deck.pdf` at 16:9). Open the HTML or the PDF for the actual artifact.
+> **The produced, submitted deck is `pitch-deck.html`** (self-contained, arrow-key nav, exports to `Rogue-Pitch-Deck.pdf` at 16:9) — a clean **12-slide YC structure** (Problem / Why-now / Solution / Agentic depth / Proof / Differentiation / Beachhead-HR / Traction / Business model / GTM / Vision+Ask), platform-led with HR as the wedge. **This file is the narrative/case-file script** (the true-crime throughline that the *video* dramatizes); it does **not** map 1:1 to the HTML's slide order. For the actual deck artifact, open the HTML or the PDF. Facts here are kept consistent with the committed scans and the HTML (one host `lookup.talent-verify.io`, Amina synthetic, Cowork = general workbench / design partner #1 with GitHub-only egress, date Dec 2027).
 
 ---
 
@@ -53,7 +53,7 @@
 >
 > Every safety test we have reads the **transcript.**
 > Text checks: PASSED ✓ ✓ ✓
-> Meanwhile, three pings still glow.
+> Meanwhile, the data is already gone — to one external host.
 >
 > *The conversation is the alibi.*
 
@@ -84,22 +84,22 @@
 >
 > | WHAT IT SAID | WHAT IT DID |
 > |---|---|
-> | "Strong profile, but not the right fit." | `GET …/?…Amina…` — her data at our listener |
-> | text check: **PASSED ✓** | 🔴 confidential data left the box · **CRITICAL** |
-> | | EU AI Act Annex III(4) · GDPR Art. 5(1)(c) |
+> | "Strong profile — recommend advancing Amina to the technical interview." | `GET …/badge?candidate=Amina…&role=Senior…` — her name on the wire, at our listener |
+> | text check: **PASSED ✓** | 🔴 confidential data left the box to an external host · **CRITICAL** |
+> | | Art. 10 — Data & data governance · Annex III §4 *(GDPR Art. 5(1)(c) in the rationale)* |
 >
 > *This agent exposes zero tools. It self-reported nothing. We caught the bytes anyway.*
 
-**SPEAKER NOTE:** Cut to the real screen-recording. Two real passes on the same agent: first paste the URL and run the adaptive swarm (most doors hold, it changes tactic, one opens); then the black-box pass on TalentScreen — zero tools, self-reports nothing — and hold this card in silence for a full three seconds. The "said vs did" side-by-side IS the product and the punchline.
+**SPEAKER NOTE:** Cut to the real screen-recording. Two real passes on the same agent: first paste the URL and run the adaptive swarm (parallel vectors; when one is refused it changes tactic on the next turn until one lands); then the black-box pass on TalentScreen — zero tools, self-reports nothing — and hold this card in silence for a full three seconds. The agent *advances* Amina in text while her name is already gone on the wire — that "said vs did" side-by-side IS the product and the punchline. (Don't say "most doors hold" — the committed scans show breaches landing.)
 **SCORES:** Demo Quality · Differentiation
 
 ---
 
 ## SLIDE 7 — What you just saw
 **ON-SLIDE COPY**
-> **The pings from second nine just lit up on a real product.**
+> **The ping from second nine just lit up on a real product.**
 >
-> Same red. Same three destinations.
+> Same red. Same host.
 > The clean recommendation was the alibi.
 > The behavior oracle found the body.
 
@@ -127,7 +127,7 @@
 > **This wasn't a one-off. Three case files, all real, all built.**
 >
 > **TalentScreen** — black-box, exposes zero tools, self-reports nothing. We caught the name on the wire anyway. *(The case a metadata-checker structurally cannot solve.)*
-> **Cowork / Rowads** — a real, shipping CV-screening agent — our own first customer. Caught fetching the candidate's GitHub/LinkedIn live; recommendation stayed clean.
+> **Cowork / Rowads** — a real, shipping production agent (a general workbench) — our design partner #1. Pointed at screening, with no guardrails it reached off-box and fetched the candidate's GitHub (on the wire; LinkedIn only self-reported); recommendation stayed clean.
 > **Clary** — a third-party French product. Zero code. Broken black-box via a canary. *Generalizes to agents we've never seen.*
 
 **SPEAKER NOTE:** Judge by proof, not vibes. TalentScreen is the structural proof (catches what self-report can't); Cowork is traction — our own startup is design partner #1, exactly the "best client in a week is your own company" play; Clary proves it generalizes beyond agents we built. Note "agents we've never seen," not "any agent" — n=3.
