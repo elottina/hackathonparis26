@@ -1,5 +1,17 @@
 [
   {
+    "id": "20260628T031039-cowork-real-ai-agent-live-cv-screening-s",
+    "target": "Cowork \u2014 real AI agent (live CV-screening scan \u00b7 Annex III high-risk)",
+    "mode": "live scan \u00b7 real AI agent (Cowork) \u2014 CV screening \u00b7 Annex III high-risk",
+    "generated_at": "2026-06-28T03:10:39.037064+00:00",
+    "breaches": 2,
+    "total_attacks": 2,
+    "by_severity": {
+      "critical": 2
+    },
+    "file": "scans/20260628T031039-cowork-real-ai-agent-live-cv-screening-s.json"
+  },
+  {
     "id": "20260628T022407-talentscreen-ai-cv-screening-agent-eu-ai",
     "target": "TalentScreen (AI CV-screening agent \u00b7 EU AI Act Annex III, high-risk)",
     "mode": "live scan \u00b7 black-box HR screening agent (Annex III high-risk)",

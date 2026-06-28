@@ -65,16 +65,21 @@
   .demolink:hover{color:var(--red2)}
   .err{color:var(--red2);font-family:var(--mono);font-size:12.5px;min-height:16px;display:block;margin-top:10px}
 
-  .demos{display:flex;flex-wrap:wrap;gap:12px}
-  .demobtn{height:54px;padding:0 22px;border-radius:12px;border:1px solid var(--line2);background:var(--panel);
-    color:var(--ink);font-family:var(--sans);font-weight:600;font-size:15px;cursor:pointer;
-    display:inline-flex;align-items:center;gap:9px;transition:border-color .18s,transform .12s,background .18s}
-  .demobtn::before{content:"\25B6";color:var(--red2);font-size:10px}
+  .pickhead{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:14px}
+  .demos{display:flex;flex-direction:column;gap:12px;max-width:660px}
+  .demobtn{padding:15px 20px;border-radius:13px;border:1px solid var(--line2);background:var(--panel);color:var(--ink);
+    font-family:var(--sans);cursor:pointer;text-align:left;display:grid;grid-template-columns:auto 1fr;column-gap:13px;row-gap:4px;
+    align-items:center;transition:border-color .18s,transform .12s,background .18s}
+  .demobtn::before{content:"\25B6";color:var(--red2);font-size:11px;grid-row:1/3;align-self:center}
+  .demobtn .dt{font-weight:700;font-size:15.5px;line-height:1.25}
+  .demobtn .ds{font-family:var(--mono);font-weight:400;font-size:12px;color:var(--mut);line-height:1.5}
+  .demobtn .ds .need{color:var(--amber)}
+  .demobtn .tagi{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--red2);
+    border:1px solid var(--red);border-radius:5px;padding:1px 6px;margin-left:8px;vertical-align:middle;font-weight:600}
   .demobtn:hover{border-color:var(--red);transform:translateY(-1px)}
-  .demobtn.primary{background:var(--red);color:#0a0a0a;border-color:var(--red);box-shadow:0 8px 30px rgba(255,68,56,.22)}
-  .demobtn.primary::before{color:#0a0a0a}
-  .demobtn.primary:hover{background:var(--red2)}
-  .demobtn.ghost{color:var(--mut);font-weight:500}
+  .demobtn.primary{background:linear-gradient(180deg,rgba(255,68,56,.13),var(--panel));border-color:var(--red);box-shadow:0 8px 30px rgba(255,68,56,.14)}
+  .demobtn.primary .dt{color:var(--red2)}
+  .demobtn.ghost{opacity:.85}
   .demobtn.ghost::before{color:var(--dim)}
   .ownscan{margin-top:24px;padding-top:22px;border-top:1px solid var(--line);max-width:620px}
   .ownlabel{font-family:var(--mono);font-size:12px;color:var(--dim);margin-bottom:11px}
@@ -243,13 +248,23 @@
   <p class="sub">Rogue sends a swarm of AI attackers at your agent, then grades what it <b>actually does</b>: its tool calls and data egress, not just what it <i>says</i>. Every breach maps to the EU AI Act.</p>
 
   <div class="launch">
+    <div class="pickhead">Pick a target — Rogue breaks in live</div>
     <div class="demos">
-      <button class="demobtn primary" onclick="Rogue.launchHR()">Scan a live HR screening agent</button>
-      <button class="demobtn" onclick="Rogue.launchCowork()">Red-team a real production agent</button>
-      <button class="demobtn ghost" onclick="Rogue.launchDemo()">Watch the 20-second demo</button>
+      <button class="demobtn primary" onclick="Rogue.launchCowork()">
+        <span class="dt">Red-team a real, live AI agent<span class="tagi">the wow demo</span></span>
+        <span class="ds">A shipping AI agent doing CV screening, scanned live over its own API — it leaks the candidate off-box while its written reply stays clean. <span class="need">needs the agent running on :8790</span></span>
+      </button>
+      <button class="demobtn" onclick="Rogue.launchHR()">
+        <span class="dt">Scan an HR screening agent</span>
+        <span class="ds">TalentScreen — a high-risk hiring bot (EU AI Act Annex III). Rogue catches its secret candidate lookup. <span class="need">needs the target on :8788</span></span>
+      </button>
+      <button class="demobtn ghost" onclick="Rogue.launchDemo()">
+        <span class="dt">Watch the 20-second demo</span>
+        <span class="ds">A canned, offline replay — no API key, nothing to set up. The bulletproof stage fallback.</span>
+      </button>
     </div>
     <div class="ownscan">
-      <div class="ownlabel">or point Rogue at your own agent</div>
+      <div class="ownlabel">— or point Rogue at your own agent —</div>
       <div class="inputrow">
         <div class="urlfield">
           <span class="pre">▸</span>
@@ -262,7 +277,7 @@
   </div>
 
   <div class="recent hidden" id="recent">
-    <div class="rh">scans on record</div>
+    <div class="rh">recent scans · click any to reopen its report</div>
     <div class="rgrid" id="rgrid"></div>
   </div>
 </div></header></main>
