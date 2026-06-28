@@ -1,8 +1,8 @@
 # Rogue
 
-**Autonomous red-teaming for AI agents, focused on HR / CV-screening agents.**
+**The autonomous red-team for AI agents** — we grade what an agent *does*, not what it says. Beachhead: AI HR / CV-screening agents (EU AI Act Annex III high-risk).
 
-Rogue points an attacker swarm at an AI agent and reports how it can be broken:
+Rogue points an attacker army at an AI agent and reports how it can be broken:
 prompt extraction, jailbreaks, candidate PII leaks, biased screening behavior, missing human
 oversight, and unauthorized tool use. Its core difference is the **behavior oracle**:
 Rogue grades what the agent **did** — tool calls and data egress — not only what it said in the
@@ -41,7 +41,7 @@ Pitch line:
 target agent (URL / API / staging endpoint)
         |
         v
-autonomous attacker swarm
+autonomous attacker army
         |
         v
 target replies + tool calls + egress events
@@ -57,7 +57,7 @@ Key modules:
 
 - `engine/strategies.py` — attack playbook, including HR/privacy/bias/tool-exfiltration probes
 - `engine/attacker.py` — attacker agent that adapts turn by turn
-- `engine/orchestrator.py` — runs the swarm concurrently
+- `engine/orchestrator.py` — runs the army concurrently
 - `engine/target.py` — demo, tool-enabled, and HTTP target adapters
 - `engine/sink.py` — deterministic egress sink for the behavior oracle
 - `engine/oracle.py` — converts confirmed egress into critical behavior findings
@@ -157,7 +157,7 @@ Important positioning:
 Hackathon scope:
 
 - Paste-a-URL scan
-- Autonomous attacker swarm
+- Autonomous attacker army
 - HR screening demo
 - Behavior oracle via sink/listener/canary
 - AI Act / GDPR mapped report
