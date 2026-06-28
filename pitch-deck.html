@@ -145,6 +145,33 @@
   .mcell.win small{color:#ffb3b3;font-size:12.5px}
   .mcell small{color:var(--faint);font-size:12.5px}
 
+  /* competitor positioning map — 2x2 quadrants + axes */
+  .posmap{position:relative;height:356px;margin-top:8px}
+  .posmap .grid{position:absolute;left:124px;right:124px;top:30px;bottom:30px}
+  .posmap .axln{position:absolute;background:var(--line2);z-index:0}
+  .posmap .axln.h{left:0;right:0;top:50%;height:1.5px;transform:translateY(-50%)}
+  .posmap .axln.v{top:0;bottom:0;left:50%;width:1.5px;transform:translateX(-50%)}
+  .posmap .zone{position:absolute;width:calc(50% - 9px);height:calc(50% - 9px);border:1px solid var(--line);
+    border-radius:12px;background:var(--panel);display:flex;flex-direction:column;align-items:center;
+    justify-content:center;text-align:center;padding:14px 16px;z-index:1}
+  .posmap .zone.tl{left:0;top:0} .posmap .zone.tr{right:0;top:0}
+  .posmap .zone.bl{left:0;bottom:0} .posmap .zone.br{right:0;bottom:0}
+  .posmap .zone.win{border:1.5px solid var(--red);background:var(--red-bg);box-shadow:0 0 30px rgba(255,77,77,.20);z-index:2}
+  .posmap .ztag{position:absolute;top:9px;left:0;right:0;font-family:var(--mono);font-size:9px;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+  .posmap .zone.win .ztag{color:var(--red);font-weight:800}
+  .posmap .nm{font-family:var(--mono);font-size:13px;color:var(--mut);line-height:1.32}
+  .posmap .zone.win .nm{font-size:22px;font-weight:850;color:#fff;letter-spacing:.02em}
+  .posmap .sub{font-family:var(--mono);font-size:10px;color:var(--faint);margin-top:6px;line-height:1.3}
+  .posmap .zone.win .sub{color:#ffd9d9;font-weight:700;font-size:10.5px}
+  .posmap .end{position:absolute;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--faint);line-height:1.5;z-index:3}
+  .posmap .end b{color:var(--ink);font-size:14px;letter-spacing:.03em}
+  .posmap .end.ytop{left:50%;top:0;transform:translateX(-50%);text-align:center}
+  .posmap .end.ybot{left:50%;bottom:0;transform:translateX(-50%);text-align:center}
+  .posmap .end.xl{left:0;top:50%;transform:translateY(-50%);width:114px;text-align:center}
+  .posmap .end.xr{right:0;top:50%;transform:translateY(-50%);width:114px;text-align:center}
+
   /* funnel + econ */
   .funnel{display:flex}
   .fstep{flex:1;background:var(--panel);border:1px solid var(--line);padding:15px 16px;display:flex;
@@ -230,8 +257,8 @@
     <div class="body">
       <h1>AI agents don't just talk. They <span class="red">act</span>. And they can say the right thing while doing the wrong thing.</h1>
       <ul class="bullets">
-        <li><span class="mk">01</span><span>Agents call tools, browse the web, move data. <b>The harm is in the action, not the transcript.</b></span></li>
-        <li><span class="mk">02</span><span>Every agent red-team today grades the <b>text</b> the agent produces.</span></li>
+        <li><span class="mk">01</span><span>Agents call tools, browse the web, move data. The harm can be in what it says <b>or what it does</b>, and the action is the half no one watches.</span></li>
+        <li><span class="mk">02</span><span>Today, every red-team tool grades only the <b>text</b> an agent produces.</span></li>
         <li><span class="mk">03</span><span>So the dangerous failure passes every test: an agent that <b>sounds compliant while it quietly leaks data.</b></span></li>
       </ul>
     </div>
@@ -244,11 +271,11 @@
     <div class="body">
       <h1>Agents are shipping faster than anyone can test them. <span class="red">The law just caught up.</span></h1>
       <ul class="bullets">
-        <li><span class="mk">→</span><span>Every company is deploying agents; <b>almost none can test what they actually do.</b></span></li>
+        <li><span class="mk">→</span><span>Every company is deploying agents; <b>very few test what they actually do.</b></span></li>
         <li><span class="mk">%</span><span><b>78% of enterprises</b> have made no meaningful move on EU AI Act compliance. <b>61% can't produce the documentation</b> high-risk AI now requires, the exact evidence Rogue generates.</span></li>
         <li><span class="mk">§</span><span><b>EU AI Act:</b> CV-screening is high-risk (Annex III), enforced <b>Dec 2027.</b> And when candidate data leaves the box, <b>GDPR</b> stacks on top: exposure up to <b class="red">€20M / 4%</b> + <b class="red">€15M / 3%</b> of global turnover.</span></li>
       </ul>
-      <p class="src">Source: Vision Compliance, 2026 EU AI Act Readiness Report.</p>
+      <p class="src">Sources: Vision Compliance, 2026 EU AI Act Readiness Report · EU AI Act Art. 99 (fines) · GDPR Art. 83.</p>
     </div>
     <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>03 / 13</span></div>
   </section>
@@ -258,7 +285,7 @@
     <div class="top"><span class="kicker"><span class="sq"></span><span class="n">04</span> Already real</span><span class="wm">Rogue</span></div>
     <div class="body">
       <h1>This isn't hypothetical. <span class="red">It already happened.</span></h1>
-      <p class="sub">Hiring AI has already been <b>scrapped, settled, and sued</b>, for harm that never showed up in its answers.</p>
+      <p class="sub">Hiring AI has already been <b>scrapped, walked back, and sued</b>, for harm that never showed up in its answers.</p>
       <div class="grid3">
         <div class="inc">
           <div class="co">Amazon · 2018</div>
@@ -267,10 +294,10 @@
           <em>Bias no one saw in the output.</em>
         </div>
         <div class="inc">
-          <div class="co">iTutorGroup · 2023</div>
-          <div class="hl">$365,000</div>
-          <p>EEOC settlement: its recruiting software auto-rejected women 55+ and men 60+. The first EEOC AI-hiring case.</p>
-          <em>It discriminated silently.</em>
+          <div class="co">HireVue · 2021</div>
+          <div class="hl">Face-scored</div>
+          <p>Its AI rated candidates on their facial expressions and tone, until a 2019 FTC complaint forced HireVue to pull facial analysis in 2021.</p>
+          <em>Hiring "AI" built on pseudoscience.</em>
         </div>
         <div class="inc">
           <div class="co">Mobley v. Workday · 2024–25</div>
@@ -279,6 +306,8 @@
           <em>The vendor is in the blast radius.</em>
         </div>
       </div>
+      <p class="quote" style="color:var(--ink)"><b>Every one of these is a hiring agent</b><span style="color:var(--mut)"> — which is exactly where Rogue starts.</span></p>
+      <p class="src">Sources: Reuters (Amazon, 2018) · EPIC / FTC (HireVue, 2019–21) · Mobley v. Workday, N.D. Cal.</p>
     </div>
     <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>04 / 13</span></div>
   </section>
@@ -291,7 +320,7 @@
       <p class="lead">Point Rogue at any agent. An <b>army of AI attackers</b> probes it; a <b>behavior oracle</b> grades the bytes that physically leave the box, captured on a server we control. Every breach maps to the EU AI Act and GDPR.</p>
       <div class="pipe">
         <div class="pnode"><span class="pi">1</span><span class="pk">Target</span><span class="pv">Any agent · URL / API</span></div>
-        <div class="pnode"><span class="pi">2</span><span class="pk">Attack</span><span class="pv">Army of AI attackers</span><span class="miniarmy"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+        <div class="pnode"><span class="pi">2</span><span class="pk">Attack</span><span class="pv">Army of AI attackers</span></div>
         <div class="pnode"><span class="pi">3</span><span class="pk">Observe</span><span class="pv">Replies · tool calls · egress</span></div>
         <div class="pnode hot"><span class="pi">4</span><span class="pk">Grade</span><span class="pv">Behavior oracle</span></div>
         <div class="pnode"><span class="pi">5</span><span class="pk">Report</span><span class="pv">AI Act / GDPR mapped</span></div>
@@ -331,7 +360,7 @@
   <section class="slide" style="--accent:54%">
     <div class="top"><span class="kicker"><span class="sq"></span><span class="n">07</span> Proof · live HR demo</span><span class="wm">Rogue</span></div>
     <div class="body" style="gap:18px">
-      <h1 style="font-size:46px">It said the right thing. <span class="red">It did the wrong thing.</span></h1>
+      <h1 style="font-size:46px">It said the right thing. <span class="red">It did the wrong one.</span></h1>
       <div class="hero">
         <div class="hcol said">
           <div class="hh"><span class="d"></span> what it said</div>
@@ -351,7 +380,7 @@
           <span class="chip"><span class="d"></span> 3 critical</span>
           <span class="chip"><span class="d"></span> text said SAFE on all 3</span>
         </div>
-        <span class="quote" style="color:var(--ink)"><b>Zero tools. Self-reported nothing. <span style="color:var(--red)">We caught the bytes anyway.</span></b></span>
+        <span class="quote" style="color:var(--ink)"><b>Zero tools. No self-reporting. <span style="color:var(--red)">We caught the bytes anyway.</span></b></span>
       </div>
     </div>
     <div class="foot"><span>Reproducible · this exact breach is a saved scan in /scans of the public repo</span><span>07 / 13</span></div>
@@ -362,21 +391,21 @@
     <div class="top"><span class="kicker"><span class="sq"></span><span class="n">08</span> Differentiation</span><span class="wm">Rogue</span></div>
     <div class="body" style="gap:18px">
       <h1>The empty lane is <span class="red">ours</span>.</h1>
-      <div class="axisx">Columns: what the tool grades&nbsp;&nbsp;·&nbsp;&nbsp;Rows: attack it pre-ship vs defend it in production</div>
-      <div class="matrix">
-        <div class="mcell mhead"></div>
-        <div class="mcell mhead col"><b>The TEXT</b><small>what it says</small></div>
-        <div class="mcell mhead col beh"><b>The BEHAVIOR</b><small>what it actually does</small></div>
-
-        <div class="mcell mhead row">Offensive<br>red-team</div>
-        <div class="mcell">Giskard · General Analysis · Promptfoo</div>
-        <div class="mcell win"><b>ROGUE</b><small>grades the bytes that leave the box</small></div>
-
-        <div class="mcell mhead row">Runtime<br>defense</div>
-        <div class="mcell">Lakera · Prompt Security</div>
-        <div class="mcell">Zenity · Noma <small>(block only, in-prod)</small></div>
+      <div class="posmap">
+        <div class="end ytop"><b>OFFENSIVE</b> ▲<br>test it pre-ship</div>
+        <div class="end ybot">block in production<br>▼ <b>RUNTIME</b></div>
+        <div class="end xl">grades the<br><b>TEXT</b><br>what it says</div>
+        <div class="end xr">grades the<br><b>BEHAVIOR</b> ▶<br>what it does</div>
+        <div class="grid">
+          <div class="axln h"></div>
+          <div class="axln v"></div>
+          <div class="zone tl"><span class="ztag">offensive · text</span><div class="nm">Giskard · General Analysis · Promptfoo</div><div class="sub">red-team the words</div></div>
+          <div class="zone tr win"><span class="ztag">offensive · behavior — the open lane</span><div class="nm">ROGUE</div><div class="sub">tests what the agent DOES, before it ships</div></div>
+          <div class="zone bl"><span class="ztag">runtime · text</span><div class="nm">Lakera · Prompt Security</div><div class="sub">filter the words, live</div></div>
+          <div class="zone br"><span class="ztag">runtime · behavior</span><div class="nm">Zenity · Noma</div><div class="sub">block actions in production only</div></div>
+        </div>
       </div>
-      <p class="note">Everyone else red-teams the <b>conversation</b>; we instrument the agent's <b>actions</b>. The innocent-reply, secret-exfiltrated breach is invisible to a text-grader, and it's the one we're built to catch. <b>Vanta / Drata</b> are the paperwork; we generate the evidence their register asks for.</p>
+      <p class="note">Everyone else grades the <b>conversation</b>; Rogue instruments the agent's <b>actions</b> before it ships. The innocent-reply, secret-exfiltrated breach is invisible to a text-grader, and it's the one we own.</p>
     </div>
     <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>08 / 13</span></div>
   </section>
@@ -388,8 +417,8 @@
       <h1>We land where the law looks first: <span class="red">AI CV-screening</span>.</h1>
       <ul class="bullets" style="gap:15px">
         <li><span class="mk">§</span><span><b>High-risk by law.</b> A screening agent has no business looking a candidate up beyond her CV. Annex III · GDPR data-minimisation.</span></li>
-        <li><span class="mk">◎</span><span><b>A clear buyer.</b> The founder / CTO of an HR-tech or applicant-tracking (ATS) vendor: no security team, personal liability on the first screen.</span></li>
-        <li><span class="mk">★</span><span><b>A real design partner.</b> Our own startup's agent is partner #1, live today.</span></li>
+        <li><span class="mk">◎</span><span><b>A clear buyer.</b> The founder / CTO shipping the screening agent: no security team, and personal liability on the first bad screen.</span></li>
+        <li><span class="mk">★</span><span><b>A design partner already live.</b> We red-team our own shipping agent before selling to anyone: real access, real proof.</span></li>
       </ul>
       <p class="quote" style="color:var(--ink)"><b>Why start here:</b> <span style="color:var(--mut)">CV-screening is the sharpest, most regulated agent to break first. Win it, then run the same engine at every high-risk agent: hiring, lending, education, insurance.</span></p>
     </div>
@@ -405,7 +434,7 @@
         <div class="card">
           <div class="ct">A black-box HR screening agent <span class="tagx">black-box</span></div>
           <p>A real Claude screening agent that exposes <b>zero tools</b> and self-reports nothing. We caught the candidate's name leaving on the wire anyway, while its written recommendation read perfectly clean.</p>
-          <em>The case a metadata-checker can't solve.</em>
+          <em>The breach no transcript review can catch.</em>
         </div>
         <div class="card">
           <div class="ct">Our own agent · Rowads <span class="tagx g">shipping</span></div>
@@ -421,7 +450,7 @@
   <section class="slide" style="--accent:85%">
     <div class="top"><span class="kicker"><span class="sq"></span><span class="n">11</span> Business model</span><span class="wm">Rogue</span></div>
     <div class="body">
-      <h1>Land free. <span class="red">Expand to recurring.</span></h1>
+      <h1>How Rogue <span class="red">makes money</span>.</h1>
       <div class="funnel">
         <div class="fstep"><span class="k">Land · lead-gen</span><span class="v">FREE exposure scan</span><span class="arrow">→</span></div>
         <div class="fstep hot"><span class="k">Convert</span><span class="v">€1,500 deep scan</span><span class="arrow">→</span></div>
@@ -429,11 +458,10 @@
       </div>
       <div class="econ">
         <div class="stat"><div class="n grn">€1,500</div><div class="l">price · standard deep scan</div></div>
-        <div class="stat"><div class="n">~€5</div><div class="l">compute cost · standard scan</div></div>
         <div class="stat"><div class="n grn">€20–30K</div><div class="l">per account / year by month 12 (ACV)</div></div>
         <div class="stat"><div class="n red">€15–90K</div><div class="l">what a human AI-hiring audit costs · weeks</div></div>
       </div>
-      <p class="note">Software economics: ~€5 of compute against a €1,500 price. The free scan is not a loss-leader, it's the lead-gen engine. <b>How we fill that funnel → next slide.</b></p>
+      <p class="note">The free scan isn't a loss-leader, it's the lead-gen engine. <b>How we fill that funnel → next slide.</b></p>
     </div>
     <div class="foot"><span>Rogue · autonomous red-team for AI agents</span><span>11 / 13</span></div>
   </section>
@@ -447,7 +475,7 @@
         <li><span class="mk">1</span><span>Scan a prospect's agent <b>(opt-in)</b> for free.</span></li>
         <li><span class="mk">2</span><span>Send a <b>blurred Annex III report</b> with one confirmed, scary finding.</span></li>
         <li><span class="mk">3</span><span>Close the <b>€1,500 deep scan</b>, then expand to monitoring + Vault.</span></li>
-        <li><span class="mk">↺</span><span><b>Viral loop:</b> the vendor forwards the report to their own enterprise buyer.</span></li>
+        <li><span class="mk">↺</span><span><b>Pull, not push:</b> their own enterprise buyers demand security proof, so the vendor brings our report to close their deals.</span></li>
       </ul>
       <div class="row">
         <div class="stat" style="min-width:auto"><div class="n red" style="font-size:23px">First €10K = 7 deep scans</div><div class="l">from an 84-contact priority list we already built · ~€1–2 to acquire (it's just compute)</div></div>
