@@ -8,6 +8,9 @@ oversight, and unauthorized tool use. Its core difference is the **behavior orac
 Rogue grades what the agent **did** — tool calls and data egress — not only what it said in the
 chat response.
 
+The attackers run **in parallel and adapt** — when a probe is refused, that refusal becomes
+information and the next turn changes tactic, with **zero humans in the loop**.
+
 The beachhead is **AI HR / CV-screening agents**, an EU AI Act Annex III high-risk workflow.
 Rogue turns each confirmed finding into an evidence-backed report mapped to GDPR / AI Act risk.
 
@@ -114,7 +117,8 @@ tool-call trace, callback sink hit, or staging tool integration.
 - **[pitch-deck.html](./pitch-deck.html)** — the submission deck (13 slides, self-contained, arrow-key nav). Open in any browser; print to PDF for 16:9.
 - **[Rogue-Pitch-Deck.pdf](./Rogue-Pitch-Deck.pdf)** — the exported deck PDF.
 - [DECK.md](./DECK.md) — slide-by-slide copy + rubric mapping.
-- [VIDEO-DIRECTION.md](./VIDEO-DIRECTION.md) — the ≤5-min video: timecoded script, 60s cut, capture list.
+- [VIDEO-SCRIPT.md](./VIDEO-SCRIPT.md) — the final ≤5-min two-speaker narration (timecoded, slide-synced).
+- [VIDEO-DIRECTION.md](./VIDEO-DIRECTION.md) — video direction notes: 60s cut and capture list.
 
 **Proof, not vibes:** every number on the deck comes from a committed scan you can open:
 
