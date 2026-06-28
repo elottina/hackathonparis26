@@ -120,7 +120,7 @@ tool-call trace, callback sink hit, or staging tool integration.
 
 - [`/scans`](./scans) — real saved scans. The HR black-box breach (TalentScreen, the candidate's name arriving at `lookup.talent-verify.io`) and the live Cowork scan are here.
 - [`clarity_deep_findings.json`](./clarity_deep_findings.json) — the deep adaptive run on the third-party Clary agent (60 attacks → 29 graded breaches).
-- Top-level `findings.json` is the **offline deterministic mock** (FinBuddy) used as a zero-API demo backup; the real HR/Clary proof lives in `/scans`.
+- The **offline deterministic mock** (FinBuddy) — the zero-API demo backup — is saved under [`/scans`](./scans) as the `*-finbuddy-offline-mock-target.json` runs; `python run.py --seeded` regenerates it to `findings.json`.
 
 ## Business Direction
 

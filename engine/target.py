@@ -199,11 +199,16 @@ class HTTPTarget:
         self.reply_key = reply_key
         self.headers = headers or {}
 
-    async def send(self, message: str, history: list[dict]) -> str:
+    async def send(self, message: str, history: list[dict]) -> "str | Reply":
         """Resilient by design: a real client endpoint will cold-start, rate-limit,
         and intermittently 5xx. We retry transient failures with backoff and, on
         persistent failure, return a benign marker instead of raising — so one bad
-        response never crashes the whole swarm. (Robustness the rubric rewards.)"""
+        response never crashes the whole swarm. (Robustness the rubric rewards.)
+
+        If the endpoint returns a `tool_calls` array (the documented contract), we
+        surface it as a Reply so the behavior oracle grades what the agent *did* —
+        not just the text. Endpoints that return only `reply` still work as plain
+        text-graded scans."""
         import asyncio as _asyncio
 
         import httpx
@@ -219,7 +224,11 @@ class HTTPTarget:
                     continue
                 r.raise_for_status()
                 data = r.json()
-                return data.get(self.reply_key) or str(data)
+                text = data.get(self.reply_key) or str(data)
+                tool_calls = data.get("tool_calls")
+                if isinstance(tool_calls, list) and tool_calls:
+                    return Reply(text=text, tool_calls=tool_calls)
+                return text
             except (httpx.TimeoutException, httpx.TransportError) as e:
                 last = f"[target unreachable: {type(e).__name__}]"
                 await _asyncio.sleep(1.5 * (attempt + 1))
